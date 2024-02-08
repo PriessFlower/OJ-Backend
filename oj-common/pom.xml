@@ -20,12 +20,21 @@
         <hutool.vision>5.8.22</hutool.vision>
         <boot.validation.vision>3.2.1</boot.validation.vision>
         <mapstruct.vision>1.5.5.Final</mapstruct.vision>
+        <knife4j.vision>4.1.0</knife4j.vision>
     </properties>
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.github.xiaoymin/knife4j-openapi3-jakarta-spring-boot-starter -->
+        <dependency>
+            <groupId>com.github.xiaoymin</groupId>
+            <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
+            <version>${knife4j.vision}</version>
+        </dependency>
+
 
         <dependency>
             <groupId>org.projectlombok</groupId>
