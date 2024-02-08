@@ -17,6 +17,9 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <hutool.vision>5.8.22</hutool.vision>
+        <boot.validation.vision>3.2.1</boot.validation.vision>
+        <mapstruct.vision>1.5.5.Final</mapstruct.vision>
     </properties>
     <dependencies>
         <dependency>
@@ -34,43 +37,17 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-
-        <!--mybatis-flex依赖包-->
-        <dependency>
-            <groupId>com.mybatis-flex</groupId>
-            <artifactId>mybatis-flex-spring-boot3-starter</artifactId>
-            <version>1.7.9</version>
-        </dependency>
-        <dependency>
-            <groupId>com.mybatis-flex</groupId>
-            <artifactId>mybatis-flex-processor</artifactId>
-            <version>1.7.9</version>
-            <scope>provided</scope>
-        </dependency>
-        <!--mybatis-flex代码生成器-->
-        <dependency>
-            <groupId>com.mybatis-flex</groupId>
-            <artifactId>mybatis-flex-codegen</artifactId>
-            <version>1.7.9</version>
-        </dependency>
-        <!--mysql驱动包-->
-        <dependency>
-            <groupId>com.mysql</groupId>
-            <artifactId>mysql-connector-j</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-
         <!--validation 注解校验依赖-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
-            <version>3.1.0</version>
+            <version>${boot.validation.vision}</version>
         </dependency>
         <!--HuTool-->
         <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
-            <version>5.8.16</version>
+            <version>${hutool.vision}</version>
         </dependency>
         <!--apache common lang3-->
         <dependency>
@@ -81,7 +58,7 @@
         <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct-processor</artifactId>
-            <version>1.5.5.Final</version>
+            <version>${mapstruct.vision}</version>
         </dependency>
         <dependency>
             <groupId>com.zaxxer</groupId>
