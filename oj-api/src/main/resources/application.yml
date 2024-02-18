@@ -35,6 +35,10 @@ springdoc:
 #      paths-to-match: '/**'
 #      # 按包路径匹配:一般到启动类的包名
 #      packages-to-scan: com.zrx
+  group-configs:
+    - group: '核心接口'
+      paths-to-match: '/core/**'
+      packages-to-scan: com.zrx
 
 # knife4j相关配置 可以不用改
 knife4j:
@@ -45,10 +49,3 @@ knife4j:
     # 为了添加 basePath
     enable-host: true
     enable-host-text: "localhost:8101/api"
-  # 开启Swagger的Basic认证功能,默认是false
-#  basic:
-#    enable: true
-#    # Basic认证用户名
-#    username: zrx
-#    # Basic认证密码
-#    password: 123456
