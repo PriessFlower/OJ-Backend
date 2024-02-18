@@ -21,6 +21,7 @@
         <boot.validation.vision>3.2.1</boot.validation.vision>
         <mapstruct.vision>1.5.5.Final</mapstruct.vision>
         <knife4j.vision>4.1.0</knife4j.vision>
+        <mybatis-flex.vision>1.7.9</mybatis-flex.vision>
     </properties>
     <dependencies>
         <dependency>
@@ -35,6 +36,31 @@
             <version>${knife4j.vision}</version>
         </dependency>
 
+        <!--mybatis-flex依赖包-->
+        <dependency>
+            <groupId>com.mybatis-flex</groupId>
+            <artifactId>mybatis-flex-spring-boot3-starter</artifactId>
+            <version>${mybatis-flex.vision}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.mybatis-flex</groupId>
+            <artifactId>mybatis-flex-processor</artifactId>
+            <version>${mybatis-flex.vision}</version>
+<!--            <scope>provided</scope>-->
+        </dependency>
+        <!--mybatis-flex代码生成器-->
+        <dependency>
+            <groupId>com.mybatis-flex</groupId>
+            <artifactId>mybatis-flex-codegen</artifactId>
+            <version>${mybatis-flex.vision}</version>
+        </dependency>
+        <!--mysql驱动包-->
+        <dependency>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
 
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -44,7 +70,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
+<!--            <scope>test</scope>-->
         </dependency>
         <!--validation 注解校验依赖-->
         <dependency>
@@ -72,6 +98,12 @@
         <dependency>
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
+        </dependency>
+
+        <!--Redis-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
     </dependencies>
 </project>

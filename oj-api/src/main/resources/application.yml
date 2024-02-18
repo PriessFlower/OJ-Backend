@@ -2,22 +2,29 @@ server:
   port: 8101
   servlet:
     context-path: /api
+    session:
+      cookie:
+        http-only: true
 spring:
   # 默认dev环境
   profiles:
     active: dev
+    include:
+      - security
   # 支持swagger3
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/sb-oj?useUnicode=true&characterEncoding=utf-8&useSSL=true
-    username: root
-    password: abc123456
 
-
-
+# mybatis-flex 配置
+mybatis-flex:
+  mapper-locations:
+    - classpath:mapper/*.xml
+  configuration:
+    call-setters-on-nulls: true
+    return-instance-for-empty-row: true
+    # SQL 日志打印
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
 # springdoc相关配置
 springdoc:
@@ -33,8 +40,10 @@ springdoc:
     - group: '核心接口'
       paths-to-match: '/core/**'
       packages-to-scan: com.zrx
-    - group: '安全'
-      paths-to-match: '/security/**'
+    - group: '系统接口'
+      paths-to-match:
+        - '/sys/**'
+        - '/security/**'
       packages-to-scan: com.zrx
 
 # knife4j相关配置 可以不用改

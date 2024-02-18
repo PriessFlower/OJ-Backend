@@ -15,8 +15,6 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <mybatis-flex.vision>1.7.9</mybatis-flex.vision>
-
     </properties>
 
     <dependencies>
@@ -29,33 +27,6 @@
             <groupId>com.zrx</groupId>
             <artifactId>oj-common</artifactId>
             <version>0.0.1</version>
-        </dependency>
-
-        <!--mybatis-flex依赖包-->
-        <dependency>
-            <groupId>com.mybatis-flex</groupId>
-            <artifactId>mybatis-flex-spring-boot3-starter</artifactId>
-            <version>${mybatis-flex.vision}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.mybatis-flex</groupId>
-            <artifactId>mybatis-flex-processor</artifactId>
-            <version>${mybatis-flex.vision}</version>
-            <scope>provided</scope>
-        </dependency>
-        <!--mybatis-flex代码生成器-->
-        <dependency>
-            <groupId>com.mybatis-flex</groupId>
-            <artifactId>mybatis-flex-codegen</artifactId>
-            <version>${mybatis-flex.vision}</version>
-        </dependency>
-
-
-        <!--mysql驱动包-->
-        <dependency>
-            <groupId>com.mysql</groupId>
-            <artifactId>mysql-connector-j</artifactId>
-            <scope>runtime</scope>
         </dependency>
     </dependencies>
 </project>
