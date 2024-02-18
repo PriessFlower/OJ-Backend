@@ -29,15 +29,12 @@ springdoc:
   api-docs:
     path: /v3/api-docs    # swagger后端请求地址
     enabled: true   # 是否开启文档功能
-  packages-to-scan: com.zrx.controller
-#  group-configs:
-#    - group: 'com.zrx'
-#      paths-to-match: '/**'
-#      # 按包路径匹配:一般到启动类的包名
-#      packages-to-scan: com.zrx
   group-configs:
     - group: '核心接口'
       paths-to-match: '/core/**'
+      packages-to-scan: com.zrx
+    - group: '安全'
+      paths-to-match: '/security/**'
       packages-to-scan: com.zrx
 
 # knife4j相关配置 可以不用改
