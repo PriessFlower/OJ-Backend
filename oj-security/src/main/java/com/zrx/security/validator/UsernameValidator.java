@@ -4,6 +4,8 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.regex.Pattern;
+
 /**
  * 密码校验器
  *
@@ -13,6 +15,8 @@ import org.apache.commons.lang3.StringUtils;
 public class UsernameValidator implements ConstraintValidator<Username, String> {
 
 	private static final String ONLY_ALPHANUMERIC = "^[a-zA-Z0-9]+$";
+
+	public static final Pattern onlyAlphanumeric = Pattern.compile(ONLY_ALPHANUMERIC);
 
 	@Override
 	public boolean isValid(String value, ConstraintValidatorContext context) {
@@ -30,7 +34,7 @@ public class UsernameValidator implements ConstraintValidator<Username, String> 
 			return false;
 		}
 		// 用户名不能含有特殊字符
-		if (!value.matches(ONLY_ALPHANUMERIC)) {
+		if (!onlyAlphanumeric.matcher(value).find()) {
 			customMessage = "用户名不能含有特殊字符";
 			setErrorMessage(context, customMessage);
 			return false;

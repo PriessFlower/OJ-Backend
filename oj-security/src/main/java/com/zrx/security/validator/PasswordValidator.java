@@ -4,6 +4,8 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.regex.Pattern;
+
 /**
  * 密码校验器
  *
@@ -13,6 +15,12 @@ import org.apache.commons.lang3.StringUtils;
 public class PasswordValidator implements ConstraintValidator<Password, String> {
 
 	private static final String ONLY_ALPHANUMERIC = "^[a-zA-Z0-9]+$";
+
+	private static final Pattern onlyAlphanumeric = Pattern.compile(ONLY_ALPHANUMERIC);
+
+	private static final String MUST_ALPHANUMERIC = "^(?=.*\\d)(?=.*[a-zA-Z]).*$";
+
+	private static final Pattern mustAlphanumeric = Pattern.compile(MUST_ALPHANUMERIC);
 
 	@Override
 	public boolean isValid(String value, ConstraintValidatorContext context) {
@@ -30,13 +38,13 @@ public class PasswordValidator implements ConstraintValidator<Password, String> 
 			return false;
 		}
 		// 密码必须包含数字和字母
-		if (!value.matches("^(?=.*\\d)(?=.*[a-zA-Z]).*$")) {
+		if (!mustAlphanumeric.matcher(value).find()) {
 			customMessage = "密码必须包含数字和字母";
 			setErrorMessage(context, customMessage);
 			return false;
 		}
 		// 密码不能含有特殊字符
-		if (!value.matches(ONLY_ALPHANUMERIC)) {
+		if (!onlyAlphanumeric.matcher(value).find()) {
 			customMessage = "密码不能含有特殊字符";
 			setErrorMessage(context, customMessage);
 			return false;
