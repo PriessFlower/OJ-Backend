@@ -60,7 +60,7 @@ public class Result<T> {
 	}
 
 	public static <T> Result<T> ok() {
-		return res(null, ResultCode.SUCCESS.getCode(), "操作成功");
+		return res(null, ResultCode.SUCCESS.getCode(), "成功");
 	}
 
 }

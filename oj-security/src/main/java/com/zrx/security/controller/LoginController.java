@@ -1,10 +1,12 @@
 package com.zrx.security.controller;
 
 import cn.dev33.satoken.stp.StpUtil;
+import com.mybatisflex.core.query.QueryWrapper;
 import com.zrx.exception.BusinessException;
 import com.zrx.reuslt.Result;
 import com.zrx.reuslt.ResultCode;
-import com.zrx.security.model.dto.LoginDTO;
+import com.zrx.security.model.dto.LoginRequest;
+import com.zrx.security.model.dto.RegisterRequest;
 import com.zrx.security.service.CaptchaService;
 import com.zrx.security.utils.Md5Util;
 import com.zrx.sys.entity.SysUser;
@@ -16,16 +18,16 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.MediaType;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.Map;
+
+import static com.zrx.sys.entity.table.SysUserTableDef.SYS_USER;
 
 /**
  * 登录管理
@@ -61,7 +63,7 @@ public class LoginController {
 
 	@PostMapping("login")
 	@Operation(summary = "登录")
-	public Result<Map<String, Object>> login(HttpServletRequest request, @Validated @RequestBody LoginDTO login) {
+	public Result<String> login(@Valid @RequestBody LoginRequest login) {
 
 		// 验证码是否正确
 		boolean flag = captchaService.validate(login.getUuid(), login.getCaptcha());
@@ -87,7 +89,33 @@ public class LoginController {
 			throw new BusinessException(ResultCode.UNAUTHORIZED.getCode(), "当前用户已被系统停用");
 		}
 		StpUtil.login(user.getId());
-		return Result.success(null);
+		return Result.ok();
+	}
+
+	@PostMapping("register")
+	@Operation(summary = "注册")
+	public Result<String> register(@Valid @RequestBody RegisterRequest registerRequest) {
+		String username = registerRequest.getUsername();
+		String password = registerRequest.getPassword();
+		String checkPassword = registerRequest.getCheckPassword();
+		if (!StringUtils.equals(password, checkPassword)) {
+			throw new BusinessException("两次输入的密码不一致");
+		}
+		SysUser sysUser = new SysUser();
+		String salt = Md5Util.generateSalt();
+		sysUser.setUsername(registerRequest.getUsername());
+		sysUser.setPassword(Md5Util.inputPassToDBPass(password, salt));
+		sysUser.setSalt(salt);
+
+		// 是否有相同用户名的用户
+		if (sysUserService.exists(new QueryWrapper().where(SYS_USER.USERNAME.eq(username)))) {
+			throw new BusinessException("用户名重复");
+		}
+		boolean saveFlag = sysUserService.save(sysUser);
+		if (!saveFlag) {
+			throw new BusinessException("注册失败");
+		}
+		return Result.ok();
 	}
 
 }

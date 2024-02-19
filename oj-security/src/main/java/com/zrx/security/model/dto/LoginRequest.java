@@ -7,9 +7,15 @@ import lombok.Data;
 import java.io.Serial;
 import java.io.Serializable;
 
+/**
+ * 登录表单
+ *
+ * @author zhang.rx
+ * @since 2024/2/19
+ */
 @Data
 @Schema(name = "登录表单")
-public class LoginDTO implements Serializable {
+public class LoginRequest implements Serializable {
 
 	@Serial
 	private static final long serialVersionUID = 1L;
