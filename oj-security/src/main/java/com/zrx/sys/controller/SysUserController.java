@@ -1,7 +1,13 @@
 package com.zrx.sys.controller;
 
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.mybatisflex.core.paginate.Page;
-import com.zrx.sys.entity.SysUser;
+import com.zrx.exception.BusinessException;
+import com.zrx.model.common.Paging;
+import com.zrx.reuslt.Result;
+import com.zrx.security.satoken.AuthConst;
+import com.zrx.sys.model.dto.SysUserRequest;
+import com.zrx.sys.model.vo.SysUserResponse;
 import com.zrx.sys.service.SysUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -10,7 +16,6 @@ import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * 系统用户 控制层。
@@ -20,54 +25,52 @@ import java.util.List;
  */
 @RestController
 @Tag(name = "系统用户管理接口")
-@RequestMapping("sys/sysUser")
+@RequestMapping("/sys/sysUser")
 public class SysUserController {
 
 	@Resource
 	private SysUserService sysUserService;
 
 	/**
-	 * 添加。
-	 * @param sysUser 系统用户
-	 * @return {@code true} 添加成功，{@code false} 添加失败
+	 * 禁用用户
+	 * @param id 主键
+	 * @return 禁用结果
 	 */
-	@PostMapping("save")
-	@Operation(summary = "保存")
-	public boolean save(@RequestBody @Parameter(description = "系统用户") SysUser sysUser) {
-		return sysUserService.save(sysUser);
+	@PutMapping("/disable/{id}")
+	@Operation(summary = "禁用用户")
+	@SaCheckPermission(AuthConst.SUPER_ADMIN)
+	public Result<String> disable(@PathVariable @Parameter(description = "主键") String id) {
+		if (!sysUserService.disable(id)) {
+			throw new BusinessException("禁用失败");
+		}
+		return Result.ok();
 	}
 
 	/**
-	 * 根据主键删除。
-	 * @param idList 主键列表
-	 * @return {@code true} 删除成功，{@code false} 删除失败
+	 * 启用用户
+	 * @param id 主键
+	 * @return 启用结果
 	 */
-	@DeleteMapping("remove")
-	@Operation(summary = "根据主键列表删除")
-	public boolean remove(@Parameter(description = "主键列表") List<Long> idList) {
-		return sysUserService.removeByIds(idList);
+	@PutMapping("/enable/{id}")
+	@Operation(summary = "启用用户")
+	@SaCheckPermission(AuthConst.SUPER_ADMIN)
+	public Result<Boolean> enable(@PathVariable @Parameter(description = "主键") String id) {
+		if (!sysUserService.enable(id)) {
+			throw new BusinessException("启用失败");
+		}
+		return Result.ok();
 	}
 
 	/**
-	 * 根据主键更新。
-	 * @param sysUser 系统用户
-	 * @return {@code true} 更新成功，{@code false} 更新失败
-	 */
-	@PutMapping("update")
-	@Operation(summary = "根据主键更新")
-	public boolean update(@RequestBody @Parameter(description = "主键") SysUser sysUser) {
-		return sysUserService.updateById(sysUser);
-	}
-
-	/**
-	 * 根据主键获取详细信息。
+	 * 根据主键获取系统用户详细信息。
 	 * @param id 主键
 	 * @return 详情
 	 */
-	@GetMapping("getInfo/{id}")
-	@Operation(summary = "根据主键获取")
-	public SysUser getInfo(@PathVariable Serializable id) {
-		return sysUserService.getById(id);
+	@GetMapping("/getInfo/{id}")
+	@Operation(summary = "根据主键获取系统用户详细信息")
+	@SaCheckPermission(AuthConst.SUPER_ADMIN)
+	public Result<SysUserResponse> getInfo(@PathVariable Serializable id) {
+		return Result.success(sysUserService.getInfoById(id));
 	}
 
 	/**
@@ -75,10 +78,12 @@ public class SysUserController {
 	 * @param page 分页对象
 	 * @return 分页对象
 	 */
-	@GetMapping("page")
+	@GetMapping("/page")
 	@Operation(summary = "分页查询")
-	public Page<SysUser> page(@Parameter(description = "分页信息") Page<SysUser> page) {
-		return sysUserService.page(page);
+	@SaCheckPermission(AuthConst.SUPER_ADMIN)
+	public Result<Page<SysUserResponse>> page(@Parameter(description = "分页条件") Paging page,
+			@Parameter(description = "查询条件") SysUserRequest request) {
+		return Result.success(sysUserService.page(page, request));
 	}
 
 }

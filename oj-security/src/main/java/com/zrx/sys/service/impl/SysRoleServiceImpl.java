@@ -5,8 +5,8 @@ import cn.dev33.satoken.stp.StpUtil;
 import com.mybatisflex.core.query.QueryWrapper;
 import com.mybatisflex.spring.service.impl.ServiceImpl;
 import com.zrx.security.satoken.AuthConst;
-import com.zrx.sys.entity.SysRole;
 import com.zrx.sys.mapper.SysRoleMapper;
+import com.zrx.sys.model.entity.SysRole;
 import com.zrx.sys.service.SysRoleService;
 import com.zrx.sys.service.SysRoleUserService;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static com.zrx.sys.entity.table.SysRoleUserTableDef.SYS_ROLE_USER;
+import static com.zrx.sys.model.entity.table.SysRoleUserTableDef.SYS_ROLE_USER;
 
 /**
  * 服务层实现。

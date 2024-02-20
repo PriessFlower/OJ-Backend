@@ -1,7 +1,7 @@
 package com.zrx.sys.mapper;
 
 import com.mybatisflex.core.BaseMapper;
-import com.zrx.sys.entity.SysRoleMenu;
+import com.zrx.sys.model.entity.SysRoleMenu;
 
 /**
  * 映射层。

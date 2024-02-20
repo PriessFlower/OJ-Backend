@@ -1,8 +1,8 @@
 package com.zrx.sys.service.impl;
 
 import com.mybatisflex.spring.service.impl.ServiceImpl;
-import com.zrx.sys.entity.SysRoleMenu;
 import com.zrx.sys.mapper.SysRoleMenuMapper;
+import com.zrx.sys.model.entity.SysRoleMenu;
 import com.zrx.sys.service.SysRoleMenuService;
 import org.springframework.stereotype.Service;
 

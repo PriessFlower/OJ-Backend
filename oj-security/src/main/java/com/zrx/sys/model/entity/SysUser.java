@@ -1,4 +1,4 @@
-package com.zrx.sys.entity;
+package com.zrx.sys.model.entity;
 
 import com.mybatisflex.annotation.Id;
 import com.mybatisflex.annotation.KeyType;
@@ -69,9 +69,9 @@ public class SysUser extends BaseEntity implements Serializable {
 	private String avatar;
 
 	/**
-	 * 性别 0：男 1：女 2：保密
+	 * 性别: 0:男; 1:女; 2:保密
 	 */
-	@Schema(description = "性别   0：男   1：女    2：保密")
+	@Schema(description = "性别: 0:男; 1:女; 2:保密")
 	private Integer gender;
 
 	/**
@@ -93,15 +93,9 @@ public class SysUser extends BaseEntity implements Serializable {
 	private String deptId;
 
 	/**
-	 * 超级管理员 0：否 1：是
+	 * 状态: 0:停用; 1:正常
 	 */
-	@Schema(description = "超级管理员   0：否   1：是")
-	private Integer superAdmin;
-
-	/**
-	 * 状态 0：停用 1：正常
-	 */
-	@Schema(description = "状态  0：停用   1：正常")
+	@Schema(description = "状态: 0:停用; 1:正常")
 	private Integer status;
 
 }

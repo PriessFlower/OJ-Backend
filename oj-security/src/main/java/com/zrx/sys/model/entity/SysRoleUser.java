@@ -1,4 +1,4 @@
-package com.zrx.sys.entity;
+package com.zrx.sys.model.entity;
 
 import com.mybatisflex.annotation.Id;
 import com.mybatisflex.annotation.Table;
@@ -13,7 +13,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
- * 系统角色菜单 实体类。
+ * 角色用户关系 实体类。
  *
  * @author zhang.rx
  * @since 2024/2/19
@@ -22,10 +22,10 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(description = "系统角色菜单")
-@Table(value = "sys_role_menu")
+@Schema(description = "角色用户关系表")
+@Table(value = "sys_role_user")
 
-public class SysRoleMenu implements Serializable {
+public class SysRoleUser implements Serializable {
 
 	@Serial
 	private static final long serialVersionUID = 1L;
@@ -44,10 +44,10 @@ public class SysRoleMenu implements Serializable {
 	private String roleId;
 
 	/**
-	 * 菜单ID
+	 * 用户ID
 	 */
-	@Schema(description = "菜单ID")
-	private String menuId;
+	@Schema(description = "用户ID")
+	private String userId;
 
 	/**
 	 * 创建者

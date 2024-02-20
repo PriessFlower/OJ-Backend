@@ -1,9 +1,15 @@
 package com.zrx.sys.service;
 
+import com.mybatisflex.core.paginate.Page;
 import com.mybatisflex.core.service.IService;
+import com.zrx.model.common.Paging;
 import com.zrx.security.model.dto.LoginRequest;
 import com.zrx.security.model.dto.RegisterRequest;
-import com.zrx.sys.entity.SysUser;
+import com.zrx.sys.model.dto.SysUserRequest;
+import com.zrx.sys.model.entity.SysUser;
+import com.zrx.sys.model.vo.SysUserResponse;
+
+import java.io.Serializable;
 
 /**
  * 系统用户 服务层。
@@ -18,5 +24,13 @@ public interface SysUserService extends IService<SysUser> {
 	String login(LoginRequest loginRequest);
 
 	String register(RegisterRequest registerRequest);
+
+	Boolean disable(String id);
+
+	Boolean enable(String id);
+
+	SysUserResponse getInfoById(Serializable id);
+
+	Page<SysUserResponse> page(Paging page, SysUserRequest request);
 
 }

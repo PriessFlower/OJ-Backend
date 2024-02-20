@@ -1,23 +1,33 @@
 package com.zrx.sys.service.impl;
 
 import cn.dev33.satoken.stp.StpUtil;
+import com.mybatisflex.core.paginate.Page;
+import com.mybatisflex.core.query.QueryChain;
 import com.mybatisflex.core.query.QueryWrapper;
+import com.mybatisflex.core.update.UpdateChain;
+import com.mybatisflex.core.util.StringUtil;
 import com.mybatisflex.spring.service.impl.ServiceImpl;
 import com.zrx.exception.BusinessException;
+import com.zrx.model.common.Paging;
 import com.zrx.reuslt.ResultCode;
 import com.zrx.security.model.dto.LoginRequest;
 import com.zrx.security.model.dto.RegisterRequest;
 import com.zrx.security.service.CaptchaService;
 import com.zrx.security.utils.Md5Util;
-import com.zrx.sys.entity.SysUser;
 import com.zrx.sys.enums.UserStatusEnum;
 import com.zrx.sys.mapper.SysUserMapper;
+import com.zrx.sys.mapstruct.SysUserMap;
+import com.zrx.sys.model.dto.SysUserRequest;
+import com.zrx.sys.model.entity.SysUser;
+import com.zrx.sys.model.vo.SysUserResponse;
 import com.zrx.sys.service.SysUserService;
-import jakarta.annotation.Resource;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
-import static com.zrx.sys.entity.table.SysUserTableDef.SYS_USER;
+import java.io.Serializable;
+
+import static com.zrx.sys.model.entity.table.SysUserTableDef.SYS_USER;
 
 /**
  * 系统用户 服务层实现。
@@ -26,10 +36,12 @@ import static com.zrx.sys.entity.table.SysUserTableDef.SYS_USER;
  * @since 2024/2/18
  */
 @Service
+@RequiredArgsConstructor
 public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> implements SysUserService {
 
-	@Resource
-	private CaptchaService captchaService;
+	private final CaptchaService captchaService;
+
+	private final SysUserMap sysUserMap;
 
 	@Override
 	public SysUser getByUsername(String username) {
@@ -94,6 +106,44 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 			throw new BusinessException("注册失败");
 		}
 		return "注册成功";
+	}
+
+	@Override
+	public Boolean disable(String id) {
+		return UpdateChain.of(mapper)
+			.where(SYS_USER.ID.eq(id))
+			.set(SYS_USER.STATUS, UserStatusEnum.DISABLE.getValue())
+			.update();
+	}
+
+	@Override
+	public Boolean enable(String id) {
+		return UpdateChain.of(mapper)
+			.where(SYS_USER.ID.eq(id))
+			.set(SYS_USER.STATUS, UserStatusEnum.ENABLED.getValue())
+			.update();
+	}
+
+	@Override
+	public SysUserResponse getInfoById(Serializable id) {
+		SysUser sysUser = QueryChain.of(mapper).where(SYS_USER.ID.eq(id)).one();
+		if (sysUser == null) {
+			throw new BusinessException("未找到该用户信息");
+		}
+		return sysUserMap.entity2Dto(sysUser);
+	}
+
+	@Override
+	public Page<SysUserResponse> page(Paging page, SysUserRequest request) {
+		QueryWrapper queryWrapper = new QueryWrapper().select()
+			.from(SYS_USER)
+			.where(SYS_USER.USERNAME.like(request.getUsername(), StringUtil::isNotBlank))
+			.and(SYS_USER.REAL_NAME.like(request.getRealName(), StringUtil::isNotBlank))
+			.and(SYS_USER.GENDER.eq(request.getGender()))
+			.and(SYS_USER.EMAIL.like(request.getEmail(), StringUtil::isNotBlank))
+			.and(SYS_USER.MOBILE.like(request.getMobile(), StringUtil::isNotBlank))
+			.and(SYS_USER.STATUS.eq(request.getStatus()));
+		return mapper.paginateAs(Page.of(page.getPageNum(), page.getPageSize()), queryWrapper, SysUserResponse.class);
 	}
 
 }

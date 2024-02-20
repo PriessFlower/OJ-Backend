@@ -33,7 +33,7 @@ import java.io.IOException;
  */
 @RestController
 @Tag(name = "登录管理")
-@RequestMapping("security")
+@RequestMapping("/security")
 public class LoginController {
 
 	@Resource
@@ -42,7 +42,7 @@ public class LoginController {
 	@Resource
 	private SysUserService sysUserService;
 
-	@GetMapping("captcha")
+	@GetMapping("/captcha")
 	@Operation(summary = "获取验证码", description = "获取验证码",
 			responses = { @ApiResponse(description = "成功返回验证码图片",
 					content = @Content(mediaType = MediaType.APPLICATION_OCTET_STREAM_VALUE,
@@ -56,40 +56,40 @@ public class LoginController {
 		captchaService.create(response, uuid);
 	}
 
-	@GetMapping("getCaptcha")
+	@GetMapping("/getCaptcha")
 	@Operation(summary = "获取验证码真实值", description = "获取验证码真实值，不可对外暴露")
 	public Result<String> getCaptcha(String uuid) {
 		return Result.success(captchaService.getCacheNotDel(uuid));
 	}
 
-	@PostMapping("login")
+	@PostMapping("/login")
 	@Operation(summary = "登录")
 	public Result<String> login(@Valid @RequestBody LoginRequest loginRequest) {
 		return Result.success(sysUserService.login(loginRequest));
 	}
 
-	@GetMapping("logout")
+	@GetMapping("/logout")
 	@Operation(summary = "退出登录")
 	public Result<String> logout() {
 		StpUtil.logout();
 		return Result.ok();
 	}
 
-	@GetMapping("isLogin")
+	@GetMapping("/isLogin")
 	@Operation(summary = "是否登录")
 	@SaCheckPermission(AuthConst.SUPER_ADMIN)
 	public Result<String> isLogin() {
 		return Result.success("是否登录：" + StpUtil.isLogin());
 	}
 
-	@GetMapping("tokenInfo")
+	@GetMapping("/tokenInfo")
 	@Operation(summary = "查询token信息")
 	@SaCheckPermission(AuthConst.SUPER_ADMIN)
 	public Result<SaTokenInfo> tokenInfo() {
 		return Result.success(StpUtil.getTokenInfo());
 	}
 
-	@PostMapping("register")
+	@PostMapping("/register")
 	@Operation(summary = "注册")
 	public Result<String> register(@Valid @RequestBody RegisterRequest registerRequest) {
 		return Result.success(sysUserService.register(registerRequest));

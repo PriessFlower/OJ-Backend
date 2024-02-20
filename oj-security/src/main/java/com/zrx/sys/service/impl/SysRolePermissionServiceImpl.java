@@ -2,15 +2,15 @@ package com.zrx.sys.service.impl;
 
 import com.mybatisflex.core.query.QueryChain;
 import com.mybatisflex.spring.service.impl.ServiceImpl;
-import com.zrx.sys.entity.SysRolePermission;
 import com.zrx.sys.mapper.SysRolePermissionMapper;
+import com.zrx.sys.model.entity.SysRolePermission;
 import com.zrx.sys.service.SysRolePermissionService;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static com.zrx.sys.entity.table.SysRolePermissionTableDef.SYS_ROLE_PERMISSION;
+import static com.zrx.sys.model.entity.table.SysRolePermissionTableDef.SYS_ROLE_PERMISSION;
 
 /**
  * 服务层实现。
