@@ -1,6 +1,8 @@
 package com.zrx.reuslt;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * 统一返回结果
@@ -9,6 +11,8 @@ import lombok.Data;
  * @since 2024/2/18
  */
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Result<T> {
 
 	private Integer code;
@@ -17,57 +21,29 @@ public class Result<T> {
 
 	private T data;
 
-	public Result() {
-	}
-
-	public Result(T data) {
-		this.data = data;
+	public Result(Integer code, String message) {
+		this.code = code;
+		this.message = message;
 	}
 
 	public static <T> Result<T> success(T data) {
-		Result<T> result = new Result<>(data);
-		result.setCode(ResultCode.SUCCESS.getCode());
-		result.setMessage(ResultCode.SUCCESS.getMessage());
-		return result;
+		return new Result<>(ResultCode.SUCCESS.getCode(), ResultCode.SUCCESS.getMessage(), data);
 	}
 
 	public static <T> Result<T> fail(String message) {
-		Result<T> result = new Result<>();
-		result.setCode(ResultCode.FAIL.getCode());
-		result.setMessage(message);
-		return result;
+		return new Result<>(ResultCode.FAIL.getCode(), message);
 	}
 
 	public static <T> Result<T> fail(ResultCode resultCode) {
-		Result<T> result = new Result<>();
-		result.setCode(resultCode.getCode());
-		result.setMessage(resultCode.getMessage());
-		return result;
+		return new Result<>(resultCode.getCode(), resultCode.getMessage());
 	}
 
 	public static <T> Result<T> fail(int code, String message) {
-		Result<T> result = new Result<>();
-		result.setCode(code);
-		result.setMessage(message);
-		return result;
-	}
-
-	public static <T> Result<T> res(T data, int code, String message) {
-		Result<T> result = new Result<>(data);
-		result.setCode(code);
-		result.setMessage(message);
-		return result;
-	}
-
-	public static <T> Result<T> res(T data, ResultCode resultCode) {
-		Result<T> result = new Result<>(data);
-		result.setCode(resultCode.getCode());
-		result.setMessage(resultCode.getMessage());
-		return result;
+		return new Result<>(code, message);
 	}
 
 	public static <T> Result<T> ok() {
-		return res(null, ResultCode.SUCCESS.getCode(), "成功");
+		return new Result<>(ResultCode.SUCCESS.getCode(), "成功", null);
 	}
 
 }

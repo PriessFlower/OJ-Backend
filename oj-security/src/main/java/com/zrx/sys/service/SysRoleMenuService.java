@@ -1,7 +1,7 @@
 package com.zrx.sys.service;
 
 import com.mybatisflex.core.service.IService;
-import com.zrx.sys.entity.SysRoleMenu;
+import com.zrx.sys.model.entity.SysRoleMenu;
 
 /**
  * 服务层。

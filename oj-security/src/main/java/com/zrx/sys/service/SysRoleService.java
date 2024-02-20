@@ -1,7 +1,7 @@
 package com.zrx.sys.service;
 
 import com.mybatisflex.core.service.IService;
-import com.zrx.sys.entity.SysRole;
+import com.zrx.sys.model.entity.SysRole;
 
 import java.util.List;
 

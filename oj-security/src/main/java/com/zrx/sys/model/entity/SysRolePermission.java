@@ -1,4 +1,4 @@
-package com.zrx.sys.entity;
+package com.zrx.sys.model.entity;
 
 import com.mybatisflex.annotation.Id;
 import com.mybatisflex.annotation.KeyType;
