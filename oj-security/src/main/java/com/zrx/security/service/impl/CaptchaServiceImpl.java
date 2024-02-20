@@ -57,11 +57,7 @@ public class CaptchaServiceImpl implements CaptchaService {
 		String captcha = getCache(uuid);
 
 		// 效验成功
-		if (code.equalsIgnoreCase(captcha)) {
-			return true;
-		}
-
-		return false;
+		return code.equalsIgnoreCase(captcha);
 	}
 
 	private void setCache(String key, String value) {
@@ -92,6 +88,17 @@ public class CaptchaServiceImpl implements CaptchaService {
 			localCache.remove(key);
 		}
 		return captcha;
+	}
+
+	@Override
+	public String getCacheNotDel(String key) {
+		if (open) {
+			key = RedisKeys.getCaptchaKey(key);
+
+			return (String) redisUtils.get(key);
+		}
+
+		return localCache.get(key);
 	}
 
 }

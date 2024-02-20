@@ -38,6 +38,13 @@ public class Result<T> {
 		return result;
 	}
 
+	public static <T> Result<T> fail(ResultCode resultCode) {
+		Result<T> result = new Result<>();
+		result.setCode(resultCode.getCode());
+		result.setMessage(resultCode.getMessage());
+		return result;
+	}
+
 	public static <T> Result<T> fail(int code, String message) {
 		Result<T> result = new Result<>();
 		result.setCode(code);

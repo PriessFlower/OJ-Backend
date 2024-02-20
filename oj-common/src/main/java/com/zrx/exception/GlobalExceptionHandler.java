@@ -1,5 +1,7 @@
 package com.zrx.exception;
 
+import cn.dev33.satoken.exception.NotLoginException;
+import cn.dev33.satoken.exception.NotPermissionException;
 import com.zrx.reuslt.Result;
 import com.zrx.reuslt.ResultCode;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +24,9 @@ import java.util.List;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+	/**
+	 * 业务异常
+	 */
 	@ExceptionHandler({ BusinessException.class })
 	public Result<?> businessExceptionHandler(BusinessException e) {
 		log.error("业务异常: ", e);
@@ -41,10 +46,25 @@ public class GlobalExceptionHandler {
 		return Result.fail(ResultCode.PARAM_ERROR.getCode(), messages);
 	}
 
+	@ExceptionHandler({ NotLoginException.class })
+	public Result<?> notLoginExceptionHandler(NotLoginException e) {
+		log.error("未登录: ", e);
+		return Result.fail(ResultCode.UNAUTHORIZED.getCode(), "请登录");
+	}
+
+	/**
+	 * 无权限异常 -- sa-token
+	 */
+	@ExceptionHandler({ NotPermissionException.class })
+	public Result<?> notPermissionExceptionHandler(NotPermissionException e) {
+		log.error("无权限异常: ", e);
+		return Result.fail(ResultCode.FORBIDDEN);
+	}
+
 	@ExceptionHandler({ Exception.class })
 	public Result<?> exceptionHandler(Exception e) {
 		log.error("服务器异常: ", e);
-		return Result.fail(ResultCode.INTERNAL_SERVER_ERROR.getCode(), e.getMessage());
+		return Result.fail(ResultCode.INTERNAL_SERVER_ERROR);
 	}
 
 }

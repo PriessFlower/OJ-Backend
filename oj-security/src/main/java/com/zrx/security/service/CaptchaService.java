@@ -23,4 +23,11 @@ public interface CaptchaService {
 	 */
 	boolean validate(String uuid, String code);
 
+	/**
+	 * 根据 key 获取验证码 -- 仅测试用，不可对外暴露
+	 * @param key uuid
+	 * @return 验证码
+	 */
+	String getCacheNotDel(String key);
+
 }

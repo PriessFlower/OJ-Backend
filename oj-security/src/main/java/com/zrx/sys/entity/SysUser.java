@@ -36,7 +36,7 @@ public class SysUser extends BaseEntity implements Serializable {
 	 */
 	@Id(keyType = KeyType.Generator, value = KeyGenerators.snowFlakeId)
 	@Schema(description = "id")
-	private Long id;
+	private String id;
 
 	/**
 	 * 用户名
@@ -90,7 +90,7 @@ public class SysUser extends BaseEntity implements Serializable {
 	 * 部门ID
 	 */
 	@Schema(description = "部门ID")
-	private Long deptId;
+	private String deptId;
 
 	/**
 	 * 超级管理员 0：否 1：是

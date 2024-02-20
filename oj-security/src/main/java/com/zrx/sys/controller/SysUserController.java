@@ -19,7 +19,7 @@ import java.util.List;
  * @since 2024/2/18
  */
 @RestController
-@Tag(name = "接口")
+@Tag(name = "系统用户管理接口")
 @RequestMapping("sys/sysUser")
 public class SysUserController {
 
@@ -43,7 +43,7 @@ public class SysUserController {
 	 * @return {@code true} 删除成功，{@code false} 删除失败
 	 */
 	@DeleteMapping("remove")
-	@Operation(summary = "根据主键")
+	@Operation(summary = "根据主键列表删除")
 	public boolean remove(@Parameter(description = "主键列表") List<Long> idList) {
 		return sysUserService.removeByIds(idList);
 	}
