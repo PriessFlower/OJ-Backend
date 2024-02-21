@@ -1,7 +1,5 @@
 package com.zrx.security.controller;
 
-import cn.dev33.satoken.annotation.SaCheckPermission;
-import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
 import com.zrx.exception.BusinessException;
 import com.zrx.reuslt.Result;
@@ -9,7 +7,6 @@ import com.zrx.reuslt.ResultCode;
 import com.zrx.security.model.dto.LoginRequest;
 import com.zrx.security.model.dto.RegisterRequest;
 import com.zrx.security.model.vo.LoginResponse;
-import com.zrx.security.satoken.AuthConst;
 import com.zrx.security.service.CaptchaService;
 import com.zrx.sys.service.SysUserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -57,10 +54,10 @@ public class LoginController {
 		captchaService.create(response, uuid);
 	}
 
-	@GetMapping("/getCaptcha")
-	@Operation(summary = "获取验证码真实值", description = "获取验证码真实值，不可对外暴露")
-	public Result<String> getCaptcha(String uuid) {
-		return Result.success(captchaService.getCacheNotDel(uuid));
+	@PostMapping("/register")
+	@Operation(summary = "注册")
+	public Result<String> register(@Valid @RequestBody RegisterRequest registerRequest) {
+		return Result.success(sysUserService.register(registerRequest));
 	}
 
 	@PostMapping("/login")
@@ -74,26 +71,6 @@ public class LoginController {
 	public Result<String> logout() {
 		StpUtil.logout();
 		return Result.ok();
-	}
-
-	@GetMapping("/isLogin")
-	@Operation(summary = "是否登录")
-	@SaCheckPermission(AuthConst.SUPER_ADMIN)
-	public Result<String> isLogin() {
-		return Result.success("是否登录：" + StpUtil.isLogin());
-	}
-
-	@GetMapping("/tokenInfo")
-	@Operation(summary = "查询token信息")
-	@SaCheckPermission(AuthConst.SUPER_ADMIN)
-	public Result<SaTokenInfo> tokenInfo() {
-		return Result.success(StpUtil.getTokenInfo());
-	}
-
-	@PostMapping("/register")
-	@Operation(summary = "注册")
-	public Result<String> register(@Valid @RequestBody RegisterRequest registerRequest) {
-		return Result.success(sysUserService.register(registerRequest));
 	}
 
 }
