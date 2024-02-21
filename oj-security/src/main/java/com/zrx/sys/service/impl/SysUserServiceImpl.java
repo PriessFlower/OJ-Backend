@@ -86,7 +86,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 		}
 
 		StpUtil.login(user.getId());
-        return new LoginResponse(StpUtil.getTokenInfo().getTokenValue(), user.getId());
+		return new LoginResponse(StpUtil.getTokenInfo().getTokenValue(), user.getId());
 	}
 
 	@Override

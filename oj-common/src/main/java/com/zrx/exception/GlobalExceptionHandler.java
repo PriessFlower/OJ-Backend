@@ -62,7 +62,7 @@ public class GlobalExceptionHandler {
 		return Result.fail(ResultCode.FORBIDDEN);
 	}
 
-	@ExceptionHandler({NoResourceFoundException.class})
+	@ExceptionHandler({ NoResourceFoundException.class })
 	public Result<?> noResourceFoundExceptionHandler(NoResourceFoundException e) {
 		log.error("资源不存在: ", e);
 		return Result.fail(ResultCode.NOT_FOUND);

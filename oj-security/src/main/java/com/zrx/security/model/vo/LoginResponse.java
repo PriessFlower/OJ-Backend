@@ -13,20 +13,21 @@ import lombok.Data;
 @Schema(name = "登录响应")
 public class LoginResponse {
 
-    /**
-     * token
-     */
-    @Schema(description = "token")
-    private String token;
+	/**
+	 * token
+	 */
+	@Schema(description = "token")
+	private String token;
 
-    /**
-     * 用户id
-     */
-    @Schema(description = "用户id")
-    private String userId;
+	/**
+	 * 用户id
+	 */
+	@Schema(description = "用户id")
+	private String userId;
 
-    public LoginResponse(String token, String userId) {
-        this.token = token;
-        this.userId = userId;
-    }
+	public LoginResponse(String token, String userId) {
+		this.token = token;
+		this.userId = userId;
+	}
+
 }
