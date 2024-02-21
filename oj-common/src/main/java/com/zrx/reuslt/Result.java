@@ -19,15 +19,15 @@ public class Result<T> {
 
 	private String message;
 
-	private T data;
+	private T result;
 
 	public Result(Integer code, String message) {
 		this.code = code;
 		this.message = message;
 	}
 
-	public static <T> Result<T> success(T data) {
-		return new Result<>(ResultCode.SUCCESS.getCode(), ResultCode.SUCCESS.getMessage(), data);
+	public static <T> Result<T> success(T result) {
+		return new Result<>(ResultCode.SUCCESS.getCode(), ResultCode.SUCCESS.getMessage(), result);
 	}
 
 	public static <T> Result<T> fail(String message) {

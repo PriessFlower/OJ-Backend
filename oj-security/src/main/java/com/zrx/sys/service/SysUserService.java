@@ -5,6 +5,7 @@ import com.mybatisflex.core.service.IService;
 import com.zrx.model.common.Paging;
 import com.zrx.security.model.dto.LoginRequest;
 import com.zrx.security.model.dto.RegisterRequest;
+import com.zrx.security.model.vo.LoginResponse;
 import com.zrx.sys.model.dto.SysUserRequest;
 import com.zrx.sys.model.entity.SysUser;
 import com.zrx.sys.model.vo.SysUserResponse;
@@ -21,7 +22,7 @@ public interface SysUserService extends IService<SysUser> {
 
 	SysUser getByUsername(String username);
 
-	String login(LoginRequest loginRequest);
+	LoginResponse login(LoginRequest loginRequest);
 
 	String register(RegisterRequest registerRequest);
 

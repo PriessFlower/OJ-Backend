@@ -8,6 +8,7 @@ import com.zrx.reuslt.Result;
 import com.zrx.reuslt.ResultCode;
 import com.zrx.security.model.dto.LoginRequest;
 import com.zrx.security.model.dto.RegisterRequest;
+import com.zrx.security.model.vo.LoginResponse;
 import com.zrx.security.satoken.AuthConst;
 import com.zrx.security.service.CaptchaService;
 import com.zrx.sys.service.SysUserService;
@@ -64,7 +65,7 @@ public class LoginController {
 
 	@PostMapping("/login")
 	@Operation(summary = "登录")
-	public Result<String> login(@Valid @RequestBody LoginRequest loginRequest) {
+	public Result<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
 		return Result.success(sysUserService.login(loginRequest));
 	}
 

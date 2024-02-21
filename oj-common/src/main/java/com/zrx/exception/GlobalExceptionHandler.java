@@ -11,6 +11,7 @@ import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.util.List;
 
@@ -59,6 +60,12 @@ public class GlobalExceptionHandler {
 	public Result<?> notPermissionExceptionHandler(NotPermissionException e) {
 		log.error("无权限异常: ", e);
 		return Result.fail(ResultCode.FORBIDDEN);
+	}
+
+	@ExceptionHandler({NoResourceFoundException.class})
+	public Result<?> noResourceFoundExceptionHandler(NoResourceFoundException e) {
+		log.error("资源不存在: ", e);
+		return Result.fail(ResultCode.NOT_FOUND);
 	}
 
 	@ExceptionHandler({ Exception.class })

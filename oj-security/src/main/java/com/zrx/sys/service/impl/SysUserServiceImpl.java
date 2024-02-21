@@ -12,6 +12,7 @@ import com.zrx.model.common.Paging;
 import com.zrx.reuslt.ResultCode;
 import com.zrx.security.model.dto.LoginRequest;
 import com.zrx.security.model.dto.RegisterRequest;
+import com.zrx.security.model.vo.LoginResponse;
 import com.zrx.security.service.CaptchaService;
 import com.zrx.security.utils.Md5Util;
 import com.zrx.sys.enums.UserStatusEnum;
@@ -52,7 +53,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 	}
 
 	@Override
-	public String login(LoginRequest loginRequest) {
+	public LoginResponse login(LoginRequest loginRequest) {
 
 		// 验证码是否正确
 		boolean flag = captchaService.validate(loginRequest.getUuid(), loginRequest.getCaptcha());
@@ -78,8 +79,14 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 		if (user.getStatus() == UserStatusEnum.DISABLE.getValue()) {
 			throw new BusinessException(ResultCode.UNAUTHORIZED.getCode(), "当前用户已被系统停用");
 		}
+
+		// 删除之前的token信息
+		if (StpUtil.isLogin()) {
+			StpUtil.logout();
+		}
+
 		StpUtil.login(user.getId());
-		return "登陆成功";
+        return new LoginResponse(StpUtil.getTokenInfo().getTokenValue(), user.getId());
 	}
 
 	@Override

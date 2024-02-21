@@ -36,6 +36,12 @@ public class SysUserResponse {
 	private String realName;
 
 	/**
+	 * 头像url
+	 */
+	@Schema(description = "头像url")
+	private String avatar;
+
+	/**
 	 * 性别: 0:男; 1:女; 2:保密
 	 */
 	@Schema(description = "性别: 0:男; 1:女; 2:保密")
