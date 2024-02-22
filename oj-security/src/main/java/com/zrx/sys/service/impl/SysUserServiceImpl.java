@@ -94,6 +94,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 		String username = registerRequest.getUsername();
 		String password = registerRequest.getPassword();
 		String checkPassword = registerRequest.getCheckPassword();
+		String mobile = registerRequest.getMobile();
 		if (!StringUtils.equals(password, checkPassword)) {
 			throw new BusinessException("两次输入的密码不一致");
 		}
@@ -103,6 +104,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 		sysUser.setPassword(Md5Util.inputPassToDBPass(password, salt));
 		sysUser.setSalt(salt);
 		sysUser.setStatus(UserStatusEnum.ENABLED.getValue());
+		sysUser.setMobile(mobile);
 
 		// 是否有相同用户名的用户
 		if (exists(new QueryWrapper().where(SYS_USER.USERNAME.eq(username)))) {

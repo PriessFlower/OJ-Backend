@@ -34,4 +34,8 @@ public class RegisterRequest implements Serializable {
 	@NotBlank(message = "确认密码不能为空")
 	private String checkPassword;
 
+	@Schema(description = "手机号", requiredMode = Schema.RequiredMode.REQUIRED)
+	@NotBlank(message = "手机号不能为空")
+	private String mobile;
+
 }
