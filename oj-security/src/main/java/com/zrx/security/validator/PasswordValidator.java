@@ -14,13 +14,9 @@ import java.util.regex.Pattern;
  */
 public class PasswordValidator implements ConstraintValidator<Password, String> {
 
-	private static final String ONLY_ALPHANUMERIC = "^[a-zA-Z0-9]+$";
+	private static final Pattern ONLY_ALPHANUMERIC = Pattern.compile("^[a-zA-Z0-9]+$");
 
-	private static final Pattern onlyAlphanumeric = Pattern.compile(ONLY_ALPHANUMERIC);
-
-	private static final String MUST_ALPHANUMERIC = "^(?=.*\\d)(?=.*[a-zA-Z]).*$";
-
-	private static final Pattern mustAlphanumeric = Pattern.compile(MUST_ALPHANUMERIC);
+	private static final Pattern MUST_ALPHANUMERIC = Pattern.compile("^(?=.*\\d)(?=.*[a-zA-Z]).*$");
 
 	@Override
 	public boolean isValid(String value, ConstraintValidatorContext context) {
@@ -38,13 +34,13 @@ public class PasswordValidator implements ConstraintValidator<Password, String> 
 			return false;
 		}
 		// 密码必须包含数字和字母
-		if (!mustAlphanumeric.matcher(value).find()) {
+		if (!MUST_ALPHANUMERIC.matcher(value).find()) {
 			customMessage = "密码必须包含数字和字母";
 			setErrorMessage(context, customMessage);
 			return false;
 		}
 		// 密码不能含有特殊字符
-		if (!onlyAlphanumeric.matcher(value).find()) {
+		if (!ONLY_ALPHANUMERIC.matcher(value).find()) {
 			customMessage = "密码不能含有特殊字符";
 			setErrorMessage(context, customMessage);
 			return false;

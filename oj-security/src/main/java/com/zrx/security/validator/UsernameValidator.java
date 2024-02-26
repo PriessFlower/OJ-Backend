@@ -14,9 +14,7 @@ import java.util.regex.Pattern;
  */
 public class UsernameValidator implements ConstraintValidator<Username, String> {
 
-	private static final String ONLY_ALPHANUMERIC = "^[a-zA-Z0-9]+$";
-
-	public static final Pattern onlyAlphanumeric = Pattern.compile(ONLY_ALPHANUMERIC);
+	private static final Pattern ONLY_ALPHANUMERIC = Pattern.compile("^[a-zA-Z0-9]+$");
 
 	@Override
 	public boolean isValid(String value, ConstraintValidatorContext context) {
@@ -34,7 +32,7 @@ public class UsernameValidator implements ConstraintValidator<Username, String> 
 			return false;
 		}
 		// 用户名不能含有特殊字符
-		if (!onlyAlphanumeric.matcher(value).find()) {
+		if (!ONLY_ALPHANUMERIC.matcher(value).find()) {
 			customMessage = "用户名不能含有特殊字符";
 			setErrorMessage(context, customMessage);
 			return false;

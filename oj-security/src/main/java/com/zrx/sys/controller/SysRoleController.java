@@ -20,7 +20,7 @@ import java.util.List;
  */
 @RestController
 @Tag(name = "接口")
-@RequestMapping("/sysRole")
+@RequestMapping("/sys/role")
 public class SysRoleController {
 
 	@Autowired
