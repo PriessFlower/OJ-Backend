@@ -6,7 +6,9 @@ import com.zrx.exception.BusinessException;
 import com.zrx.model.common.Paging;
 import com.zrx.reuslt.Result;
 import com.zrx.security.satoken.AuthConst;
+import com.zrx.security.utils.SecurityHelper;
 import com.zrx.sys.model.dto.SysUserRequest;
+import com.zrx.sys.model.entity.SysUser;
 import com.zrx.sys.model.vo.SysUserResponse;
 import com.zrx.sys.service.SysUserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -84,6 +86,17 @@ public class SysUserController {
 	public Result<Page<SysUserResponse>> page(@Parameter(description = "分页条件") Paging page,
 			@Parameter(description = "查询条件") SysUserRequest request) {
 		return Result.success(sysUserService.page(page, request));
+	}
+
+	/**
+	 * 获取已登录的当前用户信息。
+	 * @return 当前用户信息
+	 */
+	@GetMapping("/info")
+	@Operation(summary = "获取已登录的当前用户信息")
+	@SaCheckPermission(AuthConst.SUPER_ADMIN)
+	public Result<SysUser> info() {
+		return Result.success(SecurityHelper.getUser());
 	}
 
 }

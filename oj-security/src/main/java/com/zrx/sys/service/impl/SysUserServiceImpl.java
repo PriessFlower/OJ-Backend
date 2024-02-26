@@ -84,8 +84,12 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 		if (StpUtil.isLogin()) {
 			StpUtil.logout();
 		}
+		String loginId = user.getId();
+		StpUtil.login(loginId);
 
-		StpUtil.login(user.getId());
+		// 存储已经登录的用户信息
+		StpUtil.getSession().set(loginId, user);
+
 		return new LoginResponse(StpUtil.getTokenInfo().getTokenValue(), user.getId());
 	}
 
