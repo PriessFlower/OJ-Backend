@@ -30,4 +30,5 @@ public interface SysMenuMap {
 	default JSONObject string2JsonObject(String meta) {
 		return meta == null ? null : JSONObject.parseObject(meta);
 	}
+
 }

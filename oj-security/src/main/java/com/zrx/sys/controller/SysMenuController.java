@@ -38,7 +38,7 @@ public class SysMenuController {
 	@PostMapping("/save")
 	@Operation(summary = "新增菜单/按钮")
 	@SaCheckPermission(AuthConst.SUPER_ADMIN)
-	public Result<String> save(@Validated({SaveGroup.class}) @RequestBody SysMenuRequest request) {
+	public Result<String> save(@Validated({ SaveGroup.class }) @RequestBody SysMenuRequest request) {
 		sysMenuService.save(sysMenuMap.dto2Entity(request));
 		return Result.ok();
 	}
