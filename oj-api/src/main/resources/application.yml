@@ -2,22 +2,29 @@ server:
   port: 8101
   servlet:
     context-path: /api
+    session:
+      cookie:
+        http-only: true
 spring:
   # 默认dev环境
   profiles:
     active: dev
+    include:
+      - security
   # 支持swagger3
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/sb-oj?useUnicode=true&characterEncoding=utf-8&useSSL=true
-    username: root
-    password: abc123456
 
-
-
+# mybatis-flex 配置
+mybatis-flex:
+  mapper-locations:
+    - classpath:mapper/*.xml
+  configuration:
+    call-setters-on-nulls: true
+    return-instance-for-empty-row: true
+    # SQL 日志打印
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
 # springdoc相关配置
 springdoc:
@@ -29,12 +36,15 @@ springdoc:
   api-docs:
     path: /v3/api-docs    # swagger后端请求地址
     enabled: true   # 是否开启文档功能
-  packages-to-scan: com.zrx.controller
-#  group-configs:
-#    - group: 'com.zrx'
-#      paths-to-match: '/**'
-#      # 按包路径匹配:一般到启动类的包名
-#      packages-to-scan: com.zrx
+  group-configs:
+    - group: '核心接口'
+      paths-to-match: '/core/**'
+      packages-to-scan: com.zrx
+    - group: '系统接口'
+      paths-to-match:
+        - '/sys/**'
+        - '/security/**'
+      packages-to-scan: com.zrx
 
 # knife4j相关配置 可以不用改
 knife4j:
@@ -45,10 +55,3 @@ knife4j:
     # 为了添加 basePath
     enable-host: true
     enable-host-text: "localhost:8101/api"
-  # 开启Swagger的Basic认证功能,默认是false
-#  basic:
-#    enable: true
-#    # Basic认证用户名
-#    username: zrx
-#    # Basic认证密码
-#    password: 123456

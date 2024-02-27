@@ -1,0 +1,102 @@
+package com.zrx.sys.controller;
+
+import cn.dev33.satoken.annotation.SaCheckPermission;
+import com.mybatisflex.core.paginate.Page;
+import com.zrx.exception.BusinessException;
+import com.zrx.model.common.Paging;
+import com.zrx.reuslt.Result;
+import com.zrx.security.satoken.AuthConst;
+import com.zrx.security.utils.SecurityHelper;
+import com.zrx.sys.model.dto.SysUserRequest;
+import com.zrx.sys.model.entity.SysUser;
+import com.zrx.sys.model.vo.SysUserResponse;
+import com.zrx.sys.service.SysUserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.Resource;
+import org.springframework.web.bind.annotation.*;
+
+import java.io.Serializable;
+
+/**
+ * 系统用户 控制层。
+ *
+ * @author zhang.rx
+ * @since 2024/2/18
+ */
+@RestController
+@Tag(name = "系统用户管理接口")
+@RequestMapping("/sys/sysUser")
+public class SysUserController {
+
+	@Resource
+	private SysUserService sysUserService;
+
+	/**
+	 * 禁用用户
+	 * @param id 主键
+	 * @return 禁用结果
+	 */
+	@PutMapping("/disable/{id}")
+	@Operation(summary = "禁用用户")
+	@SaCheckPermission(AuthConst.SUPER_ADMIN)
+	public Result<String> disable(@PathVariable @Parameter(description = "主键") String id) {
+		if (!sysUserService.disable(id)) {
+			throw new BusinessException("禁用失败");
+		}
+		return Result.ok();
+	}
+
+	/**
+	 * 启用用户
+	 * @param id 主键
+	 * @return 启用结果
+	 */
+	@PutMapping("/enable/{id}")
+	@Operation(summary = "启用用户")
+	@SaCheckPermission(AuthConst.SUPER_ADMIN)
+	public Result<Boolean> enable(@PathVariable @Parameter(description = "主键") String id) {
+		if (!sysUserService.enable(id)) {
+			throw new BusinessException("启用失败");
+		}
+		return Result.ok();
+	}
+
+	/**
+	 * 根据主键获取系统用户详细信息。
+	 * @param id 主键
+	 * @return 详情
+	 */
+	@GetMapping("/getInfo/{id}")
+	@Operation(summary = "根据主键获取系统用户详细信息")
+	@SaCheckPermission(AuthConst.SUPER_ADMIN)
+	public Result<SysUserResponse> getInfo(@PathVariable Serializable id) {
+		return Result.success(sysUserService.getInfoById(id));
+	}
+
+	/**
+	 * 分页查询。
+	 * @param page 分页对象
+	 * @return 分页对象
+	 */
+	@GetMapping("/page")
+	@Operation(summary = "分页查询")
+	@SaCheckPermission(AuthConst.SUPER_ADMIN)
+	public Result<Page<SysUserResponse>> page(@Parameter(description = "分页条件") Paging page,
+			@Parameter(description = "查询条件") SysUserRequest request) {
+		return Result.success(sysUserService.page(page, request));
+	}
+
+	/**
+	 * 获取已登录的当前用户信息。
+	 * @return 当前用户信息
+	 */
+	@GetMapping("/info")
+	@Operation(summary = "获取已登录的当前用户信息")
+	@SaCheckPermission(AuthConst.SUPER_ADMIN)
+	public Result<SysUser> info() {
+		return Result.success(SecurityHelper.getUser());
+	}
+
+}

@@ -4,7 +4,6 @@ import io.swagger.v3.oas.models.ExternalDocumentation;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
-import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -29,12 +28,6 @@ public class OpenApiConfig {
 				// 开发者联系方式
 				.contact(new Contact().name("zhang.rx").email("zrx15726109130@outlook.com")))
 			.externalDocs(new ExternalDocumentation().description("OJ").url("http://localhost:8101/api/"));
-	}
-
-	// 以下分组可省略
-	@Bean
-	public GroupedOpenApi systemApi() {
-		return GroupedOpenApi.builder().group("测试模块").pathsToMatch("/**").build();
 	}
 
 }

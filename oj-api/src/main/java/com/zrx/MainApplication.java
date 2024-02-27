@@ -31,9 +31,10 @@ public class MainApplication {
 		String path = Optional.ofNullable(env.getProperty("server.servlet.context-path")).orElse("");
 
 		// 打印输出
-		log.info("\n----------------------------------------------------------\n\t" + "项目已成功运行！接口文档访问地址:\n\t"
+		log.info("\n------------------------------------------------------------------\n\t" + "成功运行！接口文档访问地址:\n\t"
 				+ "Local 访问网址: \t\thttp://localhost:" + port + path + "/doc.html\n\t" + "External 访问网址: \thttp://" + ip
-				+ ":" + port + path + "/doc.html\n\t" + "----------------------------------------------------------");
+				+ ":" + port + path + "/doc.html\n"
+				+ "------------------------------------------------------------------");
 	}
 
 }
