@@ -1,6 +1,5 @@
 package com.zrx.sys.service.impl;
 
-
 import com.mybatisflex.core.query.QueryChain;
 import com.mybatisflex.spring.service.impl.ServiceImpl;
 import com.zrx.constant.Constant;
@@ -22,14 +21,15 @@ import static com.zrx.sys.model.entity.table.SysMenuTableDef.SYS_MENU;
  */
 @Service
 public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> implements SysMenuService {
-    @Override
-    public List<SysMenu> getAllMenuList(Integer menuType) {
-        List<SysMenu> sysMenus = QueryChain.of(mapper)
-                .select(SYS_MENU.ALL_COLUMNS)
-                .where(SYS_MENU.MENU_TYPE.eq(menuType))
-                .orderBy(SYS_MENU.SORT, true)
-                .list();
-        return TreeUtils.build(sysMenus, Constant.MENU_ROOT);
-    }
+
+	@Override
+	public List<SysMenu> getAllMenuList(Integer menuType) {
+		List<SysMenu> sysMenus = QueryChain.of(mapper)
+			.select(SYS_MENU.ALL_COLUMNS)
+			.where(SYS_MENU.MENU_TYPE.eq(menuType))
+			.orderBy(SYS_MENU.SORT, true)
+			.list();
+		return TreeUtils.build(sysMenus, Constant.MENU_ROOT);
+	}
 
 }

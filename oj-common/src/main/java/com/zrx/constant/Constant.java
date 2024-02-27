@@ -8,9 +8,9 @@ package com.zrx.constant;
  */
 public interface Constant {
 
-    /**
-     * 菜单根节点标识
-     */
-    String MENU_ROOT = "0";
+	/**
+	 * 菜单根节点标识
+	 */
+	String MENU_ROOT = "0";
 
 }

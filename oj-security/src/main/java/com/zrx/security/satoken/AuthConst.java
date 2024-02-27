@@ -2,6 +2,7 @@ package com.zrx.security.satoken;
 
 /**
  * 权限码常量
+ *
  * @author zhang.rx
  * @since 2024/2/20
  */

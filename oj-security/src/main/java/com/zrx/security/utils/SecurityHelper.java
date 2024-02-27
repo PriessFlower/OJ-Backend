@@ -10,12 +10,14 @@ import com.zrx.sys.model.entity.SysUser;
  * @since 2024/2/26
  */
 public class SecurityHelper {
-    public static SysUser getUser() {
-        String loginId = StpUtil.getLoginId() == null ? "" : (String) StpUtil.getLoginId();
-        Object sysUser = StpUtil.getSession().get(loginId);
-        if (sysUser == null) {
-            return new SysUser();
-        }
-        return (SysUser) sysUser;
-    }
+
+	public static SysUser getUser() {
+		String loginId = StpUtil.getLoginId() == null ? "" : (String) StpUtil.getLoginId();
+		Object sysUser = StpUtil.getSession().get(loginId);
+		if (sysUser == null) {
+			return new SysUser();
+		}
+		return (SysUser) sysUser;
+	}
+
 }

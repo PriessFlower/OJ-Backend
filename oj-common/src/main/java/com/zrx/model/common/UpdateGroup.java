@@ -7,4 +7,5 @@ package com.zrx.model.common;
  * @since 2024/2/26
  */
 public interface UpdateGroup {
+
 }

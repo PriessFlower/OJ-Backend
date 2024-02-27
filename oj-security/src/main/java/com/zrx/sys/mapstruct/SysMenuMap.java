@@ -12,5 +12,7 @@ import org.mapstruct.Mapper;
  */
 @Mapper(componentModel = "Spring")
 public interface SysMenuMap {
-    SysMenu dto2Entity(SysMenuRequest request);
+
+	SysMenu dto2Entity(SysMenuRequest request);
+
 }

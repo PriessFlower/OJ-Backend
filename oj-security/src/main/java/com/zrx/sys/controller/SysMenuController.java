@@ -30,29 +30,24 @@ import java.util.List;
 @RequestMapping("/sys/menu")
 public class SysMenuController {
 
-    private final SysMenuService sysMenuService;
+	private final SysMenuService sysMenuService;
 
-    private final SysMenuMap sysMenuMap;
+	private final SysMenuMap sysMenuMap;
 
-    @PostMapping("/save")
-    @Operation(summary = "新增菜单")
-    @SaCheckPermission(AuthConst.SUPER_ADMIN)
-    public Result<String> save(@Valid @RequestBody SysMenuRequest request) {
-        sysMenuService.save(sysMenuMap.dto2Entity(request));
-        return Result.ok();
-    }
+	@PostMapping("/save")
+	@Operation(summary = "新增菜单")
+	@SaCheckPermission(AuthConst.SUPER_ADMIN)
+	public Result<String> save(@Valid @RequestBody SysMenuRequest request) {
+		sysMenuService.save(sysMenuMap.dto2Entity(request));
+		return Result.ok();
+	}
 
-
-    @GetMapping("/list")
-    @Operation(summary = "查询所有菜单")
-    @SaCheckPermission(AuthConst.SUPER_ADMIN)
-    public Result<List<SysMenu>> list(@Parameter(
-            name = "type",
-            description = "菜单类型 0:菜单 1:按钮 null:全部",
-            in = ParameterIn.QUERY,
-            schema = @Schema(allowableValues = {"0", "1", "null"}))
-                                             Integer type) {
-        return Result.success(sysMenuService.getAllMenuList(type));
-    }
+	@GetMapping("/list")
+	@Operation(summary = "查询所有菜单")
+	@SaCheckPermission(AuthConst.SUPER_ADMIN)
+	public Result<List<SysMenu>> list(@Parameter(name = "type", description = "菜单类型 0:菜单 1:按钮 null:全部",
+			in = ParameterIn.QUERY, schema = @Schema(allowableValues = { "0", "1", "null" })) Integer type) {
+		return Result.success(sysMenuService.getAllMenuList(type));
+	}
 
 }
