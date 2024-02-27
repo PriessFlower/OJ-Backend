@@ -2,6 +2,8 @@ package com.zrx.security.satoken;
 
 /**
  * 权限码常量
+ * @author zhang.rx
+ * @since 2024/2/20
  */
 public final class AuthConst {
 
@@ -14,7 +16,9 @@ public final class AuthConst {
 	// --------------- 代表身份的权限 ---------------
 
 	// --------------- 所有权限码 ---------------
-	public static final String SUPER_ADMIN = "super-admin"; // 超级管理员
+
+	// 超级管理员
+	public static final String SUPER_ADMIN = "super-admin";
 
 	// --------------- 其它常量 ---------------
 
