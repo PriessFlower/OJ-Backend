@@ -13,7 +13,8 @@ import org.springframework.web.servlet.HandlerInterceptor;
 public class ApiDocInterceptor implements HandlerInterceptor {
 
 	@Override
-	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+			throws Exception {
 		if ("/api/".equals(request.getRequestURI()) || "".equals(request.getRequestURI())) {
 			// 重定向到接口文档
 			response.sendRedirect(request.getContextPath() + "/doc.html");
