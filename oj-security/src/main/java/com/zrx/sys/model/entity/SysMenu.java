@@ -50,10 +50,28 @@ public class SysMenu extends TreeNode<SysMenu> implements Serializable {
 	private String name;
 
 	/**
-	 * 菜单URL
+	 * 菜单路径
 	 */
-	@Schema(description = "菜单URL")
-	private String url;
+	@Schema(description = "菜单路径")
+	private String path;
+
+	/**
+	 * 重定向
+	 */
+	@Schema(description = "重定向")
+	private String redirect;
+
+	/**
+	 * 组件路径
+	 */
+	@Schema(description = "组件路径")
+	private String component;
+
+	/**
+	 * 其他配置
+	 */
+	@Schema(description = "其他配置")
+	private String meta;
 
 	/**
 	 * 授权(多个用逗号分隔，如：sys:user:list,sys:user:save)
@@ -66,12 +84,6 @@ public class SysMenu extends TreeNode<SysMenu> implements Serializable {
 	 */
 	@Schema(description = "类型   0：菜单   1：按钮")
 	private Integer menuType;
-
-	/**
-	 * 菜单图标
-	 */
-	@Schema(description = "菜单图标")
-	private String icon;
 
 	/**
 	 * 排序
