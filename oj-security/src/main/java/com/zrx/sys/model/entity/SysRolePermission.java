@@ -36,7 +36,7 @@ public class SysRolePermission implements Serializable {
 	 */
 	@Id(keyType = KeyType.Auto)
 	@Schema(description = "id")
-	private String id;
+	private Long id;
 
 	/**
 	 * 角色ID
