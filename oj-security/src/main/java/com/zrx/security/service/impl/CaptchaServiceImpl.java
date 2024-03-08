@@ -42,7 +42,7 @@ public class CaptchaServiceImpl implements CaptchaService {
 		response.setDateHeader("Expires", 0);
 
 		// 生成验证码
-		SpecCaptcha captcha = new SpecCaptcha(150, 40);
+		SpecCaptcha captcha = new SpecCaptcha(125, 40);
 		captcha.setLen(4);
 		captcha.setCharType(Captcha.TYPE_DEFAULT);
 		captcha.out(response.getOutputStream());
