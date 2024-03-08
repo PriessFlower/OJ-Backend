@@ -35,7 +35,7 @@ public class SysRoleUser implements Serializable {
 	 */
 	@Id
 	@Schema(description = "id")
-	private String id;
+	private Long id;
 
 	/**
 	 * 角色ID

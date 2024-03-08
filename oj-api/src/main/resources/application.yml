@@ -54,4 +54,4 @@ knife4j:
     swagger-model-name: 实体类   # 重命名SwaggerModel名称,默认
     # 为了添加 basePath
     enable-host: true
-    enable-host-text: "localhost:8101/api"
+    enable-host-text: "localhost:8101"

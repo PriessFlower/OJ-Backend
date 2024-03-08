@@ -21,7 +21,7 @@ public class SysUserResponse {
 	 */
 	@Id(keyType = KeyType.Generator, value = KeyGenerators.snowFlakeId)
 	@Schema(description = "主键")
-	private String id;
+	private Long id;
 
 	/**
 	 * 用户名
