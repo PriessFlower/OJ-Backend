@@ -1,5 +1,6 @@
 package com.zrx.model.common;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -23,6 +24,7 @@ public class BaseEntity {
 	/**
 	 * 创建时间
 	 */
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	@Schema(description = "创建时间")
 	private LocalDateTime createTime;
 
@@ -35,6 +37,7 @@ public class BaseEntity {
 	/**
 	 * 更新时间
 	 */
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	@Schema(description = "更新时间")
 	private LocalDateTime updateTime;
 
