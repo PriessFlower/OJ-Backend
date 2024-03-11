@@ -39,12 +39,6 @@ public class SysUser extends BaseEntity implements Serializable {
 	private Long id;
 
 	/**
-	 * 姓名
-	 */
-	@Schema(description = "姓名")
-	private String name;
-
-	/**
 	 * 昵称
 	 */
 	@Schema(description = "昵称")
