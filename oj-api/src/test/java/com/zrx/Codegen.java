@@ -16,7 +16,7 @@ public class Codegen {
 	public static void main(String[] args) {
 		// 配置数据源
 		HikariDataSource dataSource = new HikariDataSource();
-		dataSource.setJdbcUrl("jdbc:mysql://localhost:3306/sb-oj?characterEncoding=utf-8");
+		dataSource.setJdbcUrl("jdbc:mysql://localhost:3306/sb-oj?characterEncoding=utf-8&useInformationSchema=true");
 		dataSource.setUsername("root");
 		dataSource.setPassword("abc123456");
 
