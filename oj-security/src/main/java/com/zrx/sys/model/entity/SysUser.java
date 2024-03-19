@@ -93,12 +93,6 @@ public class SysUser extends BaseEntity implements Serializable {
 	private String mobile;
 
 	/**
-	 * 部门ID
-	 */
-	@Schema(description = "部门ID")
-	private String deptId;
-
-	/**
 	 * 状态: 0:停用; 1:正常
 	 */
 	@Schema(description = "状态: 0:停用; 1:正常")
