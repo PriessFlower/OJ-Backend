@@ -23,9 +23,8 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(description = "系统角色权限")
+@Schema(name = "系统角色权限")
 @Table(value = "sys_role_permission")
-
 public class SysRolePermission implements Serializable {
 
 	@Serial

@@ -22,9 +22,8 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(description = "系统角色")
+@Schema(name = "系统角色")
 @Table(value = "sys_role")
-
 public class SysRole implements Serializable {
 
 	@Serial

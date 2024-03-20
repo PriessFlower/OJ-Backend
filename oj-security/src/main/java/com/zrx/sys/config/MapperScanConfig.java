@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
  * @since 2024/2/18
  */
 @Configuration
-@MapperScan({ "com.zrx.sys.mapper" })
+@MapperScan({ "com.zrx.**.mapper" })
 public class MapperScanConfig {
 
 }
