@@ -26,7 +26,7 @@ import java.io.Serializable;
  * @since 2024/2/18
  */
 @RestController
-@Tag(name = "系统用户管理接口")
+@Tag(name = "SysUser", description = "系统用户管理接口")
 @RequestMapping("/sys/sysUser")
 public class SysUserController {
 

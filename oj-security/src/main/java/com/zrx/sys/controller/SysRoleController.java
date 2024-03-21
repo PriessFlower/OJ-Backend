@@ -19,7 +19,7 @@ import java.util.List;
  * @since 2024/2/19
  */
 @RestController
-@Tag(name = "角色管理")
+@Tag(name = "SysRole", description = "角色管理")
 @RequestMapping("/sys/role")
 public class SysRoleController {
 

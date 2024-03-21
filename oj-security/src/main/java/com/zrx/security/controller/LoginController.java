@@ -30,7 +30,7 @@ import java.io.IOException;
  * @since 2024/2/18
  */
 @RestController
-@Tag(name = "登录管理")
+@Tag(name = "Login", description = "登录管理")
 @RequestMapping("/security")
 public class LoginController {
 
