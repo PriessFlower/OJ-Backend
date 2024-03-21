@@ -4,9 +4,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 /**
- * 题目配置
+ * 判题配置
  */
 @Data
+@Schema(description = "判题配置")
 public class JudgeConfig {
 
     /**

@@ -17,6 +17,7 @@ import java.util.List;
  * @since 2024/3/20
  */
 @Data
+@Schema(description = "题目请求体")
 public class OjProblemRequest {
 
     /**

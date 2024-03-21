@@ -16,7 +16,7 @@ import java.io.Serializable;
  * @since 2024/2/19
  */
 @Data
-@Schema(name = "注册表单")
+@Schema(description = "注册表单")
 public class RegisterRequest implements Serializable {
 
 	@Serial

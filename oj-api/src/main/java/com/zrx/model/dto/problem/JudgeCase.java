@@ -7,6 +7,7 @@ import lombok.Data;
  * 题目用例
  */
 @Data
+@Schema(description = "题目用例")
 public class JudgeCase {
 
     /**

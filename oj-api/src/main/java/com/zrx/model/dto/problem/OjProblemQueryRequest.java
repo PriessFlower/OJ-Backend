@@ -8,12 +8,13 @@ import lombok.Data;
 import java.util.List;
 
 /**
- * 题目请求体
+ * 题目查询请求体
  *
  * @author zhang.rx
  * @since 2024/3/20
  */
 @Data
+@Schema(description = "题目查询请求体")
 public class OjProblemQueryRequest {
 
     /**

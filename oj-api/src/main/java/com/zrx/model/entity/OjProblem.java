@@ -23,7 +23,7 @@ import java.io.Serializable;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(name = "题目")
+@Schema(description = "题目")
 @Table(value = "oj_problem")
 public class OjProblem extends BaseEntity implements Serializable {
 

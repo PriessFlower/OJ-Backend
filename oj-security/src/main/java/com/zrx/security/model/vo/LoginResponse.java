@@ -10,7 +10,7 @@ import lombok.Data;
  * @since 2024/2/21
  */
 @Data
-@Schema(name = "登录响应")
+@Schema(description = "登录响应")
 public class LoginResponse {
 
 	/**

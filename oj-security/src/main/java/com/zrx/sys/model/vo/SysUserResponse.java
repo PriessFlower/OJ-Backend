@@ -13,7 +13,7 @@ import lombok.Data;
  * @since 2024/2/20
  */
 @Data
-@Schema(name = "系统用户响应体")
+@Schema(description = "系统用户响应体")
 public class SysUserResponse {
 
 	/**

@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
  * @since 2024/2/20
  */
 @Data
-@Schema(name = "分页信息")
+@Schema(description = "分页信息")
 @NoArgsConstructor
 public class Paging {
 

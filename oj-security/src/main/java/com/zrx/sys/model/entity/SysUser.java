@@ -24,7 +24,7 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(name = "系统用户")
+@Schema(description = "系统用户")
 @Table(value = "sys_user")
 public class SysUser extends BaseEntity implements Serializable {
 

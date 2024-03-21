@@ -14,7 +14,7 @@ import java.io.Serializable;
  * @since 2024/2/19
  */
 @Data
-@Schema(name = "登录表单")
+@Schema(description = "登录表单")
 public class LoginRequest implements Serializable {
 
 	@Serial

@@ -22,7 +22,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(name = "角色用户关系表")
+@Schema(description = "角色用户关系表")
 @Table(value = "sys_role_user")
 public class SysRoleUser implements Serializable {
 

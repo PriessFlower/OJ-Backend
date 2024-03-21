@@ -15,7 +15,7 @@ import java.util.List;
  * @since 2024/3/20
  */
 @Data
-@Schema(name = "题目响应体")
+@Schema(description = "题目响应体")
 public class OjProblemVo {
 
     /**

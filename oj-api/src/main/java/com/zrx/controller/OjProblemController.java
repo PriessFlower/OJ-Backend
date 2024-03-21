@@ -45,7 +45,7 @@ public class OjProblemController {
     @PostMapping("/save")
     @Operation(summary = "保存题目")
     @SaCheckPermission(AuthConst.SUPER_ADMIN)
-    public Result<Boolean> save(@Validated({SaveGroup.class}) @RequestBody @Parameter(description = "题目添加请求体") OjProblemAddRequest req) {
+    public Result<Boolean> save(@Validated({SaveGroup.class}) @RequestBody @Parameter OjProblemAddRequest req) {
         return Result.success(ojProblemService.save(req));
     }
 
