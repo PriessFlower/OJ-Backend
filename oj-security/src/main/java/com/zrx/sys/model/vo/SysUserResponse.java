@@ -1,10 +1,13 @@
 package com.zrx.sys.model.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.mybatisflex.annotation.Id;
 import com.mybatisflex.annotation.KeyType;
 import com.mybatisflex.core.keygen.KeyGenerators;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+
+import java.time.LocalDateTime;
 
 /**
  * 系统用户响应体
@@ -70,5 +73,12 @@ public class SysUserResponse {
 	 */
 	@Schema(description = "状态: 0:停用; 1:正常")
 	private Integer status;
+
+	/**
+	 * 注册时间
+	 */
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	@Schema(description = "注册时间")
+	private LocalDateTime registerTime;
 
 }
