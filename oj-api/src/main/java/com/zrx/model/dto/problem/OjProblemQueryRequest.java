@@ -17,24 +17,24 @@ import java.util.List;
 @Schema(description = "题目查询请求体")
 public class OjProblemQueryRequest {
 
-    /**
-     * 标题
-     */
-    @Schema(description = "标题")
-    private String title;
+	/**
+	 * 标题
+	 */
+	@Schema(description = "标题")
+	private String title;
 
-    /**
-     * 标签列表
-     */
-    @Schema(description = "标签列表")
-    private List<String> tags;
+	/**
+	 * 标签列表
+	 */
+	@Schema(description = "标签列表")
+	private List<String> tags;
 
-    /**
-     * 题目难度，0简单，1中等，2困难
-     */
-    @Min(0)
-    @Max(2)
-    @Schema(description = "题目难度，0简单，1中等，2困难")
-    private Integer difficulty;
+	/**
+	 * 题目难度，0简单，1中等，2困难
+	 */
+	@Min(0)
+	@Max(2)
+	@Schema(description = "题目难度，0简单，1中等，2困难")
+	private Integer difficulty;
 
 }

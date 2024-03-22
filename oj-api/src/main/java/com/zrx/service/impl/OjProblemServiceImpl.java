@@ -32,57 +32,57 @@ import static com.zrx.model.entity.table.OjProblemTableDef.OJ_PROBLEM;
 @Service
 public class OjProblemServiceImpl extends ServiceImpl<OjProblemMapper, OjProblem> implements OjProblemService {
 
-    @Override
-    public Boolean save(OjProblemAddRequest req) {
-        OjProblem ojProblem = OjProblemConverter.addDto2Entity(req);
-        mapper.insert(ojProblem);
-        return true;
-    }
+	@Override
+	public Boolean save(OjProblemAddRequest req) {
+		OjProblem ojProblem = OjProblemConverter.addDto2Entity(req);
+		mapper.insert(ojProblem);
+		return true;
+	}
 
-    @Override
-    public Boolean updateById(OjProblemUpdateRequest req) {
-        OjProblem ojProblem = OjProblemConverter.updateDto2Entity(req);
-        int updateFlag = mapper.update(ojProblem);
-        if (updateFlag == 0) {
-            throw new BusinessException("更新失败");
-        }
-        return true;
-    }
+	@Override
+	public Boolean updateById(OjProblemUpdateRequest req) {
+		OjProblem ojProblem = OjProblemConverter.updateDto2Entity(req);
+		int updateFlag = mapper.update(ojProblem);
+		if (updateFlag == 0) {
+			throw new BusinessException("更新失败");
+		}
+		return true;
+	}
 
-    @Override
-    public OjProblemVo getInfoById(Serializable id) {
-        OjProblem ojProblem = mapper.selectOneById(id);
-        if (ojProblem == null) {
-            throw new BusinessException("当前题目不存在");
-        }
-        return OjProblemConverter.entity2Vo(ojProblem);
-    }
+	@Override
+	public OjProblemVo getInfoById(Serializable id) {
+		OjProblem ojProblem = mapper.selectOneById(id);
+		if (ojProblem == null) {
+			throw new BusinessException("当前题目不存在");
+		}
+		return OjProblemConverter.entity2Vo(ojProblem);
+	}
 
-    @Override
-    public Page<OjProblemVo> page(Paging page, OjProblemQueryRequest req) {
-        String title = req.getTitle();
-        List<String> tags = req.getTags();
-        Integer difficulty = req.getDifficulty();
+	@Override
+	public Page<OjProblemVo> page(Paging page, OjProblemQueryRequest req) {
+		String title = req.getTitle();
+		List<String> tags = req.getTags();
+		Integer difficulty = req.getDifficulty();
 
-        QueryWrapper queryWrapper = new QueryWrapper();
-        queryWrapper.select(OJ_PROBLEM.ALL_COLUMNS)
-                        .where(OJ_PROBLEM.TITLE.like(title, StringUtil::isNotBlank))
-                .and(OJ_PROBLEM.DIFFICULTY.eq(difficulty, ObjectUtil::isNotNull));
-        if (CollUtil.isNotEmpty(tags)) {
-            for (String tag : tags) {
-                queryWrapper.and(OJ_PROBLEM.TAGS.like("\"" + tag + "\""));
-            }
-        }
-        Page<OjProblem> ojProblemPage = mapper.paginate(Page.of(page.getPageNum(), page.getPageSize()), queryWrapper);
-        Page<OjProblemVo> resPage = new Page<>();
-        List<OjProblemVo> voList = ojProblemPage.getRecords().stream().map(OjProblemConverter::entity2Vo).toList();
+		QueryWrapper queryWrapper = new QueryWrapper();
+		queryWrapper.select(OJ_PROBLEM.ALL_COLUMNS)
+			.where(OJ_PROBLEM.TITLE.like(title, StringUtil::isNotBlank))
+			.and(OJ_PROBLEM.DIFFICULTY.eq(difficulty, ObjectUtil::isNotNull));
+		if (CollUtil.isNotEmpty(tags)) {
+			for (String tag : tags) {
+				queryWrapper.and(OJ_PROBLEM.TAGS.like("\"" + tag + "\""));
+			}
+		}
+		Page<OjProblem> ojProblemPage = mapper.paginate(Page.of(page.getPageNum(), page.getPageSize()), queryWrapper);
+		Page<OjProblemVo> resPage = new Page<>();
+		List<OjProblemVo> voList = ojProblemPage.getRecords().stream().map(OjProblemConverter::entity2Vo).toList();
 
-        resPage.setRecords(voList);
-        resPage.setTotalPage(ojProblemPage.getTotalPage());
-        resPage.setPageNumber(ojProblemPage.getPageNumber());
-        resPage.setPageSize(ojProblemPage.getPageSize());
-        resPage.setTotalRow(ojProblemPage.getTotalRow());
-        return resPage;
-    }
+		resPage.setRecords(voList);
+		resPage.setTotalPage(ojProblemPage.getTotalPage());
+		resPage.setPageNumber(ojProblemPage.getPageNumber());
+		resPage.setPageSize(ojProblemPage.getPageSize());
+		resPage.setTotalRow(ojProblemPage.getTotalRow());
+		return resPage;
+	}
 
 }

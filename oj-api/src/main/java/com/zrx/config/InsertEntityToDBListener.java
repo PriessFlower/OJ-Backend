@@ -16,16 +16,16 @@ import java.time.LocalDateTime;
  */
 public class InsertEntityToDBListener implements InsertListener {
 
-    @Override
-    public void onInsert(Object o) {
-        BaseEntity baseEntity = (BaseEntity) o;
-        SysUser loginUser = SecurityHelper.getUser();
-        Long userId = loginUser.getId();
+	@Override
+	public void onInsert(Object o) {
+		BaseEntity baseEntity = (BaseEntity) o;
+		SysUser loginUser = SecurityHelper.getUser();
+		Long userId = loginUser.getId();
 		if (userId == null) {
 			throw new BusinessException("请登录");
 		}
-        baseEntity.setCreator(String.valueOf(userId));
-        baseEntity.setCreateTime(LocalDateTime.now());
-    }
+		baseEntity.setCreator(String.valueOf(userId));
+		baseEntity.setCreateTime(LocalDateTime.now());
+	}
 
 }

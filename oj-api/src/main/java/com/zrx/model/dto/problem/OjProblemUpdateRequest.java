@@ -20,22 +20,22 @@ import java.io.Serializable;
 @Schema(description = "题目更新请求体")
 public class OjProblemUpdateRequest extends OjProblemRequest implements Serializable {
 
-    @Serial
-    private static final long serialVersionUID = 1L;
+	@Serial
+	private static final long serialVersionUID = 1L;
 
-    /**
-     * id
-     */
-    @Schema(description = "主键")
-    @NotNull(message = "主键不能为空", groups = UpdateGroup.class)
-    private Long id;
+	/**
+	 * id
+	 */
+	@Schema(description = "主键")
+	@NotNull(message = "主键不能为空", groups = UpdateGroup.class)
+	private Long id;
 
-    public Long getId() {
-        return id;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	public void setId(Long id) {
+		this.id = id;
+	}
 
 }

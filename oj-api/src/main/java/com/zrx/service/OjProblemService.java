@@ -19,12 +19,12 @@ import java.io.Serializable;
  */
 public interface OjProblemService extends IService<OjProblem> {
 
-    Boolean save(OjProblemAddRequest req);
+	Boolean save(OjProblemAddRequest req);
 
-    Boolean updateById(OjProblemUpdateRequest req);
+	Boolean updateById(OjProblemUpdateRequest req);
 
-    OjProblemVo getInfoById(Serializable id);
+	OjProblemVo getInfoById(Serializable id);
 
-    Page<OjProblemVo> page(Paging page, OjProblemQueryRequest req);
+	Page<OjProblemVo> page(Paging page, OjProblemQueryRequest req);
 
 }

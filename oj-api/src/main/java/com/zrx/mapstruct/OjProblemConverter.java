@@ -23,70 +23,70 @@ import java.util.List;
 @Mapper(componentModel = "Spring")
 public interface OjProblemConverter {
 
-    static OjProblem addDto2Entity(OjProblemRequest req) {
-        String title = req.getTitle();
-        String content = req.getContent();
-        List<String> tags = req.getTags();
-        Integer difficulty = req.getDifficulty();
-        String answer = req.getAnswer();
-        List<JudgeCase> judgeCase = req.getJudgeCase();
-        JudgeConfig judgeConfig = req.getJudgeConfig();
+	static OjProblem addDto2Entity(OjProblemRequest req) {
+		String title = req.getTitle();
+		String content = req.getContent();
+		List<String> tags = req.getTags();
+		Integer difficulty = req.getDifficulty();
+		String answer = req.getAnswer();
+		List<JudgeCase> judgeCase = req.getJudgeCase();
+		JudgeConfig judgeConfig = req.getJudgeConfig();
 
-        OjProblem ojProblem = new OjProblem();
-        ojProblem.setTitle(title);
-        ojProblem.setContent(content);
-        ojProblem.setTags(JSON.toJSONString(tags));
-        ojProblem.setDifficulty(difficulty);
-        ojProblem.setAnswer(answer);
-        ojProblem.setSubmitNum(0);
-        ojProblem.setAcceptedNum(0);
-        if (CollUtil.isNotEmpty(judgeCase)) {
-            ojProblem.setJudgeCase(JSON.toJSONString(judgeCase));
-        }
-        if (judgeCase != null) {
-            ojProblem.setJudgeConfig(JSON.toJSONString(judgeConfig));
-        }
-        ojProblem.setThumbNum(0);
-        ojProblem.setFavourNum(0);
-        ojProblem.setDelFlag(0);
+		OjProblem ojProblem = new OjProblem();
+		ojProblem.setTitle(title);
+		ojProblem.setContent(content);
+		ojProblem.setTags(JSON.toJSONString(tags));
+		ojProblem.setDifficulty(difficulty);
+		ojProblem.setAnswer(answer);
+		ojProblem.setSubmitNum(0);
+		ojProblem.setAcceptedNum(0);
+		if (CollUtil.isNotEmpty(judgeCase)) {
+			ojProblem.setJudgeCase(JSON.toJSONString(judgeCase));
+		}
+		if (judgeCase != null) {
+			ojProblem.setJudgeConfig(JSON.toJSONString(judgeConfig));
+		}
+		ojProblem.setThumbNum(0);
+		ojProblem.setFavourNum(0);
+		ojProblem.setDelFlag(0);
 
-        return ojProblem;
-    }
+		return ojProblem;
+	}
 
-    static OjProblem updateDto2Entity(OjProblemUpdateRequest req) {
-        Long id = req.getId();
-        OjProblem ojProblem = addDto2Entity(req);
-        ojProblem.setId(id);
-        return ojProblem;
-    }
+	static OjProblem updateDto2Entity(OjProblemUpdateRequest req) {
+		Long id = req.getId();
+		OjProblem ojProblem = addDto2Entity(req);
+		ojProblem.setId(id);
+		return ojProblem;
+	}
 
-    static OjProblemVo entity2Vo(OjProblem ojProblem) {
-        Long id = ojProblem.getId();
-        String title = ojProblem.getTitle();
-        String content = ojProblem.getContent();
-        String tags = ojProblem.getTags();
-        Integer difficulty = ojProblem.getDifficulty();
-        Integer submitNum = ojProblem.getSubmitNum();
-        Integer acceptedNum = ojProblem.getAcceptedNum();
-        String judgeConfig = ojProblem.getJudgeConfig();
-        Integer thumbNum = ojProblem.getThumbNum();
-        Integer favourNum = ojProblem.getFavourNum();
+	static OjProblemVo entity2Vo(OjProblem ojProblem) {
+		Long id = ojProblem.getId();
+		String title = ojProblem.getTitle();
+		String content = ojProblem.getContent();
+		String tags = ojProblem.getTags();
+		Integer difficulty = ojProblem.getDifficulty();
+		Integer submitNum = ojProblem.getSubmitNum();
+		Integer acceptedNum = ojProblem.getAcceptedNum();
+		String judgeConfig = ojProblem.getJudgeConfig();
+		Integer thumbNum = ojProblem.getThumbNum();
+		Integer favourNum = ojProblem.getFavourNum();
 
-        OjProblemVo vo = new OjProblemVo();
-        vo.setId(id);
-        vo.setTitle(title);
-        vo.setContent(content);
-        vo.setTags(JSONUtil.toList(tags, String.class));
-        ProblemDifficultyEnum anEnum = ProblemDifficultyEnum.getEnum(difficulty);
-        if (anEnum != null) {
-            vo.setDifficulty(anEnum.getName());
-        }
-        vo.setSubmitNum(submitNum);
-        vo.setAcceptedNum(acceptedNum);
-        vo.setJudgeConfig(JSONUtil.toBean(judgeConfig, JudgeConfig.class));
-        vo.setThumbNum(thumbNum);
-        vo.setFavourNum(favourNum);
-        return vo;
-    }
+		OjProblemVo vo = new OjProblemVo();
+		vo.setId(id);
+		vo.setTitle(title);
+		vo.setContent(content);
+		vo.setTags(JSONUtil.toList(tags, String.class));
+		ProblemDifficultyEnum anEnum = ProblemDifficultyEnum.getEnum(difficulty);
+		if (anEnum != null) {
+			vo.setDifficulty(anEnum.getName());
+		}
+		vo.setSubmitNum(submitNum);
+		vo.setAcceptedNum(acceptedNum);
+		vo.setJudgeConfig(JSONUtil.toBean(judgeConfig, JudgeConfig.class));
+		vo.setThumbNum(thumbNum);
+		vo.setFavourNum(favourNum);
+		return vo;
+	}
 
 }

@@ -18,65 +18,65 @@ import java.util.List;
 @Schema(description = "题目响应体")
 public class OjProblemVo {
 
-    /**
-     * id
-     */
-    @Id(keyType = KeyType.Auto)
-    @Schema(description = "id")
-    private Long id;
+	/**
+	 * id
+	 */
+	@Id(keyType = KeyType.Auto)
+	@Schema(description = "id")
+	private Long id;
 
-    /**
-     * 标题
-     */
-    @Schema(description = "标题")
-    private String title;
+	/**
+	 * 标题
+	 */
+	@Schema(description = "标题")
+	private String title;
 
-    /**
-     * 内容
-     */
-    @Schema(description = "内容")
-    private String content;
+	/**
+	 * 内容
+	 */
+	@Schema(description = "内容")
+	private String content;
 
-    /**
-     * 标签列表（json 数组）
-     */
-    @Schema(description = "标签列表（json 数组）")
-    private List<String> tags;
+	/**
+	 * 标签列表（json 数组）
+	 */
+	@Schema(description = "标签列表（json 数组）")
+	private List<String> tags;
 
-    /**
-     * 题目难度，简单，中等，困难
-     */
-    @Schema(description = "题目难度，简单，中等，困难")
-    private String difficulty;
+	/**
+	 * 题目难度，简单，中等，困难
+	 */
+	@Schema(description = "题目难度，简单，中等，困难")
+	private String difficulty;
 
-    /**
-     * 题目提交数
-     */
-    @Schema(description = "题目提交数")
-    private Integer submitNum;
+	/**
+	 * 题目提交数
+	 */
+	@Schema(description = "题目提交数")
+	private Integer submitNum;
 
-    /**
-     * 题目通过数
-     */
-    @Schema(description = "题目通过数")
-    private Integer acceptedNum;
+	/**
+	 * 题目通过数
+	 */
+	@Schema(description = "题目通过数")
+	private Integer acceptedNum;
 
-    /**
-     * 判题配置（json 对象）
-     */
-    @Schema(description = "判题配置（json 对象）")
-    private JudgeConfig judgeConfig;
+	/**
+	 * 判题配置（json 对象）
+	 */
+	@Schema(description = "判题配置（json 对象）")
+	private JudgeConfig judgeConfig;
 
-    /**
-     * 点赞数
-     */
-    @Schema(description = "点赞数")
-    private Integer thumbNum;
+	/**
+	 * 点赞数
+	 */
+	@Schema(description = "点赞数")
+	private Integer thumbNum;
 
-    /**
-     * 收藏数
-     */
-    @Schema(description = "收藏数")
-    private Integer favourNum;
+	/**
+	 * 收藏数
+	 */
+	@Schema(description = "收藏数")
+	private Integer favourNum;
 
 }

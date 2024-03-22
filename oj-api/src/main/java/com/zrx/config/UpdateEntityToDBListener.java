@@ -16,15 +16,16 @@ import java.time.LocalDateTime;
  */
 public class UpdateEntityToDBListener implements UpdateListener {
 
-    @Override
-    public void onUpdate(Object o) {
-        BaseEntity baseEntity = (BaseEntity) o;
-        SysUser loginUser = SecurityHelper.getUser();
-        Long userId = loginUser.getId();
-        if (userId == null) {
-            throw new BusinessException("请登录");
-        }
-        baseEntity.setUpdater(String.valueOf(userId));
-        baseEntity.setUpdateTime(LocalDateTime.now());
-    }
+	@Override
+	public void onUpdate(Object o) {
+		BaseEntity baseEntity = (BaseEntity) o;
+		SysUser loginUser = SecurityHelper.getUser();
+		Long userId = loginUser.getId();
+		if (userId == null) {
+			throw new BusinessException("请登录");
+		}
+		baseEntity.setUpdater(String.valueOf(userId));
+		baseEntity.setUpdateTime(LocalDateTime.now());
+	}
+
 }
