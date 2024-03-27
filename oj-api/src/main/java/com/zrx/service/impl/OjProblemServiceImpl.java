@@ -67,7 +67,7 @@ public class OjProblemServiceImpl extends ServiceImpl<OjProblemMapper, OjProblem
 		QueryWrapper queryWrapper = new QueryWrapper();
 		queryWrapper.select(OJ_PROBLEM.ALL_COLUMNS)
 			.where(OJ_PROBLEM.TITLE.like(title, StringUtil::isNotBlank))
-			.and(OJ_PROBLEM.DIFFICULTY.eq(difficulty, ObjectUtil::isNotNull));
+			.and(OJ_PROBLEM.DIFFICULTY.eq(difficulty, ObjectUtil::isNotNull)).orderBy(OJ_PROBLEM.CREATE_TIME, false);
 		if (CollUtil.isNotEmpty(tags)) {
 			for (String tag : tags) {
 				queryWrapper.and(OJ_PROBLEM.TAGS.like("\"" + tag + "\""));

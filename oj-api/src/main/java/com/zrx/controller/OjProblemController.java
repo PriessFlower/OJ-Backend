@@ -97,7 +97,7 @@ public class OjProblemController {
 	@GetMapping("/page")
 	@Operation(summary = "分页查询题目")
 	@SaCheckPermission(AuthConst.SUPER_ADMIN)
-	public Result<Page<OjProblemVo>> page(@Parameter(description = "分页信息") Paging page, OjProblemQueryRequest req) {
+	public Result<Page<OjProblemVo>> page(@Parameter(description = "分页信息") Paging page, @Parameter(description = "查询条件") OjProblemQueryRequest req) {
 		return Result.success(ojProblemService.page(page, req));
 	}
 
