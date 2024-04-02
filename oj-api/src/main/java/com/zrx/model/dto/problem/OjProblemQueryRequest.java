@@ -32,8 +32,8 @@ public class OjProblemQueryRequest {
 	/**
 	 * 题目难度，0简单，1中等，2困难
 	 */
-	@Min(0)
-	@Max(2)
+	@Min(value = 0, message = "0~2")
+	@Max(value = 2, message = "0~2")
 	@Schema(description = "题目难度，0简单，1中等，2困难")
 	private Integer difficulty;
 

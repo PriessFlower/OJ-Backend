@@ -44,11 +44,18 @@ public class OjProblemRequest {
 	/**
 	 * 题目难度，0简单，1中等，2困难
 	 */
-	@Min(0)
-	@Max(2)
+	@Min(value = 0, message = "0~2")
+	@Max(value = 2, message = "0~2")
 	@Schema(description = "题目难度，0简单，1中等，2困难")
 	@NotNull(message = "请选择题目难度", groups = SaveGroup.class)
 	private Integer difficulty;
+
+	/**
+	 * 题目答案语言
+	 */
+	@Schema(description = "题目答案语言")
+	@NotBlank(message = "题目答案语言不能为空", groups = SaveGroup.class)
+	private String ansLanguage;
 
 	/**
 	 * 题目答案

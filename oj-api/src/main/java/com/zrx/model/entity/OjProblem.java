@@ -62,6 +62,12 @@ public class OjProblem extends BaseEntity implements Serializable {
 	private Integer difficulty;
 
 	/**
+	 * 题目答案语言
+	 */
+	@Schema(description = "题目答案语言")
+	private String ansLanguage;
+
+	/**
 	 * 题目答案
 	 */
 	@Schema(description = "题目答案")
