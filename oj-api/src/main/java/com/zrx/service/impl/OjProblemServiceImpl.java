@@ -6,6 +6,7 @@ import com.mybatisflex.core.paginate.Page;
 import com.mybatisflex.core.query.QueryWrapper;
 import com.mybatisflex.core.util.StringUtil;
 import com.mybatisflex.spring.service.impl.ServiceImpl;
+import com.zrx.config.flex.MybatisFlexFunc;
 import com.zrx.exception.BusinessException;
 import com.zrx.mapper.OjProblemMapper;
 import com.zrx.mapstruct.OjProblemConverter;
@@ -14,6 +15,7 @@ import com.zrx.model.dto.problem.OjProblemAddRequest;
 import com.zrx.model.dto.problem.OjProblemQueryRequest;
 import com.zrx.model.dto.problem.OjProblemUpdateRequest;
 import com.zrx.model.entity.OjProblem;
+import com.zrx.model.vo.OjProblemPageVo;
 import com.zrx.model.vo.OjProblemVo;
 import com.zrx.service.OjProblemService;
 import org.springframework.stereotype.Service;
@@ -59,7 +61,7 @@ public class OjProblemServiceImpl extends ServiceImpl<OjProblemMapper, OjProblem
 	}
 
 	@Override
-	public Page<OjProblemVo> page(Paging page, OjProblemQueryRequest req) {
+	public Page<OjProblemPageVo> page(Paging page, OjProblemQueryRequest req) {
 		String title = req.getTitle();
 		List<String> tags = req.getTags();
 		Integer difficulty = req.getDifficulty();
@@ -67,15 +69,16 @@ public class OjProblemServiceImpl extends ServiceImpl<OjProblemMapper, OjProblem
 		QueryWrapper queryWrapper = new QueryWrapper();
 		queryWrapper.select(OJ_PROBLEM.ALL_COLUMNS)
 			.where(OJ_PROBLEM.TITLE.like(title, StringUtil::isNotBlank))
-			.and(OJ_PROBLEM.DIFFICULTY.eq(difficulty, ObjectUtil::isNotNull)).orderBy(OJ_PROBLEM.CREATE_TIME, false);
+			.and(OJ_PROBLEM.DIFFICULTY.eq(difficulty, ObjectUtil::isNotNull))
+				.orderBy(MybatisFlexFunc.coalesce(OJ_PROBLEM.UPDATE_TIME, OJ_PROBLEM.CREATE_TIME), false);
 		if (CollUtil.isNotEmpty(tags)) {
 			for (String tag : tags) {
 				queryWrapper.and(OJ_PROBLEM.TAGS.like("\"" + tag + "\""));
 			}
 		}
 		Page<OjProblem> ojProblemPage = mapper.paginate(Page.of(page.getPageNum(), page.getPageSize()), queryWrapper);
-		Page<OjProblemVo> resPage = new Page<>();
-		List<OjProblemVo> voList = ojProblemPage.getRecords().stream().map(OjProblemConverter::entity2Vo).toList();
+		Page<OjProblemPageVo> resPage = new Page<>();
+		List<OjProblemPageVo> voList = ojProblemPage.getRecords().stream().map(OjProblemConverter::entity2VoPage).toList();
 
 		resPage.setRecords(voList);
 		resPage.setTotalPage(ojProblemPage.getTotalPage());

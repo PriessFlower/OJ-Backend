@@ -9,6 +9,7 @@ import com.zrx.model.dto.problem.JudgeConfig;
 import com.zrx.model.dto.problem.OjProblemRequest;
 import com.zrx.model.dto.problem.OjProblemUpdateRequest;
 import com.zrx.model.entity.OjProblem;
+import com.zrx.model.vo.OjProblemPageVo;
 import com.zrx.model.vo.OjProblemVo;
 import org.mapstruct.Mapper;
 
@@ -60,7 +61,7 @@ public interface OjProblemConverter {
 		return ojProblem;
 	}
 
-	static OjProblemVo entity2Vo(OjProblem ojProblem) {
+	static OjProblemPageVo entity2VoPage(OjProblem ojProblem) {
 		Long id = ojProblem.getId();
 		String title = ojProblem.getTitle();
 		String content = ojProblem.getContent();
@@ -68,6 +69,36 @@ public interface OjProblemConverter {
 		Integer difficulty = ojProblem.getDifficulty();
 		Integer submitNum = ojProblem.getSubmitNum();
 		Integer acceptedNum = ojProblem.getAcceptedNum();
+		Integer thumbNum = ojProblem.getThumbNum();
+		Integer favourNum = ojProblem.getFavourNum();
+
+		OjProblemPageVo pageVo = new OjProblemPageVo();
+		pageVo.setId(id);
+		pageVo.setTitle(title);
+		pageVo.setContent(content);
+		pageVo.setTags(JSONUtil.toList(tags, String.class));
+		ProblemDifficultyEnum anEnum = ProblemDifficultyEnum.getEnum(difficulty);
+		if (anEnum != null) {
+			pageVo.setDifficulty(anEnum.getName());
+		}
+		pageVo.setSubmitNum(submitNum);
+		pageVo.setAcceptedNum(acceptedNum);
+		pageVo.setThumbNum(thumbNum);
+		pageVo.setFavourNum(favourNum);
+		return pageVo;
+	}
+
+	static OjProblemVo entity2Vo(OjProblem ojProblem) {
+		Long id = ojProblem.getId();
+		String title = ojProblem.getTitle();
+		String content = ojProblem.getContent();
+		String tags = ojProblem.getTags();
+		Integer difficulty = ojProblem.getDifficulty();
+		String ansLanguage = ojProblem.getAnsLanguage();
+		String answer = ojProblem.getAnswer();
+		Integer submitNum = ojProblem.getSubmitNum();
+		Integer acceptedNum = ojProblem.getAcceptedNum();
+		String judgeCase = ojProblem.getJudgeCase();
 		String judgeConfig = ojProblem.getJudgeConfig();
 		Integer thumbNum = ojProblem.getThumbNum();
 		Integer favourNum = ojProblem.getFavourNum();
@@ -77,12 +108,12 @@ public interface OjProblemConverter {
 		vo.setTitle(title);
 		vo.setContent(content);
 		vo.setTags(JSONUtil.toList(tags, String.class));
-		ProblemDifficultyEnum anEnum = ProblemDifficultyEnum.getEnum(difficulty);
-		if (anEnum != null) {
-			vo.setDifficulty(anEnum.getName());
-		}
+		vo.setDifficulty(difficulty);
 		vo.setSubmitNum(submitNum);
 		vo.setAcceptedNum(acceptedNum);
+		vo.setAnsLanguage(ansLanguage);
+		vo.setAnswer(answer);
+		vo.setJudgeCase(JSONUtil.toList(judgeCase, JudgeCase.class));
 		vo.setJudgeConfig(JSONUtil.toBean(judgeConfig, JudgeConfig.class));
 		vo.setThumbNum(thumbNum);
 		vo.setFavourNum(favourNum);

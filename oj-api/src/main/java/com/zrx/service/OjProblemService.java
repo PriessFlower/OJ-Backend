@@ -7,6 +7,7 @@ import com.zrx.model.dto.problem.OjProblemAddRequest;
 import com.zrx.model.dto.problem.OjProblemQueryRequest;
 import com.zrx.model.dto.problem.OjProblemUpdateRequest;
 import com.zrx.model.entity.OjProblem;
+import com.zrx.model.vo.OjProblemPageVo;
 import com.zrx.model.vo.OjProblemVo;
 
 import java.io.Serializable;
@@ -25,6 +26,6 @@ public interface OjProblemService extends IService<OjProblem> {
 
 	OjProblemVo getInfoById(Serializable id);
 
-	Page<OjProblemVo> page(Paging page, OjProblemQueryRequest req);
+	Page<OjProblemPageVo> page(Paging page, OjProblemQueryRequest req);
 
 }

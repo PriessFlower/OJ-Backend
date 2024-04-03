@@ -1,7 +1,6 @@
 package com.zrx.model.vo;
 
-import com.mybatisflex.annotation.Id;
-import com.mybatisflex.annotation.KeyType;
+import com.zrx.model.dto.problem.JudgeCase;
 import com.zrx.model.dto.problem.JudgeConfig;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -21,7 +20,6 @@ public class OjProblemVo {
 	/**
 	 * id
 	 */
-	@Id(keyType = KeyType.Auto)
 	@Schema(description = "id")
 	private Long id;
 
@@ -47,7 +45,19 @@ public class OjProblemVo {
 	 * 题目难度，简单，中等，困难
 	 */
 	@Schema(description = "题目难度，简单，中等，困难")
-	private String difficulty;
+	private Integer difficulty;
+
+	/**
+	 * 题目答案语言
+	 */
+	@Schema(description = "题目答案语言")
+	private String ansLanguage;
+
+	/**
+	 * 题目答案
+	 */
+	@Schema(description = "题目答案")
+	private String answer;
 
 	/**
 	 * 题目提交数
@@ -60,6 +70,12 @@ public class OjProblemVo {
 	 */
 	@Schema(description = "题目通过数")
 	private Integer acceptedNum;
+
+	/**
+	 * 判题用例
+	 */
+	@Schema(description = "判题用例")
+	private List<JudgeCase> judgeCase;
 
 	/**
 	 * 判题配置（json 对象）
