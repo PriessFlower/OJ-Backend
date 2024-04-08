@@ -39,17 +39,12 @@ public interface OjProblemConverter {
 		ojProblem.setTags(JSON.toJSONString(tags));
 		ojProblem.setDifficulty(difficulty);
 		ojProblem.setAnswer(answer);
-		ojProblem.setSubmitNum(0);
-		ojProblem.setAcceptedNum(0);
 		if (CollUtil.isNotEmpty(judgeCase)) {
 			ojProblem.setJudgeCase(JSON.toJSONString(judgeCase));
 		}
 		if (judgeCase != null) {
 			ojProblem.setJudgeConfig(JSON.toJSONString(judgeConfig));
 		}
-		ojProblem.setThumbNum(0);
-		ojProblem.setFavourNum(0);
-		ojProblem.setDelFlag(0);
 
 		return ojProblem;
 	}
