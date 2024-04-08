@@ -1,6 +1,8 @@
 package com.zrx.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import com.alibaba.excel.EasyExcelFactory;
+import com.alibaba.excel.support.ExcelTypeEnum;
 import com.mybatisflex.core.paginate.Page;
 import com.zrx.model.common.Paging;
 import com.zrx.model.common.SaveGroup;
@@ -14,13 +16,16 @@ import com.zrx.reuslt.Result;
 import com.zrx.reuslt.ResultCode;
 import com.zrx.security.satoken.AuthConst;
 import com.zrx.service.OjProblemService;
+import com.zrx.utils.ExcelUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.io.Serializable;
 
 /**
@@ -100,6 +105,25 @@ public class OjProblemController {
 	@SaCheckPermission(AuthConst.SUPER_ADMIN)
 	public Result<Page<OjProblemPageVo>> page(@Parameter(description = "分页信息") Paging page, @Parameter(description = "查询条件") OjProblemQueryRequest req) {
 		return Result.success(ojProblemService.page(page, req));
+	}
+
+	/**
+	 * 导出题目信息
+	 * @param req 请求信息
+	 * @param response 响应
+	 * @throws IOException 异常
+	 */
+	@GetMapping("/export")
+	@Operation(summary = "导出题目信息")
+	public void export(@Parameter(description = "分页信息") Paging page, @Parameter(description = "查询条件") OjProblemQueryRequest req,
+					   HttpServletResponse response) throws IOException {
+		Page<OjProblemPageVo> pageR = ojProblemService.page(page, req);
+		ExcelUtil.setExcelResponseProp(response, "题目信息");
+		EasyExcelFactory.write(response.getOutputStream())
+				.head(OjProblemPageVo.class)
+				.excelType(ExcelTypeEnum.XLSX)
+				.sheet(0, "题目信息")
+				.doWrite(pageR.getRecords());
 	}
 
 }
