@@ -36,7 +36,9 @@ public interface OjProblemConverter {
 		OjProblem ojProblem = new OjProblem();
 		ojProblem.setTitle(title);
 		ojProblem.setContent(content);
-		ojProblem.setTags(JSON.toJSONString(tags));
+		if (CollUtil.isNotEmpty(tags)) {
+			ojProblem.setTags(JSON.toJSONString(tags));
+		}
 		ojProblem.setDifficulty(difficulty);
 		ojProblem.setAnswer(answer);
 		if (CollUtil.isNotEmpty(judgeCase)) {
