@@ -6,8 +6,8 @@ import com.zrx.exception.BusinessException;
 import com.zrx.model.common.Paging;
 import com.zrx.reuslt.Result;
 import com.zrx.security.satoken.AuthConst;
-import com.zrx.security.utils.SecurityHelper;
 import com.zrx.sys.model.dto.SysUserRequest;
+import com.zrx.sys.model.dto.SysUserUpdateRequest;
 import com.zrx.sys.model.entity.SysUser;
 import com.zrx.sys.model.vo.SysUserResponse;
 import com.zrx.sys.service.SysUserService;
@@ -16,8 +16,6 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
-
-import java.io.Serializable;
 
 /**
  * 系统用户 控制层。
@@ -32,6 +30,13 @@ public class SysUserController {
 
 	@Resource
 	private SysUserService sysUserService;
+
+	@PutMapping("/update")
+	@Operation(summary = "修改用户信息--开放给个人用户使用")
+	@SaCheckPermission(AuthConst.SUPER_ADMIN)
+	public Result<Boolean> updateUserInfo(@RequestBody SysUserUpdateRequest request) {
+		return Result.success(sysUserService.update(request));
+	}
 
 	/**
 	 * 禁用用户
@@ -65,14 +70,13 @@ public class SysUserController {
 
 	/**
 	 * 根据主键获取系统用户详细信息。
-	 * @param id 主键
 	 * @return 详情
 	 */
-	@GetMapping("/getInfo/{id}")
-	@Operation(summary = "根据主键获取系统用户详细信息")
+	@GetMapping("/getInfo")
+	@Operation(summary = "获取已登录的当前用户信息--用户使用")
 	@SaCheckPermission(AuthConst.SUPER_ADMIN)
-	public Result<SysUserResponse> getInfo(@PathVariable Serializable id) {
-		return Result.success(sysUserService.getInfoById(id));
+	public Result<SysUserResponse> getInfo() {
+		return Result.success(sysUserService.getInfo());
 	}
 
 	/**
@@ -93,10 +97,10 @@ public class SysUserController {
 	 * @return 当前用户信息
 	 */
 	@GetMapping("/info")
-	@Operation(summary = "获取已登录的当前用户信息")
+	@Operation(summary = "根据主键获取系统用户详细信息--admin使用")
 	@SaCheckPermission(AuthConst.SUPER_ADMIN)
-	public Result<SysUser> info() {
-		return Result.success(SecurityHelper.getUser());
+	public Result<SysUser> infoById(String id) {
+		return Result.success(sysUserService.getById(id));
 	}
 
 }

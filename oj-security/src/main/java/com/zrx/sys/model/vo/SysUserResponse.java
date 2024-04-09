@@ -33,6 +33,12 @@ public class SysUserResponse {
 	private String username;
 
 	/**
+	 * 昵称
+	 */
+	@Schema(description = "昵称")
+	private String nickName;
+
+	/**
 	 * 姓名
 	 */
 	@Schema(description = "姓名")
@@ -80,5 +86,11 @@ public class SysUserResponse {
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	@Schema(description = "注册时间")
 	private LocalDateTime registerTime;
+
+	/**
+	 * 个人简介
+	 */
+	@Schema(description = "个人简介")
+	private String introduce;
 
 }

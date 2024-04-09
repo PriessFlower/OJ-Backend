@@ -1,6 +1,7 @@
 package com.zrx.sys.service.impl;
 
 import cn.dev33.satoken.stp.StpUtil;
+import com.mybatisflex.core.mask.MaskManager;
 import com.mybatisflex.core.paginate.Page;
 import com.mybatisflex.core.query.QueryChain;
 import com.mybatisflex.core.query.QueryWrapper;
@@ -19,14 +20,13 @@ import com.zrx.sys.enums.UserStatusEnum;
 import com.zrx.sys.mapper.SysUserMapper;
 import com.zrx.sys.mapstruct.SysUserMap;
 import com.zrx.sys.model.dto.SysUserRequest;
+import com.zrx.sys.model.dto.SysUserUpdateRequest;
 import com.zrx.sys.model.entity.SysUser;
 import com.zrx.sys.model.vo.SysUserResponse;
 import com.zrx.sys.service.SysUserService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
-
-import java.io.Serializable;
 
 import static com.zrx.sys.model.entity.table.SysUserTableDef.SYS_USER;
 
@@ -43,6 +43,12 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 	private final CaptchaService captchaService;
 
 	private final SysUserMap sysUserMap;
+
+	@Override
+	public Boolean update(SysUserUpdateRequest request) {
+		SysUser sysUser = sysUserMap.toEntityByUpdate(request);
+		return updateById(sysUser, true);
+	}
 
 	@Override
 	public SysUser getByUsername(String username) {
@@ -138,12 +144,16 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 	}
 
 	@Override
-	public SysUserResponse getInfoById(Serializable id) {
-		SysUser sysUser = QueryChain.of(mapper).where(SYS_USER.ID.eq(id)).one();
+	public SysUserResponse getInfo() {
+		Object loginId = StpUtil.getTokenInfo().loginId;
+		Long userId = Long.valueOf((String) loginId);
+		// TODO: 统一拦截脱敏、解除脱敏
+		MaskManager.skipMask();
+		SysUser sysUser = QueryChain.of(mapper).where(SYS_USER.ID.eq(userId)).one();
 		if (sysUser == null) {
 			throw new BusinessException("未找到该用户信息");
 		}
-		return sysUserMap.entity2Dto(sysUser);
+		return sysUserMap.toResp(sysUser);
 	}
 
 	@Override
