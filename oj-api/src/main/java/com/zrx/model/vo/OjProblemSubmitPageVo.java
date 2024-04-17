@@ -12,6 +12,7 @@ import lombok.Data;
 import org.springframework.beans.BeanUtils;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 public class OjProblemSubmitPageVo {
@@ -30,7 +31,7 @@ public class OjProblemSubmitPageVo {
 	private String codeStatus;
 
 	@Schema(description = "题目实际输出（json）")
-	private String output;
+	private List<String> outputList;
 
 	@Schema(description = "判题信息（json 对象）")
 	private JudgeInfo judgeInfo;
@@ -79,6 +80,8 @@ public class OjProblemSubmitPageVo {
 		problemSubmitPageVo.setStatus(ProblemSubmitStatusEnum.getEnum(problemSubmit.getStatus()).getValue());
 		String judgeInfoStr = problemSubmit.getJudgeInfo();
 		problemSubmitPageVo.setJudgeInfo(JSONUtil.toBean(judgeInfoStr, JudgeInfo.class));
+		problemSubmitPageVo.setCodeStatus(ProblemSubmitStatusEnum.getEnum(problemSubmit.getCodeStatus()).getValue());
+		problemSubmitPageVo.setOutputList(JSONUtil.toList(problemSubmit.getOutput(), String.class));
 		return problemSubmitPageVo;
 	}
 
