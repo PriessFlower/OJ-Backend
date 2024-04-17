@@ -61,8 +61,6 @@ public abstract class CodeSandboxTemplate implements CodeSandBox {
 
     protected String ImageName;
 
-    protected boolean is_init_first = false;
-
     protected String volumnName;
 
     protected Long memory;
