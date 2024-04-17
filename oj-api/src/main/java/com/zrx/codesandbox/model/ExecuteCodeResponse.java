@@ -1,6 +1,5 @@
 package com.zrx.codesandbox.model;
 
-
 import lombok.*;
 
 import java.util.List;
@@ -12,13 +11,12 @@ import java.util.List;
 @ToString
 public class ExecuteCodeResponse {
 
-    private List<String> ouputList;
+	private List<String> ouputList;
 
+	private String message;
 
-    private String message;
+	private Integer status;
 
-    private Integer status;
-
-    private JudgeInfo judgeInfo;
+	private JudgeInfo judgeInfo;
 
 }

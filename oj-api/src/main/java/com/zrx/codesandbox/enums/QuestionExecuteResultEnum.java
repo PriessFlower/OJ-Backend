@@ -1,6 +1,5 @@
 package com.zrx.codesandbox.enums;
 
-import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.apache.commons.lang3.ObjectUtils;
 
 import java.util.Arrays;
@@ -9,56 +8,54 @@ import java.util.stream.Collectors;
 
 public enum QuestionExecuteResultEnum {
 
+	CompileFailure("编译失败", 0),
 
-    CompileFailure("编译失败", 0),
+	RunException("运行异常", 1),
 
-    RunException("运行异常",1),
+	ExecuteSuccess("执行成功", 2),
 
-    ExecuteSuccess("执行成功",2),
+	OutOfTimeException("超时异常", 3);
 
-    OutOfTimeException("超时异常",3);
+	private final String text;
 
-    private final String text;
+	private final Integer value;
 
-    private final Integer value;
+	QuestionExecuteResultEnum(String text, Integer value) {
+		this.text = text;
+		this.value = value;
+	}
 
-    QuestionExecuteResultEnum(String text, Integer value) {
-        this.text = text;
-        this.value = value;
-    }
+	/**
+	 * 获取值列表
+	 * @return
+	 */
+	public static List<Integer> getValues() {
+		return Arrays.stream(values()).map(item -> item.value).collect(Collectors.toList());
+	}
 
-    /**
-     * 获取值列表
-     *
-     * @return
-     */
-    public static List<Integer> getValues() {
-        return Arrays.stream(values()).map(item -> item.value).collect(Collectors.toList());
-    }
+	/**
+	 * 根据 value 获取枚举
+	 * @param value
+	 * @return
+	 */
+	public static QuestionExecuteResultEnum getEnumByValue(Integer value) {
+		if (ObjectUtils.isEmpty(value)) {
+			return null;
+		}
+		for (QuestionExecuteResultEnum anEnum : QuestionExecuteResultEnum.values()) {
+			if (anEnum.value == value) {
+				return anEnum;
+			}
+		}
+		return null;
+	}
 
-    /**
-     * 根据 value 获取枚举
-     *
-     * @param value
-     * @return
-     */
-    public static QuestionExecuteResultEnum getEnumByValue(Integer value) {
-        if (ObjectUtils.isEmpty(value)) {
-            return null;
-        }
-        for (QuestionExecuteResultEnum anEnum : QuestionExecuteResultEnum.values()) {
-            if (anEnum.value == value) {
-                return anEnum;
-            }
-        }
-        return null;
-    }
+	public Integer getValue() {
+		return value;
+	}
 
-    public Integer getValue() {
-        return value;
-    }
+	public String getText() {
+		return text;
+	}
 
-    public String getText() {
-        return text;
-    }
 }

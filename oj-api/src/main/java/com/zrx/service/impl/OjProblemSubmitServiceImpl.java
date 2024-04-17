@@ -13,47 +13,48 @@ import com.zrx.sys.model.entity.SysUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-
 @Service
-public class OjProblemSubmitServiceImpl extends ServiceImpl<OjProblemSubmitMapper, OjProblemSubmit> implements OjProblemSubmitService {
+public class OjProblemSubmitServiceImpl extends ServiceImpl<OjProblemSubmitMapper, OjProblemSubmit>
+		implements OjProblemSubmitService {
 
+	@Autowired
+	private OjProblemService ojProblemService;
 
+	@Autowired
+	private OjMessageProducer ojMessageProducer;
 
-    @Autowired
-    private OjProblemService ojProblemService;
+	@Override
+	public Long doSubmit(ProblemSubmitAddRequest problemSubmitAddRequest, SysUser loginUser) throws Exception {
+		OjProblemSubmit ojProblemSubmit = new OjProblemSubmit();
+		ojProblemSubmit.setStatus(ProblemSubmitStatusEnum.Submitting.getKey());
+		ojProblemSubmit.setLanguage(problemSubmitAddRequest.getLanguage());
+		ojProblemSubmit.setCode(problemSubmitAddRequest.getCode());
 
-    @Autowired
-    private OjMessageProducer ojMessageProducer;
+		Long questionId = ojProblemSubmit.getQuestionId();
 
-    @Override
-    public Long doSubmit(ProblemSubmitAddRequest problemSubmitAddRequest, SysUser loginUser) throws Exception {
-        OjProblemSubmit ojProblemSubmit = new OjProblemSubmit();
-        ojProblemSubmit.setStatus(ProblemSubmitStatusEnum.Submitting.getKey());
-        ojProblemSubmit.setLanguage(problemSubmitAddRequest.getLanguage());
-        ojProblemSubmit.setCode(problemSubmitAddRequest.getCode());
+		OjProblem problem = ojProblemService.getById(questionId);
 
-        Long questionId = ojProblemSubmit.getQuestionId();
+		if (problem == null) {
+			throw new Exception("题目不存在");
+		}
+		ojProblemSubmit.setQuestionId(problemSubmitAddRequest.getQuestionId());
+		// TODO: 可能存在问题
+		if (loginUser == null) {
+			throw new Exception("你还未登录");
+		}
+		ojProblemSubmit.setUserId(loginUser.getId());
+		this.save(ojProblemSubmit);
+		Long ojProblemSubmitId = ojProblemSubmit.getId();
+		if (problem.getSubmitNum() == null) {
+			problem.setSubmitNum(1);
+		}
+		else {
+			problem.setSubmitNum(problem.getSubmitNum() + 1);
+		}
+		boolean update = ojProblemService.updateById(problem);
+		// 消息队列
+		ojMessageProducer.sendMessage("luojialong", "shenming", String.valueOf(ojProblemSubmitId));
+		return ojProblemSubmitId;
+	}
 
-        OjProblem problem = ojProblemService.getById(questionId);
-
-        if (problem == null) {
-            throw new Exception("题目不存在");
-        }
-        ojProblemSubmit.setQuestionId(problemSubmitAddRequest.getQuestionId());
-        if (loginUser == null) {
-            throw new Exception("你还未登录");
-        }
-        ojProblemSubmit.setUserId(loginUser.getId());
-        this.save(ojProblemSubmit);
-        Long ojProblemSubmitId = ojProblemSubmit.getId();
-        if (problem.getSubmitNum() == null) {
-            problem.setSubmitNum(1);
-        }else {
-            problem.setSubmitNum(problem.getSubmitNum() + 1);
-        }
-        boolean update = ojProblemService.updateById(problem);
-        //消息队列
-        ojMessageProducer.sendMessage("luojialong","shenming",String.valueOf(ojProblemSubmitId));
-        return ojProblemSubmitId;
-    }
 }

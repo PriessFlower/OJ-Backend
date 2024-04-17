@@ -6,25 +6,23 @@ import com.zrx.codesandbox.impl.docker.CDockerCodeSandbox;
 import com.zrx.codesandbox.impl.docker.CPPDockerCodeSandbox;
 import com.zrx.codesandbox.impl.docker.JavaDockerCodeSandbox;
 import com.zrx.codesandbox.impl.docker.PythonDockerCodeSandbox;
-import org.springframework.stereotype.Component;
 
 public class CodeManager {
 
-
-    public static CodeSandBox getCodeSandbox(String language) {
-        QuestionSubmitLanguageEnum enumByValue = QuestionSubmitLanguageEnum.getEnumByValue(language);
-        switch (enumByValue) {
-            case JAVA:
-                return new JavaDockerCodeSandbox();
-            case C:
-                return new CDockerCodeSandbox();
-            case PYTHON:
-                return new PythonDockerCodeSandbox();
-            case CPLUSPLUS:
-                return new CPPDockerCodeSandbox();
-            default:
-                return new JavaDockerCodeSandbox();
-        }
-    }
+	public static CodeSandBox getCodeSandbox(String language) {
+		QuestionSubmitLanguageEnum enumByValue = QuestionSubmitLanguageEnum.getEnumByValue(language);
+		switch (enumByValue) {
+			case JAVA:
+				return new JavaDockerCodeSandbox();
+			case C:
+				return new CDockerCodeSandbox();
+			case PYTHON:
+				return new PythonDockerCodeSandbox();
+			case CPLUSPLUS:
+				return new CPPDockerCodeSandbox();
+			default:
+				return new JavaDockerCodeSandbox();
+		}
+	}
 
 }

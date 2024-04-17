@@ -19,9 +19,7 @@ public interface SysUserMap {
 
 	SysUser toEntity(SysUserRequest request);
 
-	@Mappings({
-			@Mapping(source = "createTime", target = "registerTime")
-	})
+	@Mappings({ @Mapping(source = "createTime", target = "registerTime") })
 	SysUserResponse toResp(SysUser sysUser);
 
 	SysUser toEntityByUpdate(SysUserUpdateRequest request);
