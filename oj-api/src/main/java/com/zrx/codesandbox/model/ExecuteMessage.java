@@ -1,6 +1,5 @@
 package com.zrx.codesandbox.model;
 
-
 import lombok.Data;
 
 /**
@@ -10,15 +9,14 @@ import lombok.Data;
 @Data
 public class ExecuteMessage {
 
-    private Integer exitValue;
+	private Integer exitValue;
 
-    private String message;
+	private String message;
 
-    private String errorMessage;
+	private String errorMessage;
 
-    private Long time;
+	private Long time;
 
-
-    private Long memory;
+	private Long memory;
 
 }

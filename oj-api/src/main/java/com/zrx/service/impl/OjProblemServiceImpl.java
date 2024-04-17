@@ -70,7 +70,7 @@ public class OjProblemServiceImpl extends ServiceImpl<OjProblemMapper, OjProblem
 		queryWrapper.select(OJ_PROBLEM.ALL_COLUMNS)
 			.where(OJ_PROBLEM.TITLE.like(title, StringUtil::isNotBlank))
 			.and(OJ_PROBLEM.DIFFICULTY.eq(difficulty, ObjectUtil::isNotNull))
-				.orderBy(MybatisFlexFunc.coalesce(OJ_PROBLEM.UPDATE_TIME, OJ_PROBLEM.CREATE_TIME), false);
+			.orderBy(MybatisFlexFunc.coalesce(OJ_PROBLEM.UPDATE_TIME, OJ_PROBLEM.CREATE_TIME), false);
 		if (CollUtil.isNotEmpty(tags)) {
 			for (String tag : tags) {
 				queryWrapper.and(OJ_PROBLEM.TAGS.like("\"" + tag + "\""));
@@ -78,7 +78,10 @@ public class OjProblemServiceImpl extends ServiceImpl<OjProblemMapper, OjProblem
 		}
 		Page<OjProblem> ojProblemPage = mapper.paginate(Page.of(page.getPageNum(), page.getPageSize()), queryWrapper);
 		Page<OjProblemPageVo> resPage = new Page<>();
-		List<OjProblemPageVo> voList = ojProblemPage.getRecords().stream().map(OjProblemConverter::entity2VoPage).toList();
+		List<OjProblemPageVo> voList = ojProblemPage.getRecords()
+			.stream()
+			.map(OjProblemConverter::entity2VoPage)
+			.toList();
 
 		resPage.setRecords(voList);
 		resPage.setTotalPage(ojProblemPage.getTotalPage());

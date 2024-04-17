@@ -11,10 +11,10 @@ import java.util.List;
 @ToString
 public class ExecuteCodeRequest {
 
-    private List<String> inputList;
+	private List<String> inputList;
 
+	private String code;
 
-    private String code;
+	private String language;
 
-    private String language;
 }

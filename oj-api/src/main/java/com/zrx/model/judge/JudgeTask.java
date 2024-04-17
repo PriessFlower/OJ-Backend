@@ -1,10 +1,8 @@
 package com.zrx.model.judge;
 
 import com.zrx.codesandbox.model.ExecuteCodeResponse;
-import com.zrx.codesandbox.model.JudgeInfo;
 import com.zrx.model.entity.OjProblem;
 import com.zrx.model.entity.OjProblemSubmit;
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,15 +12,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class JudgeTask {
 
+	// 判题的目标题目
+	public OjProblem ojProblem;
 
-    //判题的目标题目
-    public OjProblem ojProblem;
+	// 代码运行结果
+	public ExecuteCodeResponse executeCodeResponse;
 
-    //代码运行结果
-    public ExecuteCodeResponse executeCodeResponse;
-
-    //代码提交信息
-    public OjProblemSubmit ojProblemSubmit;
-
+	// 代码提交信息
+	public OjProblemSubmit ojProblemSubmit;
 
 }

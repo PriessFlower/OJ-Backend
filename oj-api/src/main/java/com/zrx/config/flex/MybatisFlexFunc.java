@@ -11,11 +11,11 @@ import com.mybatisflex.core.query.QueryColumn;
  */
 public class MybatisFlexFunc {
 
-    /**
-     * COALESCE 函数
-     */
-    public static QueryColumn coalesce(QueryColumn ...columns) {
-        return new FunctionQueryColumn("COALESCE", columns);
-    }
+	/**
+	 * COALESCE 函数
+	 */
+	public static QueryColumn coalesce(QueryColumn... columns) {
+		return new FunctionQueryColumn("COALESCE", columns);
+	}
 
 }

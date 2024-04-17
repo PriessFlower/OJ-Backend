@@ -9,21 +9,18 @@ import java.util.List;
 
 public class CDockerCodeSandbox extends CodeSandboxTemplate {
 
-    List<String> blackList = Arrays.asList("","");
+	List<String> blackList = Arrays.asList("", "");
 
-    public CDockerCodeSandbox() {
-        super();
-        super.GLOBAL_CODE_FILE_NAME = "main.c";
-        super.ImageName = "gcc:latest";
-        super.volumnName = "/c";
-    }
+	public CDockerCodeSandbox() {
+		super();
+		super.GLOBAL_CODE_FILE_NAME = "main.c";
+		super.ImageName = "gcc:latest";
+		super.volumnName = "/c";
+	}
 
-
-
-
-    @Override
-    public ExecuteCodeResponse executeCode(ExecuteCodeRequest executeCodeRequest) {
-        return super.executeCode(executeCodeRequest);
-    }
+	@Override
+	public ExecuteCodeResponse executeCode(ExecuteCodeRequest executeCodeRequest) {
+		return super.executeCode(executeCodeRequest);
+	}
 
 }

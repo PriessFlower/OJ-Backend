@@ -103,7 +103,8 @@ public class OjProblemController {
 	@GetMapping("/page")
 	@Operation(summary = "分页查询题目")
 	@SaCheckPermission(AuthConst.SUPER_ADMIN)
-	public Result<Page<OjProblemPageVo>> page(@Parameter(description = "分页信息") Paging page, @Parameter(description = "查询条件") OjProblemQueryRequest req) {
+	public Result<Page<OjProblemPageVo>> page(@Parameter(description = "分页信息") Paging page,
+			@Parameter(description = "查询条件") OjProblemQueryRequest req) {
 		return Result.success(ojProblemService.page(page, req));
 	}
 
@@ -115,15 +116,16 @@ public class OjProblemController {
 	 */
 	@GetMapping("/export")
 	@Operation(summary = "导出题目信息")
-	public void export(@Parameter(description = "分页信息") Paging page, @Parameter(description = "查询条件") OjProblemQueryRequest req,
-					   HttpServletResponse response) throws IOException {
+	public void export(@Parameter(description = "分页信息") Paging page,
+			@Parameter(description = "查询条件") OjProblemQueryRequest req, HttpServletResponse response)
+			throws IOException {
 		Page<OjProblemPageVo> pageR = ojProblemService.page(page, req);
 		ExcelUtil.setExcelResponseProp(response, "题目信息");
 		EasyExcelFactory.write(response.getOutputStream())
-				.head(OjProblemPageVo.class)
-				.excelType(ExcelTypeEnum.XLSX)
-				.sheet(0, "题目信息")
-				.doWrite(pageR.getRecords());
+			.head(OjProblemPageVo.class)
+			.excelType(ExcelTypeEnum.XLSX)
+			.sheet(0, "题目信息")
+			.doWrite(pageR.getRecords());
 	}
 
 }

@@ -4,7 +4,9 @@ import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.async.ResultCallback;
-import com.github.dockerjava.api.command.*;
+import com.github.dockerjava.api.command.CreateContainerCmd;
+import com.github.dockerjava.api.command.CreateContainerResponse;
+import com.github.dockerjava.api.command.StatsCmd;
 import com.github.dockerjava.api.model.Bind;
 import com.github.dockerjava.api.model.HostConfig;
 import com.github.dockerjava.api.model.Statistics;
@@ -31,327 +33,324 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-
 @Slf4j
 public abstract class CodeSandboxTemplate implements CodeSandBox {
 
-    public static final String GLOBAL_CODE_DIR_NAME = "tmpCode";
+	public static final String GLOBAL_CODE_DIR_NAME = "tmpCode";
 
-    protected String GLOBAL_CODE_FILE_NAME;
+	protected String GLOBAL_CODE_FILE_NAME;
 
-    public static final String SECURITY_MANAGER_CLASSNAME;
+	public static final String SECURITY_MANAGER_CLASSNAME;
 
-    public static final int TIME_OUT = 5000;
+	public static final int TIME_OUT = 5000;
 
+	public static final String SECURITY_MANAGER_PATH;
 
-    public static final String SECURITY_MANAGER_PATH;
+	private static String globalCodePathName;
 
-    private static String globalCodePathName;
+	private static String userCodeParentPath;
 
-    private static String userCodeParentPath;
+	private static String userCodePath;
 
-    private static String userCodePath;
+	protected String language;
 
+	protected String containerId;
 
-    protected String language;
+	protected DockerClient dockerClient;
 
-    protected String containerId;
+	protected String ImageName;
 
-    protected DockerClient dockerClient;
+	protected boolean is_init_first = false;
 
-    protected String ImageName;
+	protected String volumnName;
 
-    protected boolean is_init_first = false;
+	protected Long memory;
 
-    protected String volumnName;
+	static {
+		String property = System.getProperty("user.dir");
+		SECURITY_MANAGER_PATH = property + File.separator + "src/main/resources/security";
+		SECURITY_MANAGER_CLASSNAME = "OjSecurityManager";
+	}
 
-    protected Long memory;
+	public ExecuteCodeResponse executeCode(ExecuteCodeRequest executeCodeRequest) {
+		language = executeCodeRequest.getLanguage();
+		List<String> inputList = executeCodeRequest.getInputList();
+		String code = executeCodeRequest.getCode();
+		File userCodeFile = saveCodeFile(code);
 
+		ExecuteMessage compileExecuteMessage = null;
+		List<ExecuteMessage> runExecuteMessageList = null;
+		try {
+			compileExecuteMessage = compileFile(userCodeFile);
+			startDocker();
+			createContiner();
+			runContainer();
+			StatsCmd statsCmd = calculateMemory();
+			runExecuteMessageList = runFile(inputList);
+			stopContainer();
+			removeContainer(statsCmd);
+		}
+		catch (Exception e) {
+			return getErrorResponse(e);
+		}
 
-    static {
-        String property = System.getProperty("user.dir");
-        SECURITY_MANAGER_PATH = property + File.separator + "src/main/resources/security";
-        SECURITY_MANAGER_CLASSNAME = "OjSecurityManager";
-    }
+		ExecuteCodeResponse executeCodeResponse = getOutputResponse(runExecuteMessageList);
 
+		boolean isDeleteFile = clearFile(userCodeFile);
 
-    public ExecuteCodeResponse executeCode(ExecuteCodeRequest executeCodeRequest) {
-        language = executeCodeRequest.getLanguage();
-        List<String> inputList = executeCodeRequest.getInputList();
-        String code = executeCodeRequest.getCode();
-        File userCodeFile = saveCodeFile(code);
+		if (!isDeleteFile) {
+			log.error("delete file error,userCodeFilePath={}", userCodeFile.getAbsolutePath());
+		}
+		return executeCodeResponse;
+	}
 
-        ExecuteMessage compileExecuteMessage = null;
-        List<ExecuteMessage> runExecuteMessageList = null;
-        try {
-            compileExecuteMessage = compileFile(userCodeFile);
-            startDocker();
-            createContiner();
-            runContainer();
-            StatsCmd statsCmd = calculateMemory();
-            runExecuteMessageList = runFile(inputList);
-            stopContainer();
-            removeContainer(statsCmd);
-        } catch (Exception e) {
-            return getErrorResponse(e);
-        }
+	public void startDocker() {
+		DockerClientConfig custom = DefaultDockerClientConfig.createDefaultConfigBuilder()
+			.withDockerHost("unix:///var/run/docker.sock")
+			.build();
+		dockerClient = DockerClientBuilder.getInstance(custom).build();
+	}
 
-        ExecuteCodeResponse executeCodeResponse = getOutputResponse(runExecuteMessageList);
+	public void createContiner() throws Exception {
+		CreateContainerCmd containerCmd = dockerClient.createContainerCmd(ImageName);
+		HostConfig hostConfig = new HostConfig();
+		hostConfig.setBinds(new Bind(userCodeParentPath, new Volume(volumnName)));
+		hostConfig.withCpuCount(1L);
+		hostConfig.withMemorySwap(0L);
+		hostConfig.withMemory(100 * 1000 * 1000L);
+		CreateContainerResponse createContainerResponse = containerCmd.withHostConfig(hostConfig)
+			.withNetworkDisabled(true)
+			.withReadonlyRootfs(true)
+			.withAttachStderr(true)
+			.withAttachStdin(true)
+			.withAttachStdout(true)
+			.withTty(true)
+			.exec();
+		String responseId = createContainerResponse.getId();
+		containerId = responseId;
+	}
 
+	public void runContainer() {
+		dockerClient.startContainerCmd(containerId).exec();
+	}
 
-        boolean isDeleteFile = clearFile(userCodeFile);
+	public StatsCmd calculateMemory() {
+		memory = Long.MIN_VALUE;
+		StatsCmd statsCmd = dockerClient.statsCmd(containerId);
+		ResultCallback<Statistics> statisticsResultCallback = statsCmd.exec(new ResultCallback<Statistics>() {
 
-        if (!isDeleteFile) {
-            log.error("delete file error,userCodeFilePath={}", userCodeFile.getAbsolutePath());
-        }
-        return executeCodeResponse;
-    }
+			@Override
+			public void onStart(Closeable closeable) {
 
+			}
 
-    public void startDocker() {
-        DockerClientConfig custom = DefaultDockerClientConfig.createDefaultConfigBuilder()
-                .withDockerHost("unix:///var/run/docker.sock")
-                .build();
-        dockerClient = DockerClientBuilder.getInstance(custom).build();
-    }
+			@Override
+			public void onNext(Statistics statistics) {
+				System.out.println("内存占用：" + statistics.getMemoryStats().getUsage());
+				memory = Math.max(statistics.getMemoryStats().getUsage(), memory);
+			}
 
+			@Override
+			public void close() throws IOException {
 
-    public void createContiner() throws Exception {
-        CreateContainerCmd containerCmd = dockerClient.createContainerCmd(ImageName);
-        HostConfig hostConfig = new HostConfig();
-        hostConfig.setBinds(new Bind(userCodeParentPath, new Volume(volumnName)));
-        hostConfig.withCpuCount(1L);
-        hostConfig.withMemorySwap(0L);
-        hostConfig.withMemory(100 * 1000 * 1000L);
-        CreateContainerResponse createContainerResponse = containerCmd
-                .withHostConfig(hostConfig)
-                .withNetworkDisabled(true)
-                .withReadonlyRootfs(true)
-                .withAttachStderr(true)
-                .withAttachStdin(true)
-                .withAttachStdout(true)
-                .withTty(true)
-                .exec();
-        String responseId = createContainerResponse.getId();
-        containerId = responseId;
-    }
+			}
 
+			@Override
+			public void onError(Throwable throwable) {
 
-    public void runContainer() {
-        dockerClient.startContainerCmd(containerId).exec();
-    }
+			}
 
-    public StatsCmd calculateMemory() {
-        memory = Long.MIN_VALUE;
-        StatsCmd statsCmd = dockerClient.statsCmd(containerId);
-        ResultCallback<Statistics> statisticsResultCallback = statsCmd.exec(new ResultCallback<Statistics>() {
+			@Override
+			public void onComplete() {
 
-            @Override
-            public void onStart(Closeable closeable) {
+			}
+		});
+		statsCmd.exec(statisticsResultCallback);
+		return statsCmd;
+	}
 
-            }
+	public void stopContainer() {
+		try {
+			Runtime.getRuntime().exec(String.format("docker stop -f %s", containerId));
+			// dockerClient.stopContainerCmd(containerId).exec();
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
 
-            @Override
-            public void onNext(Statistics statistics) {
-                System.out.println("内存占用：" + statistics.getMemoryStats().getUsage());
-                memory = Math.max(statistics.getMemoryStats().getUsage(), memory);
-            }
+	public void removeContainer(StatsCmd statsCmd) {
+		try {
+			Runtime.getRuntime().exec(String.format("docker rm -f %s", containerId));
+			// dockerClient.removeContainerCmd(containerId).exec();
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		statsCmd.close();
+	}
 
-            @Override
-            public void close() throws IOException {
+	public void removeContainer() {
+		try {
+			// Process exec = Runtime.getRuntime().exec(String.format("docker rm -f %s",
+			// containerId));
+			dockerClient.removeContainerCmd(containerId).exec();
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
 
-            }
+	public File saveCodeFile(String code) {
+		String userDir = System.getProperty("user.dir");
+		globalCodePathName = userDir + File.separator + GLOBAL_CODE_DIR_NAME;
+		if (!FileUtil.exist(globalCodePathName)) {
+			FileUtil.mkdir(globalCodePathName);
+		}
+		userCodeParentPath = globalCodePathName + File.separator + UUID.randomUUID();
+		userCodePath = userCodeParentPath + File.separator + GLOBAL_CODE_FILE_NAME;
+		File userCodeFile = FileUtil.writeString(code, userCodePath, StandardCharsets.UTF_8);
+		return userCodeFile;
+	}
 
+	public ExecuteMessage compileFile(File userCodeFile) throws Exception {
+		String compileCmd = LanguageCmdUtils.getCompileCMD(userCodeFile.getAbsolutePath(), userCodeParentPath,
+				language);
+		if (compileCmd == null)
+			return null;
+		try {
+			Process compileProcess = Runtime.getRuntime().exec(compileCmd);
+			ExecuteMessage executeMessage = ProcessUtils.compileCode(compileProcess);
+			if (executeMessage.getExitValue() != 0) {
+				throw new RuntimeException("编译错误：\n错误的原因是：" + executeMessage.getErrorMessage());
+			}
+			return executeMessage;
+		}
+		catch (Exception e) {
+			throw e;
+		}
+	}
 
-            @Override
-            public void onError(Throwable throwable) {
+	public List<ExecuteMessage> runFile(List<String> inputList) throws IOException {
+		long startMemory = memory;
+		System.out.println("开始的内存---" + memory);
+		List<ExecuteMessage> executeMessagesList = new ArrayList<>();
+		if (inputList == null) {
+			Runtime runtime = Runtime.getRuntime();
+			String runCmd = LanguageCmdUtils.getRunCMD(volumnName, language, containerId);
+			System.out.println(runCmd);
+			Process runProcess = runtime.exec(runCmd);
+			ExecuteMessage executeMessage = null;
+			TimeManagerThread timeManagerThread = new TimeManagerThread(TIME_OUT);
+			timeManagerThread.setProcess(runProcess);
+			timeManagerThread.start();
+			executeMessage = ProcessUtils.runCode(runProcess, null);
+			executeMessage.setMemory(memory);
+			executeMessagesList.add(executeMessage);
+			if (timeManagerThread.IsTime_out()) {
+				throw new RuntimeException("超时异常");
+			}
+			timeManagerThread.stop();
+		}
+		else {
+			for (String inputArgs : inputList) {
+				try {
+					Runtime runtime = Runtime.getRuntime();
+					String runCmd = LanguageCmdUtils.getRunCMD(volumnName, language, containerId);
+					System.out.println(runCmd);
+					Process runProcess = runtime.exec(runCmd);
+					ExecuteMessage executeMessage = null;
+					TimeManagerThread timeManagerThread = new TimeManagerThread(TIME_OUT);
+					timeManagerThread.setProcess(runProcess);
+					timeManagerThread.start();
+					executeMessage = ProcessUtils.runCode(runProcess, inputArgs);
+					System.out.println("结束的进程-----" + memory);
+					executeMessage.setMemory(memory);
+					executeMessagesList.add(executeMessage);
+					if (timeManagerThread.IsTime_out()) {
+						stopContainer();
+						removeContainer();
+						throw new RuntimeException("超时异常");
+					}
+					timeManagerThread.stop();
+				}
+				catch (Exception e) {
+					throw e;
+				}
+			}
+		}
+		return executeMessagesList;
+	}
 
-            }
+	public ExecuteCodeResponse getOutputResponse(List<ExecuteMessage> executeMessagesList) {
+		ExecuteCodeResponse executeCodeResponse = new ExecuteCodeResponse();
+		JudgeInfo judgeResult = new JudgeInfo();
+		List<String> outputList = new ArrayList<>();
+		long maxTime = 0L;
+		long maxMemory = 0L;
+		for (ExecuteMessage executeMessage : executeMessagesList) {
+			String errorMessageStr = executeMessage.getErrorMessage();
+			if (StrUtil.isNotBlank(errorMessageStr)) {
+				executeCodeResponse.setMessage(QuestionExecuteResultEnum.RunException.getText());
+				executeCodeResponse.setStatus(QuestionExecuteResultEnum.RunException.getValue());
+				break;
+			}
+			Long time = executeMessage.getTime();
+			Long memory = executeMessage.getMemory();
+			maxTime = Math.max(time, maxTime);
+			maxMemory = Math.max(maxMemory, memory);
+			outputList.add(executeMessage.getMessage());
+		}
+		if (outputList.size() == executeMessagesList.size()) {
+			executeCodeResponse.setStatus(1);
+		}
+		judgeResult.setMemory(maxMemory / 1024 / 8);
+		judgeResult.setTime(maxTime);
+		executeCodeResponse.setOuputList(outputList);
+		executeCodeResponse.setJudgeInfo(judgeResult);
+		return executeCodeResponse;
+	}
 
-            @Override
-            public void onComplete() {
+	public boolean clearFile(File userCodeFile) {
+		if (userCodeFile.getParentFile() != null) {
+			boolean del = FileUtil.del(userCodeParentPath);
+			System.out.println("消除:" + (del ? "成功" : "失败"));
+			return del;
+		}
+		return true;
+	}
 
-            }
-        });
-        statsCmd.exec(statisticsResultCallback);
-        return statsCmd;
-    }
+	public ExecuteCodeResponse getErrorResponse(Throwable e) {
+		ExecuteCodeResponse executeCodeResponse = new ExecuteCodeResponse();
+		executeCodeResponse.setOuputList(new ArrayList<>());
+		JudgeInfo judgeInfo = new JudgeInfo();
+		judgeInfo.setMessage(e.getMessage());
+		if (memory > 0) {
+			judgeInfo.setMemory(memory / 1024 / 8);
+		}
+		judgeInfo.setMessage(desensitizationStr(e.getMessage()));
+		if (e.getMessage().contains("编译")) {
+			executeCodeResponse.setMessage(QuestionExecuteResultEnum.CompileFailure.getText());
+			executeCodeResponse.setStatus(QuestionExecuteResultEnum.CompileFailure.getValue());
+		}
+		else if (e.getMessage().contains("超时")) {
+			executeCodeResponse.setMessage(QuestionExecuteResultEnum.OutOfTimeException.getText());
+			executeCodeResponse.setStatus(QuestionExecuteResultEnum.OutOfTimeException.getValue());
+		}
+		else {
+			executeCodeResponse.setMessage(QuestionExecuteResultEnum.RunException.getText());
+			executeCodeResponse.setStatus(QuestionExecuteResultEnum.RunException.getValue());
+		}
+		executeCodeResponse.setJudgeInfo(new JudgeInfo());
+		return executeCodeResponse;
+	}
 
-    public void stopContainer() {
-        try {
-            Runtime.getRuntime().exec(String.format("docker stop -f %s", containerId));
-//            dockerClient.stopContainerCmd(containerId).exec();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
+	public String desensitizationStr(String information) {
+		if (information != null) {
+			information = information.replaceAll(userCodePath, "");
+			information = information.replaceAll(userCodeParentPath, "");
+		}
+		return information;
+	}
 
-    public void removeContainer(StatsCmd statsCmd) {
-        try {
-            Runtime.getRuntime().exec(String.format("docker rm -f %s", containerId));
-//            dockerClient.removeContainerCmd(containerId).exec();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        statsCmd.close();
-    }
-
-    public void removeContainer() {
-        try {
-//            Process exec = Runtime.getRuntime().exec(String.format("docker rm -f %s", containerId));
-            dockerClient.removeContainerCmd(containerId).exec();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-
-    public File saveCodeFile(String code) {
-        String userDir = System.getProperty("user.dir");
-        globalCodePathName = userDir + File.separator + GLOBAL_CODE_DIR_NAME;
-        if (!FileUtil.exist(globalCodePathName)) {
-            FileUtil.mkdir(globalCodePathName);
-        }
-        userCodeParentPath = globalCodePathName + File.separator + UUID.randomUUID();
-        userCodePath = userCodeParentPath + File.separator + GLOBAL_CODE_FILE_NAME;
-        File userCodeFile = FileUtil.writeString(code, userCodePath, StandardCharsets.UTF_8);
-        return userCodeFile;
-    }
-
-
-    public ExecuteMessage compileFile(File userCodeFile) throws Exception {
-        String compileCmd = LanguageCmdUtils.getCompileCMD(userCodeFile.getAbsolutePath(), userCodeParentPath, language);
-        if (compileCmd == null) return null;
-        try {
-            Process compileProcess = Runtime.getRuntime().exec(compileCmd);
-            ExecuteMessage executeMessage = ProcessUtils.compileCode(compileProcess);
-            if (executeMessage.getExitValue() != 0) {
-                throw new RuntimeException("编译错误：\n错误的原因是：" + executeMessage.getErrorMessage());
-            }
-            return executeMessage;
-        } catch (Exception e) {
-            throw e;
-        }
-    }
-
-
-    public List<ExecuteMessage> runFile(List<String> inputList) throws IOException {
-        long startMemory = memory;
-        System.out.println("开始的内存---" + memory);
-        List<ExecuteMessage> executeMessagesList = new ArrayList<>();
-        if (inputList == null) {
-            Runtime runtime = Runtime.getRuntime();
-            String runCmd = LanguageCmdUtils.getRunCMD(volumnName, language, containerId);
-            System.out.println(runCmd);
-            Process runProcess = runtime.exec(runCmd);
-            ExecuteMessage executeMessage = null;
-            TimeManagerThread timeManagerThread = new TimeManagerThread(TIME_OUT);
-            timeManagerThread.setProcess(runProcess);
-            timeManagerThread.start();
-            executeMessage = ProcessUtils.runCode(runProcess, null);
-            executeMessage.setMemory(memory);
-            executeMessagesList.add(executeMessage);
-            if (timeManagerThread.IsTime_out()) {
-                throw new RuntimeException("超时异常");
-            }
-            timeManagerThread.stop();
-        } else {
-            for (String inputArgs : inputList) {
-                try {
-                    Runtime runtime = Runtime.getRuntime();
-                    String runCmd = LanguageCmdUtils.getRunCMD(volumnName, language, containerId);
-                    System.out.println(runCmd);
-                    Process runProcess = runtime.exec(runCmd);
-                    ExecuteMessage executeMessage = null;
-                    TimeManagerThread timeManagerThread = new TimeManagerThread(TIME_OUT);
-                    timeManagerThread.setProcess(runProcess);
-                    timeManagerThread.start();
-                    executeMessage = ProcessUtils.runCode(runProcess, inputArgs);
-                    System.out.println("结束的进程-----" + memory);
-                    executeMessage.setMemory(memory);
-                    executeMessagesList.add(executeMessage);
-                    if (timeManagerThread.IsTime_out()) {
-                        stopContainer();
-                        removeContainer();
-                        throw new RuntimeException("超时异常");
-                    }
-                    timeManagerThread.stop();
-                } catch (Exception e) {
-                    throw e;
-                }
-            }
-        }
-        return executeMessagesList;
-    }
-
-    public ExecuteCodeResponse getOutputResponse(List<ExecuteMessage> executeMessagesList) {
-        ExecuteCodeResponse executeCodeResponse = new ExecuteCodeResponse();
-        JudgeInfo judgeResult = new JudgeInfo();
-        List<String> outputList = new ArrayList<>();
-        long maxTime = 0L;
-        long maxMemory = 0L;
-        for (ExecuteMessage executeMessage : executeMessagesList) {
-            String errorMessageStr = executeMessage.getErrorMessage();
-            if (StrUtil.isNotBlank(errorMessageStr)) {
-                executeCodeResponse.setMessage(QuestionExecuteResultEnum.RunException.getText());
-                executeCodeResponse.setStatus(QuestionExecuteResultEnum.RunException.getValue());
-                break;
-            }
-            Long time = executeMessage.getTime();
-            Long memory = executeMessage.getMemory();
-            maxTime = Math.max(time, maxTime);
-            maxMemory = Math.max(maxMemory, memory);
-            outputList.add(executeMessage.getMessage());
-        }
-        if (outputList.size() == executeMessagesList.size()) {
-            executeCodeResponse.setStatus(1);
-        }
-        judgeResult.setMemory(maxMemory / 1024 / 8);
-        judgeResult.setTime(maxTime);
-        executeCodeResponse.setOuputList(outputList);
-        executeCodeResponse.setJudgeInfo(judgeResult);
-        return executeCodeResponse;
-    }
-
-
-    public boolean clearFile(File userCodeFile) {
-        if (userCodeFile.getParentFile() != null) {
-            boolean del = FileUtil.del(userCodeParentPath);
-            System.out.println("消除:" + (del ? "成功" : "失败"));
-            return del;
-        }
-        return true;
-    }
-
-
-    public ExecuteCodeResponse getErrorResponse(Throwable e) {
-        ExecuteCodeResponse executeCodeResponse = new ExecuteCodeResponse();
-        executeCodeResponse.setOuputList(new ArrayList<>());
-        JudgeInfo judgeInfo = new JudgeInfo();
-        judgeInfo.setMessage(e.getMessage());
-        if (memory > 0) {
-            judgeInfo.setMemory(memory / 1024 / 8);
-        }
-        judgeInfo.setMessage(desensitizationStr(e.getMessage()));
-        if (e.getMessage().contains("编译")) {
-            executeCodeResponse.setMessage(QuestionExecuteResultEnum.CompileFailure.getText());
-            executeCodeResponse.setStatus(QuestionExecuteResultEnum.CompileFailure.getValue());
-        } else if (e.getMessage().contains("超时")) {
-            executeCodeResponse.setMessage(QuestionExecuteResultEnum.OutOfTimeException.getText());
-            executeCodeResponse.setStatus(QuestionExecuteResultEnum.OutOfTimeException.getValue());
-        } else {
-            executeCodeResponse.setMessage(QuestionExecuteResultEnum.RunException.getText());
-            executeCodeResponse.setStatus(QuestionExecuteResultEnum.RunException.getValue());
-        }
-        executeCodeResponse.setJudgeInfo(new JudgeInfo());
-        return executeCodeResponse;
-    }
-
-    public String desensitizationStr(String information) {
-        if (information != null) {
-            information = information.replaceAll(userCodePath, "");
-            information = information.replaceAll(userCodeParentPath, "");
-        }
-        return information;
-    }
 }

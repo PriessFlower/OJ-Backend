@@ -10,12 +10,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ProblemSubmitAddRequest {
 
-    @Schema(description = "编程语言")
-    private String language;
+	@Schema(description = "编程语言")
+	private String language;
 
-    @Schema(description = "用户代码")
-    private String code;
+	@Schema(description = "用户代码")
+	private String code;
 
-    @Schema(description = "题目 id")
-    private Long questionId;
+	@Schema(description = "题目 id")
+	private Long questionId;
+
 }

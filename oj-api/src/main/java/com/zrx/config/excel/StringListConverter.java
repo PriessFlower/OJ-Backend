@@ -13,19 +13,21 @@ import java.util.List;
  * @since 2024/4/8
  */
 public class StringListConverter implements Converter<List<String>> {
-    @Override
-    public Class<?> supportJavaTypeKey() {
-        return List.class;
-    }
 
-    @Override
-    public CellDataTypeEnum supportExcelTypeKey() {
-        return CellDataTypeEnum.STRING;
-    }
+	@Override
+	public Class<?> supportJavaTypeKey() {
+		return List.class;
+	}
 
-    @Override
-    public WriteCellData<?> convertToExcelData(List<String> value, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
-        return new WriteCellData<>(String.join(",", value));
-    }
+	@Override
+	public CellDataTypeEnum supportExcelTypeKey() {
+		return CellDataTypeEnum.STRING;
+	}
+
+	@Override
+	public WriteCellData<?> convertToExcelData(List<String> value, ExcelContentProperty contentProperty,
+			GlobalConfiguration globalConfiguration) {
+		return new WriteCellData<>(String.join(",", value));
+	}
 
 }
