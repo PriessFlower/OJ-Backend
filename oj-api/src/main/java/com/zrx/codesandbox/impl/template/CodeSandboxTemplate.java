@@ -48,9 +48,9 @@ public abstract class CodeSandboxTemplate implements CodeSandBox {
 
     private static String globalCodePathName;
 
-    private static String userCodeParentPath;
+    private String userCodeParentPath;
 
-    private static String userCodePath;
+    private String userCodePath;
 
 
     protected String language;
