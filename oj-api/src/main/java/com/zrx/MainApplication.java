@@ -1,5 +1,6 @@
 package com.zrx;
 
+import com.zrx.queue.InitRabbitMq;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -19,6 +20,7 @@ import java.util.Optional;
 public class MainApplication {
 
 	public static void main(String[] args) throws UnknownHostException {
+		InitRabbitMq.init();
 		SpringApplication application = new SpringApplication(MainApplication.class);
 		ConfigurableApplicationContext applicationContext = application.run(args);
 

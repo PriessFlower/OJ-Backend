@@ -4,6 +4,10 @@ import com.mybatisflex.codegen.Generator;
 import com.mybatisflex.codegen.config.EntityConfig;
 import com.mybatisflex.codegen.config.GlobalConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import com.zrx.controller.OjProblemSubmitController;
+import jakarta.annotation.Resource;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Mybatis-Flex 代码生成
@@ -12,6 +16,7 @@ import com.zaxxer.hikari.HikariDataSource;
  * @since 2024/2/18
  */
 public class Codegen {
+
 
 	public static void main(String[] args) {
 		// 配置数据源
@@ -61,5 +66,7 @@ public class Codegen {
 
 		return globalConfig;
 	}
+
+
 
 }
