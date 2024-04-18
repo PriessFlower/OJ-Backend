@@ -34,7 +34,7 @@ public class SysFileController {
      */
     @PostMapping("/upload")
     @Operation(summary = "上传文件")
-    public Result<Boolean> upload(@RequestParam("file") MultipartFile file) {
+    public Result<String> upload(@RequestParam("file") MultipartFile file) {
         return Result.success(sysFileService.upload(file));
     }
 

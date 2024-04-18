@@ -10,6 +10,7 @@ import com.zrx.sys.mapper.SysFileMapper;
 import com.zrx.sys.service.SysFileService;
 import com.zrx.sys.utils.MinioUtil;
 import jakarta.annotation.Resource;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,8 +26,14 @@ public class SysFileServiceImpl extends ServiceImpl<SysFileMapper, SysFile> impl
     @Resource
     private MinioUtil minioUtil;
 
+    @Value("${minio.endpoint}")
+    private String endpoint;
+
+    @Value("${minio.bucketName}")
+    private String bucketName;
+
     @Override
-    public Boolean upload(MultipartFile file) {
+    public String upload(MultipartFile file) {
         // TODO: 处理大文件上传
         String fileName = file.getOriginalFilename();
         fileName = NanoId.randomNanoId(10) + "-" + FileNameUtil.getName(fileName);
@@ -42,7 +49,11 @@ public class SysFileServiceImpl extends ServiceImpl<SysFileMapper, SysFile> impl
         if (!save) {
             throw new BusinessException("上传失败");
         }
-        return true;
+        return getUrl(url);
+    }
+
+    private String getUrl(String url) {
+        return endpoint + "/" + bucketName + "/" + url;
     }
 
 }

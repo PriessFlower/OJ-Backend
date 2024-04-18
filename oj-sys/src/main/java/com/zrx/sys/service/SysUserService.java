@@ -10,6 +10,7 @@ import com.zrx.sys.model.dto.SysUserRequest;
 import com.zrx.sys.model.dto.SysUserUpdateRequest;
 import com.zrx.sys.model.entity.SysUser;
 import com.zrx.sys.model.vo.SysUserResponse;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 系统用户 服务层。
@@ -35,4 +36,5 @@ public interface SysUserService extends IService<SysUser> {
 
 	Page<SysUserResponse> page(Paging page, SysUserRequest request);
 
+	String uploadAvatar(MultipartFile file);
 }

@@ -16,6 +16,7 @@ import com.zrx.security.model.dto.RegisterRequest;
 import com.zrx.security.model.vo.LoginResponse;
 import com.zrx.security.service.CaptchaService;
 import com.zrx.security.utils.Md5Util;
+import com.zrx.security.utils.SecurityHelper;
 import com.zrx.sys.enums.UserStatusEnum;
 import com.zrx.sys.mapper.SysUserMapper;
 import com.zrx.sys.mapstruct.SysUserMap;
@@ -23,10 +24,12 @@ import com.zrx.sys.model.dto.SysUserRequest;
 import com.zrx.sys.model.dto.SysUserUpdateRequest;
 import com.zrx.sys.model.entity.SysUser;
 import com.zrx.sys.model.vo.SysUserResponse;
+import com.zrx.sys.service.SysFileService;
 import com.zrx.sys.service.SysUserService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import static com.zrx.sys.model.entity.table.SysUserTableDef.SYS_USER;
 
@@ -43,6 +46,20 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 	private final CaptchaService captchaService;
 
 	private final SysUserMap sysUserMap;
+
+	private final SysFileService sysFileService;
+
+	@Override
+	public String uploadAvatar(MultipartFile file) {
+		String url = sysFileService.upload(file);
+		SysUser user = SecurityHelper.getUser();
+		user.setAvatar(url);
+		boolean updateFlag = updateById(user);
+		if (!updateFlag) {
+			throw new BusinessException("上传头像失败");
+		}
+		return url;
+	}
 
 	@Override
 	public Boolean update(SysUserUpdateRequest request) {

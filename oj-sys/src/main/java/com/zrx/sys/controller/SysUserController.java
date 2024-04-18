@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 系统用户 控制层。
@@ -30,6 +31,12 @@ public class SysUserController {
 
 	@Resource
 	private SysUserService sysUserService;
+
+	@PostMapping("/upload/avatar")
+	@Operation(summary = "上传头像")
+	public Result<String> upload(@RequestParam("file") MultipartFile file) {
+		return Result.success(sysUserService.uploadAvatar(file));
+	}
 
 	@PutMapping("/update")
 	@Operation(summary = "修改用户信息--开放给个人用户使用")
