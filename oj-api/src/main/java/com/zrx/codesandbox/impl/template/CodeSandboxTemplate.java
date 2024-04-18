@@ -4,9 +4,7 @@ import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.async.ResultCallback;
-import com.github.dockerjava.api.command.CreateContainerCmd;
-import com.github.dockerjava.api.command.CreateContainerResponse;
-import com.github.dockerjava.api.command.StatsCmd;
+import com.github.dockerjava.api.command.*;
 import com.github.dockerjava.api.model.Bind;
 import com.github.dockerjava.api.model.HostConfig;
 import com.github.dockerjava.api.model.Statistics;
@@ -48,9 +46,9 @@ public abstract class CodeSandboxTemplate implements CodeSandBox {
 
 	private static String globalCodePathName;
 
-	private static String userCodeParentPath;
+	private String userCodeParentPath;
 
-	private static String userCodePath;
+	private String userCodePath;
 
 	protected String language;
 
@@ -59,8 +57,6 @@ public abstract class CodeSandboxTemplate implements CodeSandBox {
 	protected DockerClient dockerClient;
 
 	protected String ImageName;
-
-	protected boolean is_init_first = false;
 
 	protected String volumnName;
 
