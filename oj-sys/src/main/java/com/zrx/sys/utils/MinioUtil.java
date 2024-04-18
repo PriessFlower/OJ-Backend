@@ -2,7 +2,7 @@ package com.zrx.sys.utils;
 
 import cn.hutool.core.date.DateUtil;
 import com.zrx.exception.BusinessException;
-import com.zrx.oss.MinioConfig;
+import com.zrx.minio.MinioConfig;
 import com.zrx.security.utils.SecurityHelper;
 import com.zrx.sys.model.entity.SysUser;
 import io.minio.*;

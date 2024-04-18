@@ -1,4 +1,4 @@
-package com.zrx.oss;
+package com.zrx.minio;
 
 import io.minio.MinioClient;
 import lombok.Data;
