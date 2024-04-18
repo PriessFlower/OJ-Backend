@@ -16,6 +16,9 @@ sa-token:
   is-log: false
 
 spring:
+  servlet:
+    multipart:
+      max-file-size: 100MB
   data:
     # redis配置
     redis:
@@ -43,3 +46,13 @@ spring:
 oj:
   redis:
     open: true
+
+minio:
+  # Minio服务所在地址
+  endpoint: http://127.0.0.1:9005
+  # 存储桶名称
+  bucketName: oj-bucket
+  # 访问的key
+  accessKey: minio
+  #访问的秘钥
+  secretKey: abc123456

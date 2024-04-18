@@ -19,7 +19,7 @@
     <modules>
         <module>oj-common</module>
         <module>oj-api</module>
-        <module>oj-security</module>
+        <module>oj-sys</module>
     </modules>
 
     <build>

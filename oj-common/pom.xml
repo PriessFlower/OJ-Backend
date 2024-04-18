@@ -23,11 +23,19 @@
         <knife4j.version>4.1.0</knife4j.version>
         <mybatis-flex.version>1.7.9</mybatis-flex.version>
         <easyexcel.version>3.3.4</easyexcel.version>
+        <minio.version>8.4.2</minio.version>
     </properties>
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!--MinIO 依赖-->
+        <dependency>
+            <groupId>io.minio</groupId>
+            <artifactId>minio</artifactId>
+            <version>${minio.version}</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/com.github.xiaoymin/knife4j-openapi3-jakarta-spring-boot-starter -->
