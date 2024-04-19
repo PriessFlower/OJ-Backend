@@ -32,12 +32,22 @@ public class SysUserController {
 	@Resource
 	private SysUserService sysUserService;
 
+	/**
+	 * 上传头像
+	 * @param file 文件
+	 * @return url
+	 */
 	@PostMapping("/upload/avatar")
 	@Operation(summary = "上传头像")
 	public Result<String> upload(@RequestParam("file") MultipartFile file) {
 		return Result.success(sysUserService.uploadAvatar(file));
 	}
 
+	/**
+	 * 修改用户信息--开放给个人用户使用
+	 * @param request 请求参数
+	 * @return boolean
+	 */
 	@PutMapping("/update")
 	@Operation(summary = "修改用户信息--开放给个人用户使用")
 	@SaCheckPermission(AuthConst.SUPER_ADMIN)
