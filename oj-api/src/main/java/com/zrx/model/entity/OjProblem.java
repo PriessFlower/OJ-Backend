@@ -76,12 +76,14 @@ public class OjProblem extends BaseEntity implements Serializable {
 	/**
 	 * 题目提交数
 	 */
+	@Column(onInsertValue = "0")
 	@Schema(description = "题目提交数")
 	private Integer submitNum;
 
 	/**
 	 * 题目通过数
 	 */
+	@Column(onInsertValue = "0")
 	@Schema(description = "题目通过数")
 	private Integer acceptedNum;
 
@@ -100,12 +102,14 @@ public class OjProblem extends BaseEntity implements Serializable {
 	/**
 	 * 点赞数
 	 */
+	@Column(onInsertValue = "0")
 	@Schema(description = "点赞数")
 	private Integer thumbNum;
 
 	/**
 	 * 收藏数
 	 */
+	@Column(onInsertValue = "0")
 	@Schema(description = "收藏数")
 	private Integer favourNum;
 

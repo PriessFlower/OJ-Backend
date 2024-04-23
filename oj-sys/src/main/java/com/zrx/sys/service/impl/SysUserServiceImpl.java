@@ -3,7 +3,6 @@ package com.zrx.sys.service.impl;
 import cn.dev33.satoken.stp.StpUtil;
 import com.mybatisflex.core.mask.MaskManager;
 import com.mybatisflex.core.paginate.Page;
-import com.mybatisflex.core.query.QueryChain;
 import com.mybatisflex.core.query.QueryWrapper;
 import com.mybatisflex.core.update.UpdateChain;
 import com.mybatisflex.core.util.StringUtil;
@@ -165,8 +164,14 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 		Object loginId = StpUtil.getTokenInfo().loginId;
 		Long userId = Long.valueOf((String) loginId);
 		// TODO: 统一拦截脱敏、解除脱敏
-		MaskManager.skipMask();
-		SysUser sysUser = QueryChain.of(mapper).where(SYS_USER.ID.eq(userId)).one();
+		SysUser sysUser;
+		try {
+			MaskManager.skipMask();
+			sysUser = mapper.selectOneByQuery(new QueryWrapper()
+					.where(SYS_USER.ID.eq(userId)));
+		} finally {
+			MaskManager.restoreMask();
+		}
 		if (sysUser == null) {
 			throw new BusinessException("未找到该用户信息");
 		}
