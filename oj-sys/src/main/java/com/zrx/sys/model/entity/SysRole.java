@@ -1,16 +1,16 @@
 package com.zrx.sys.model.entity;
 
+import com.mybatisflex.annotation.Column;
 import com.mybatisflex.annotation.Id;
+import com.mybatisflex.annotation.KeyType;
 import com.mybatisflex.annotation.Table;
+import com.mybatisflex.core.keygen.KeyGenerators;
+import com.zrx.model.common.BaseEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
 /**
  * 系统角色 实体类。
@@ -18,13 +18,14 @@ import java.time.LocalDateTime;
  * @author zhang.rx
  * @since 2024/2/19
  */
+@EqualsAndHashCode(callSuper = false)
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Schema(description = "系统角色")
 @Table(value = "sys_role")
-public class SysRole implements Serializable {
+public class SysRole extends BaseEntity implements Serializable {
 
 	@Serial
 	private static final long serialVersionUID = 1L;
@@ -32,15 +33,15 @@ public class SysRole implements Serializable {
 	/**
 	 * id
 	 */
-	@Id
+	@Id(keyType = KeyType.Generator, value = KeyGenerators.flexId)
 	@Schema(description = "id")
 	private Long id;
 
 	/**
-	 * 角色名称
+	 * 角色标识
 	 */
-	@Schema(description = "角色名称")
-	private String name;
+	@Schema(description = "角色标识")
+	private String roleCode;
 
 	/**
 	 * 备注
@@ -54,28 +55,8 @@ public class SysRole implements Serializable {
 	@Schema(description = "部门ID")
 	private String deptId;
 
-	/**
-	 * 创建者
-	 */
-	@Schema(description = "创建者")
-	private String creator;
-
-	/**
-	 * 创建时间
-	 */
-	@Schema(description = "创建时间")
-	private LocalDateTime createTime;
-
-	/**
-	 * 更新者
-	 */
-	@Schema(description = "更新者")
-	private String updater;
-
-	/**
-	 * 更新时间
-	 */
-	@Schema(description = "更新时间")
-	private LocalDateTime updateTime;
+	@Column(isLogicDelete = true)
+	@Schema(description = "逻辑删除 0-正常，1-已删除")
+	private Integer delFlag;
 
 }

@@ -1,7 +1,11 @@
 package com.zrx.sys.service;
 
+import com.mybatisflex.core.paginate.Page;
 import com.mybatisflex.core.service.IService;
+import com.zrx.model.common.Paging;
+import com.zrx.sys.model.dto.SysRoleRequest;
 import com.zrx.sys.model.entity.SysRole;
+import com.zrx.sys.model.vo.SysRoleResponse;
 
 import java.util.List;
 
@@ -16,5 +20,11 @@ public interface SysRoleService extends IService<SysRole> {
 	List<String> getRoleIdListByUserId(String userId);
 
 	List<String> getRoleListByUserId(String userId);
+
+	Page<SysRoleResponse> page(Paging page, SysRoleRequest sysRole);
+
+	Boolean updateById(SysRoleRequest req);
+
+	Boolean save(SysRoleRequest req);
 
 }
