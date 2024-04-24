@@ -1,11 +1,9 @@
 package com.zrx.sys.model.entity;
 
-import com.mybatisflex.annotation.ColumnMask;
 import com.mybatisflex.annotation.Id;
 import com.mybatisflex.annotation.KeyType;
 import com.mybatisflex.annotation.Table;
 import com.mybatisflex.core.keygen.KeyGenerators;
-import com.mybatisflex.core.mask.Masks;
 import com.zrx.model.common.BaseEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -67,7 +65,6 @@ public class SysUser extends BaseEntity implements Serializable {
 	/**
 	 * 姓名
 	 */
-	@ColumnMask(Masks.CHINESE_NAME)
 	@Schema(description = "姓名")
 	private String realName;
 
@@ -92,14 +89,12 @@ public class SysUser extends BaseEntity implements Serializable {
 	/**
 	 * 邮箱
 	 */
-	@ColumnMask(Masks.EMAIL)
 	@Schema(description = "邮箱")
 	private String email;
 
 	/**
 	 * 手机号
 	 */
-	@ColumnMask(Masks.MOBILE)
 	@Schema(description = "手机号")
 	private String mobile;
 

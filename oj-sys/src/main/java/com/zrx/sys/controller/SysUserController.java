@@ -1,6 +1,6 @@
 package com.zrx.sys.controller;
 
-import cn.dev33.satoken.annotation.SaCheckPermission;
+import cn.dev33.satoken.annotation.SaCheckRole;
 import com.mybatisflex.core.paginate.Page;
 import com.zrx.exception.BusinessException;
 import com.zrx.model.common.Paging;
@@ -50,7 +50,7 @@ public class SysUserController {
 	 */
 	@PutMapping("/update")
 	@Operation(summary = "修改用户信息--开放给个人用户使用")
-	@SaCheckPermission(AuthConst.SUPER_ADMIN)
+	@SaCheckRole(AuthConst.SUPER_ADMIN)
 	public Result<Boolean> updateUserInfo(@RequestBody SysUserUpdateRequest request) {
 		return Result.success(sysUserService.update(request));
 	}
@@ -62,7 +62,7 @@ public class SysUserController {
 	 */
 	@PutMapping("/disable/{id}")
 	@Operation(summary = "禁用用户")
-	@SaCheckPermission(AuthConst.SUPER_ADMIN)
+	@SaCheckRole(AuthConst.SUPER_ADMIN)
 	public Result<String> disable(@PathVariable @Parameter(description = "主键") String id) {
 		if (!sysUserService.disable(id)) {
 			throw new BusinessException("禁用失败");
@@ -77,7 +77,7 @@ public class SysUserController {
 	 */
 	@PutMapping("/enable/{id}")
 	@Operation(summary = "启用用户")
-	@SaCheckPermission(AuthConst.SUPER_ADMIN)
+	@SaCheckRole(AuthConst.SUPER_ADMIN)
 	public Result<Boolean> enable(@PathVariable @Parameter(description = "主键") String id) {
 		if (!sysUserService.enable(id)) {
 			throw new BusinessException("启用失败");
@@ -91,7 +91,7 @@ public class SysUserController {
 	 */
 	@GetMapping("/getInfo")
 	@Operation(summary = "获取已登录的当前用户信息--用户使用")
-	@SaCheckPermission(AuthConst.SUPER_ADMIN)
+	@SaCheckRole(AuthConst.SUPER_ADMIN)
 	public Result<SysUserResponse> getInfo() {
 		return Result.success(sysUserService.getInfo());
 	}
@@ -103,7 +103,7 @@ public class SysUserController {
 	 */
 	@GetMapping("/page")
 	@Operation(summary = "分页查询")
-	@SaCheckPermission(AuthConst.SUPER_ADMIN)
+	@SaCheckRole(AuthConst.SUPER_ADMIN)
 	public Result<Page<SysUserResponse>> page(@Parameter(description = "分页条件") Paging page,
 			@Parameter(description = "查询条件") SysUserRequest request) {
 		return Result.success(sysUserService.page(page, request));
@@ -115,7 +115,7 @@ public class SysUserController {
 	 */
 	@GetMapping("/info")
 	@Operation(summary = "根据主键获取系统用户详细信息--admin使用")
-	@SaCheckPermission(AuthConst.SUPER_ADMIN)
+	@SaCheckRole(AuthConst.SUPER_ADMIN)
 	public Result<SysUser> infoById(String id) {
 		return Result.success(sysUserService.getById(id));
 	}

@@ -53,7 +53,7 @@ public class StpInterfaceImpl implements StpInterface {
 	@Override
 	public List<String> getRoleList(Object loginId, String loginType) {
 		String userId = SaFoxUtil.getValueByType(loginId, String.class);
-		return sysRoleService.getRoleIdListByUserId(userId);
+		return sysRoleService.getRoleListByUserId(userId);
 	}
 
 }
