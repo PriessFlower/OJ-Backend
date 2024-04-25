@@ -145,10 +145,16 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 
     @Override
     public Boolean disable(String id) {
-        return UpdateChain.of(mapper)
+        boolean updateFlag = UpdateChain.of(mapper)
                 .where(SYS_USER.ID.eq(id))
                 .set(SYS_USER.STATUS, UserStatusEnum.DISABLE.getValue())
                 .update();
+        if (!updateFlag) {
+            throw new BusinessException("停用失败");
+        }
+        // 强制踢下线
+        StpUtil.kickout(id);
+        return true;
     }
 
     @Override
@@ -192,6 +198,12 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
                 .and(SYS_USER.STATUS.eq(request.getStatus()))
                 .orderBy(SYS_USER.UPDATE_TIME.desc());
         return mapper.paginateAs(Page.of(page.getPageNum(), page.getPageSize()), queryWrapper, SysUserResponse.class);
+    }
+
+    @Override
+    public Boolean kick(Long id) {
+        StpUtil.kickout(id);
+        return true;
     }
 
 }

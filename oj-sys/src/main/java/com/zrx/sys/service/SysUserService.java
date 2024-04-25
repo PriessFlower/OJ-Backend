@@ -37,4 +37,7 @@ public interface SysUserService extends IService<SysUser> {
 	Page<SysUserResponse> page(Paging page, SysUserRequest request);
 
 	String uploadAvatar(MultipartFile file);
+
+    Boolean kick(Long id);
+
 }

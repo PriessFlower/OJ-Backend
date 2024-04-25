@@ -120,4 +120,14 @@ public class SysUserController {
 		return Result.success(sysUserService.getById(id));
 	}
 
+	/**
+	 * 强制踢人下线
+	 */
+	@PutMapping("/kick/{id}")
+	@Operation(summary = "强制踢人下线")
+	@SaCheckRole(AuthConst.SUPER_ADMIN)
+	public Result<Boolean> kick(@PathVariable @Parameter(description = "主键") Long id) {
+		return Result.success(sysUserService.kick(id));
+	}
+
 }

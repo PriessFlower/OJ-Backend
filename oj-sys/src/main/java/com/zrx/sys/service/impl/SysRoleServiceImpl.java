@@ -10,6 +10,7 @@ import com.mybatisflex.spring.service.impl.ServiceImpl;
 import com.zrx.exception.BusinessException;
 import com.zrx.model.common.Paging;
 import com.zrx.security.satoken.AuthConst;
+import com.zrx.security.utils.SecurityHelper;
 import com.zrx.sys.mapper.SysRoleMapper;
 import com.zrx.sys.mapper.SysRoleUserMapper;
 import com.zrx.sys.mapstruct.SysRoleMap;
@@ -17,6 +18,7 @@ import com.zrx.sys.model.dto.SysRoleRequest;
 import com.zrx.sys.model.dto.UpdateUserRoleRequest;
 import com.zrx.sys.model.entity.SysRole;
 import com.zrx.sys.model.entity.SysRoleUser;
+import com.zrx.sys.model.entity.SysUser;
 import com.zrx.sys.model.vo.SysRoleResponse;
 import com.zrx.sys.service.SysRoleService;
 import lombok.RequiredArgsConstructor;
@@ -126,9 +128,13 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
     @Transactional(rollbackFor = Exception.class)
     public Boolean updateUserRole(UpdateUserRoleRequest req) {
         Long userId = req.getUserId();
+        SysUser user = SecurityHelper.getUser();
+        if (userId.equals(user.getId())) {
+            throw new BusinessException("不能修改自己的角色");
+        }
         roleUserMapper.deleteByQuery(
                 new QueryWrapper()
-                        .where(SYS_ROLE_USER.USER_ID.eq(userId, userId != null))
+                        .where(SYS_ROLE_USER.USER_ID.eq(userId))
         );
         List<SysRoleUser> sysRoleUserList = req.getRoleIds().stream().map(roleId -> {
             SysRoleUser sysRoleUser = new SysRoleUser();
