@@ -1,5 +1,6 @@
 package com.zrx.sys.service.impl;
 
+import cn.dev33.satoken.session.SaSession;
 import cn.dev33.satoken.stp.StpUtil;
 import com.mybatisflex.core.mask.MaskManager;
 import com.mybatisflex.core.paginate.Page;
@@ -103,9 +104,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         }
 
         // 删除之前的token信息
-        if (StpUtil.isLogin()) {
-            StpUtil.logout();
-        }
+        StpUtil.logout(user.getId());
         String loginId = String.valueOf(user.getId());
         StpUtil.login(loginId);
 
@@ -197,7 +196,12 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
                 .and(SYS_USER.MOBILE.like(request.getMobile(), StringUtil::isNotBlank))
                 .and(SYS_USER.STATUS.eq(request.getStatus()))
                 .orderBy(SYS_USER.UPDATE_TIME.desc());
-        return mapper.paginateAs(Page.of(page.getPageNum(), page.getPageSize()), queryWrapper, SysUserResponse.class);
+        Page<SysUserResponse> respPage = mapper.paginateAs(Page.of(page.getPageNum(), page.getPageSize()), queryWrapper, SysUserResponse.class);
+        respPage.getRecords().forEach(item -> {
+            SaSession session = StpUtil.getSessionByLoginId(item.getId(), false);
+            item.setOnline(session != null);
+        });
+        return respPage;
     }
 
     @Override

@@ -100,4 +100,10 @@ public class SysUserResponse {
 	@Schema(description = "角色")
 	private List<String> roles;
 
+	/**
+	 * 是否在线
+	 */
+	@Schema(description = "是否在线")
+	private Boolean online;
+
 }
