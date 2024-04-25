@@ -1,18 +1,23 @@
 package com.zrx.sys.controller;
 
+import cn.dev33.satoken.annotation.SaCheckRole;
 import com.mybatisflex.core.paginate.Page;
 import com.zrx.model.common.Paging;
 import com.zrx.reuslt.Result;
+import com.zrx.security.satoken.AuthConst;
 import com.zrx.sys.model.dto.SysRoleRequest;
+import com.zrx.sys.model.dto.UpdateUserRoleRequest;
 import com.zrx.sys.model.vo.SysRoleResponse;
 import com.zrx.sys.service.SysRoleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 角色管理 控制层。
@@ -28,6 +33,8 @@ public class SysRoleController {
 	@Resource
 	private SysRoleService sysRoleService;
 
+
+
 	/**
 	 * 添加系统角色。
 	 * @param req 系统角色
@@ -35,8 +42,20 @@ public class SysRoleController {
 	 */
 	@PostMapping("/save")
 	@Operation(summary = "保存")
+	@SaCheckRole(AuthConst.SUPER_ADMIN)
 	public Result<Boolean> save(@RequestBody @Parameter(description = "系统角色") SysRoleRequest req) {
 		return Result.success(sysRoleService.save(req));
+	}
+
+	/**
+	 * 查询所有系统角色。
+	 * @return 系统角色
+	 */
+	@GetMapping("/list")
+	@Operation(summary = "查询所有系统角色")
+	@SaCheckRole(AuthConst.SUPER_ADMIN)
+	public Result<List<SysRoleResponse>> list() {
+		return Result.success(sysRoleService.listRole());
 	}
 
 	/**
@@ -46,6 +65,7 @@ public class SysRoleController {
 	 */
 	@DeleteMapping("/remove/{id}")
 	@Operation(summary = "根据主键列表删除系统角色")
+	@SaCheckRole(AuthConst.SUPER_ADMIN)
 	public Result<Boolean> remove(@PathVariable @Parameter(description = "主键") Serializable id) {
 		return Result.success(sysRoleService.removeById(id));
 	}
@@ -57,6 +77,7 @@ public class SysRoleController {
 	 */
 	@PutMapping("/update")
 	@Operation(summary = "根据主键更新系统角色")
+	@SaCheckRole(AuthConst.SUPER_ADMIN)
 	public Result<Boolean> update(@RequestBody @Parameter(description = "系统角色") SysRoleRequest req) {
 		return Result.success(sysRoleService.updateById(req));
 	}
@@ -68,8 +89,22 @@ public class SysRoleController {
 	 */
 	@GetMapping("/page")
 	@Operation(summary = "分页查询")
+	@SaCheckRole(AuthConst.SUPER_ADMIN)
 	public Result<Page<SysRoleResponse>> page(@Parameter(description = "分页信息") Paging page, @Parameter(description = "查询参数") SysRoleRequest req) {
 		return Result.success(sysRoleService.page(page, req));
 	}
+
+	/**
+	 * 修改系统用户角色。
+	 * @param req 系统角色
+	 * @return {@code true} 更新成功，{@code false} 更新失败
+	 */
+	@PutMapping("/update/userRole")
+	@Operation(summary = "修改系统用户角色")
+	@SaCheckRole(AuthConst.SUPER_ADMIN)
+	public Result<Boolean> update(@Valid @RequestBody @Parameter(description = "更改用户角色请求") UpdateUserRoleRequest req) {
+		return Result.success(sysRoleService.updateUserRole(req));
+	}
+
 
 }

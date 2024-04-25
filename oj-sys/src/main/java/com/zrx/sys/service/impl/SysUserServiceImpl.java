@@ -30,6 +30,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import static com.zrx.sys.model.entity.table.SysRoleTableDef.SYS_ROLE;
+import static com.zrx.sys.model.entity.table.SysRoleUserTableDef.SYS_ROLE_USER;
 import static com.zrx.sys.model.entity.table.SysUserTableDef.SYS_USER;
 
 /**
@@ -42,153 +44,154 @@ import static com.zrx.sys.model.entity.table.SysUserTableDef.SYS_USER;
 @RequiredArgsConstructor
 public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> implements SysUserService {
 
-	private final CaptchaService captchaService;
+    private final CaptchaService captchaService;
+    private final SysUserMap sysUserMap;
+    private final SysFileService sysFileService;
 
-	private final SysUserMap sysUserMap;
+    @Override
+    public String uploadAvatar(MultipartFile file) {
+        String url = sysFileService.upload(file);
+        SysUser user = SecurityHelper.getUser();
+        user.setAvatar(url);
+        boolean updateFlag = updateById(user);
+        if (!updateFlag) {
+            throw new BusinessException("上传头像失败");
+        }
+        return url;
+    }
 
-	private final SysFileService sysFileService;
+    @Override
+    public Boolean update(SysUserUpdateRequest request) {
+        SysUser sysUser = sysUserMap.toEntityByUpdate(request);
+        return updateById(sysUser, true);
+    }
 
-	@Override
-	public String uploadAvatar(MultipartFile file) {
-		String url = sysFileService.upload(file);
-		SysUser user = SecurityHelper.getUser();
-		user.setAvatar(url);
-		boolean updateFlag = updateById(user);
-		if (!updateFlag) {
-			throw new BusinessException("上传头像失败");
-		}
-		return url;
-	}
+    @Override
+    public SysUser getByUsername(String username) {
+        if (StringUtils.isBlank(username)) {
+            throw new BusinessException("用户名为空");
+        }
+        return mapper.selectOneByQuery(new QueryWrapper().where(SYS_USER.USERNAME.eq(username)));
+    }
 
-	@Override
-	public Boolean update(SysUserUpdateRequest request) {
-		SysUser sysUser = sysUserMap.toEntityByUpdate(request);
-		return updateById(sysUser, true);
-	}
+    @Override
+    public LoginResponse login(LoginRequest loginRequest) {
 
-	@Override
-	public SysUser getByUsername(String username) {
-		if (StringUtils.isBlank(username)) {
-			throw new BusinessException("用户名为空");
-		}
-		return mapper.selectOneByQuery(new QueryWrapper().where(SYS_USER.USERNAME.eq(username)));
-	}
+        // 验证码是否正确
+        boolean flag = captchaService.validate(loginRequest.getUuid(), loginRequest.getCaptcha());
+        if (!flag) {
+            throw new BusinessException(ResultCode.PARAM_ERROR.getCode(), "验证码错误");
+        }
 
-	@Override
-	public LoginResponse login(LoginRequest loginRequest) {
+        // 用户信息
+        SysUser user = getByUsername(loginRequest.getUsername());
 
-		// 验证码是否正确
-		boolean flag = captchaService.validate(loginRequest.getUuid(), loginRequest.getCaptcha());
-		if (!flag) {
-			throw new BusinessException(ResultCode.PARAM_ERROR.getCode(), "验证码错误");
-		}
+        // 用户不存在
+        if (user == null) {
+            throw new BusinessException(ResultCode.FAIL.getCode(), "用户不存在");
+        }
 
-		// 用户信息
-		SysUser user = getByUsername(loginRequest.getUsername());
+        // 密码错误
+        if (!StringUtils.equals(Md5Util.inputPassToDBPass(loginRequest.getPassword(), user.getSalt()),
+                user.getPassword())) {
+            throw new BusinessException(ResultCode.FAIL.getCode(), "密码错误");
+        }
 
-		// 用户不存在
-		if (user == null) {
-			throw new BusinessException(ResultCode.FAIL.getCode(), "用户不存在");
-		}
+        // 账号停用
+        if (user.getStatus() == UserStatusEnum.DISABLE.getValue()) {
+            throw new BusinessException(ResultCode.UNAUTHORIZED.getCode(), "当前用户已被系统停用");
+        }
 
-		// 密码错误
-		if (!StringUtils.equals(Md5Util.inputPassToDBPass(loginRequest.getPassword(), user.getSalt()),
-				user.getPassword())) {
-			throw new BusinessException(ResultCode.FAIL.getCode(), "密码错误");
-		}
+        // 删除之前的token信息
+        if (StpUtil.isLogin()) {
+            StpUtil.logout();
+        }
+        String loginId = String.valueOf(user.getId());
+        StpUtil.login(loginId);
 
-		// 账号停用
-		if (user.getStatus() == UserStatusEnum.DISABLE.getValue()) {
-			throw new BusinessException(ResultCode.UNAUTHORIZED.getCode(), "当前用户已被系统停用");
-		}
+        // 存储已经登录的用户信息
+        StpUtil.getSession().set(loginId, user);
 
-		// 删除之前的token信息
-		if (StpUtil.isLogin()) {
-			StpUtil.logout();
-		}
-		String loginId = String.valueOf(user.getId());
-		StpUtil.login(loginId);
+        return new LoginResponse(StpUtil.getTokenInfo().getTokenValue(), loginId);
+    }
 
-		// 存储已经登录的用户信息
-		StpUtil.getSession().set(loginId, user);
+    @Override
+    public String register(RegisterRequest registerRequest) {
+        String username = registerRequest.getUsername();
+        String password = registerRequest.getPassword();
+        String checkPassword = registerRequest.getCheckPassword();
+        String mobile = registerRequest.getMobile();
+        if (!StringUtils.equals(password, checkPassword)) {
+            throw new BusinessException("两次输入的密码不一致");
+        }
+        SysUser sysUser = new SysUser();
+        String salt = Md5Util.generateSalt();
+        sysUser.setUsername(registerRequest.getUsername());
+        sysUser.setPassword(Md5Util.inputPassToDBPass(password, salt));
+        sysUser.setSalt(salt);
+        sysUser.setStatus(UserStatusEnum.ENABLED.getValue());
+        sysUser.setMobile(mobile);
 
-		return new LoginResponse(StpUtil.getTokenInfo().getTokenValue(), loginId);
-	}
+        // 是否有相同用户名的用户
+        if (exists(new QueryWrapper().where(SYS_USER.USERNAME.eq(username)))) {
+            throw new BusinessException("用户名重复");
+        }
+        boolean saveFlag = save(sysUser);
+        if (!saveFlag) {
+            throw new BusinessException("注册失败");
+        }
+        return "注册成功";
+    }
 
-	@Override
-	public String register(RegisterRequest registerRequest) {
-		String username = registerRequest.getUsername();
-		String password = registerRequest.getPassword();
-		String checkPassword = registerRequest.getCheckPassword();
-		String mobile = registerRequest.getMobile();
-		if (!StringUtils.equals(password, checkPassword)) {
-			throw new BusinessException("两次输入的密码不一致");
-		}
-		SysUser sysUser = new SysUser();
-		String salt = Md5Util.generateSalt();
-		sysUser.setUsername(registerRequest.getUsername());
-		sysUser.setPassword(Md5Util.inputPassToDBPass(password, salt));
-		sysUser.setSalt(salt);
-		sysUser.setStatus(UserStatusEnum.ENABLED.getValue());
-		sysUser.setMobile(mobile);
+    @Override
+    public Boolean disable(String id) {
+        return UpdateChain.of(mapper)
+                .where(SYS_USER.ID.eq(id))
+                .set(SYS_USER.STATUS, UserStatusEnum.DISABLE.getValue())
+                .update();
+    }
 
-		// 是否有相同用户名的用户
-		if (exists(new QueryWrapper().where(SYS_USER.USERNAME.eq(username)))) {
-			throw new BusinessException("用户名重复");
-		}
-		boolean saveFlag = save(sysUser);
-		if (!saveFlag) {
-			throw new BusinessException("注册失败");
-		}
-		return "注册成功";
-	}
+    @Override
+    public Boolean enable(String id) {
+        return UpdateChain.of(mapper)
+                .where(SYS_USER.ID.eq(id))
+                .set(SYS_USER.STATUS, UserStatusEnum.ENABLED.getValue())
+                .update();
+    }
 
-	@Override
-	public Boolean disable(String id) {
-		return UpdateChain.of(mapper)
-			.where(SYS_USER.ID.eq(id))
-			.set(SYS_USER.STATUS, UserStatusEnum.DISABLE.getValue())
-			.update();
-	}
+    @Override
+    public SysUserResponse getInfo() {
+        Object loginId = StpUtil.getTokenInfo().loginId;
+        Long userId = Long.valueOf((String) loginId);
+        // TODO: 统一拦截脱敏、解除脱敏
+        SysUser sysUser;
+        try {
+            MaskManager.skipMask();
+            sysUser = mapper.selectOneByQuery(new QueryWrapper()
+                    .where(SYS_USER.ID.eq(userId)));
+        } finally {
+            MaskManager.restoreMask();
+        }
+        if (sysUser == null) {
+            throw new BusinessException("未找到该用户信息");
+        }
+        return sysUserMap.toResp(sysUser);
+    }
 
-	@Override
-	public Boolean enable(String id) {
-		return UpdateChain.of(mapper)
-			.where(SYS_USER.ID.eq(id))
-			.set(SYS_USER.STATUS, UserStatusEnum.ENABLED.getValue())
-			.update();
-	}
-
-	@Override
-	public SysUserResponse getInfo() {
-		Object loginId = StpUtil.getTokenInfo().loginId;
-		Long userId = Long.valueOf((String) loginId);
-		// TODO: 统一拦截脱敏、解除脱敏
-		SysUser sysUser;
-		try {
-			MaskManager.skipMask();
-			sysUser = mapper.selectOneByQuery(new QueryWrapper()
-					.where(SYS_USER.ID.eq(userId)));
-		} finally {
-			MaskManager.restoreMask();
-		}
-		if (sysUser == null) {
-			throw new BusinessException("未找到该用户信息");
-		}
-		return sysUserMap.toResp(sysUser);
-	}
-
-	@Override
-	public Page<SysUserResponse> page(Paging page, SysUserRequest request) {
-		QueryWrapper queryWrapper = new QueryWrapper().select()
-			.from(SYS_USER)
-			.where(SYS_USER.USERNAME.like(request.getUsername(), StringUtil::isNotBlank))
-			.and(SYS_USER.REAL_NAME.like(request.getRealName(), StringUtil::isNotBlank))
-			.and(SYS_USER.GENDER.eq(request.getGender()))
-			.and(SYS_USER.EMAIL.like(request.getEmail(), StringUtil::isNotBlank))
-			.and(SYS_USER.MOBILE.like(request.getMobile(), StringUtil::isNotBlank))
-			.and(SYS_USER.STATUS.eq(request.getStatus()));
-		return mapper.paginateAs(Page.of(page.getPageNum(), page.getPageSize()), queryWrapper, SysUserResponse.class);
-	}
+    @Override
+    public Page<SysUserResponse> page(Paging page, SysUserRequest request) {
+        QueryWrapper queryWrapper = new QueryWrapper().select(SYS_USER.DEFAULT_COLUMNS)
+                .select(SYS_ROLE_USER.ROLE_ID, SYS_ROLE.REMARK.as("roles"))
+                .leftJoin(SYS_ROLE_USER).on(SYS_USER.ID.eq(SYS_ROLE_USER.USER_ID))
+                .leftJoin(SYS_ROLE).on(SYS_ROLE_USER.ROLE_ID.eq(SYS_ROLE.ID))
+                .where(SYS_USER.USERNAME.like(request.getUsername(), StringUtil::isNotBlank))
+                .and(SYS_USER.REAL_NAME.like(request.getRealName(), StringUtil::isNotBlank))
+                .and(SYS_USER.GENDER.eq(request.getGender()))
+                .and(SYS_USER.EMAIL.like(request.getEmail(), StringUtil::isNotBlank))
+                .and(SYS_USER.MOBILE.like(request.getMobile(), StringUtil::isNotBlank))
+                .and(SYS_USER.STATUS.eq(request.getStatus()))
+                .orderBy(SYS_USER.UPDATE_TIME.desc());
+        return mapper.paginateAs(Page.of(page.getPageNum(), page.getPageSize()), queryWrapper, SysUserResponse.class);
+    }
 
 }

@@ -4,6 +4,7 @@ import com.mybatisflex.core.paginate.Page;
 import com.mybatisflex.core.service.IService;
 import com.zrx.model.common.Paging;
 import com.zrx.sys.model.dto.SysRoleRequest;
+import com.zrx.sys.model.dto.UpdateUserRoleRequest;
 import com.zrx.sys.model.entity.SysRole;
 import com.zrx.sys.model.vo.SysRoleResponse;
 
@@ -19,6 +20,8 @@ public interface SysRoleService extends IService<SysRole> {
 
 	List<String> getRoleIdListByUserId(String userId);
 
+	List<SysRoleResponse> listRole();
+
 	List<String> getRoleListByUserId(String userId);
 
 	Page<SysRoleResponse> page(Paging page, SysRoleRequest sysRole);
@@ -26,5 +29,7 @@ public interface SysRoleService extends IService<SysRole> {
 	Boolean updateById(SysRoleRequest req);
 
 	Boolean save(SysRoleRequest req);
+
+	Boolean updateUserRole(UpdateUserRoleRequest req);
 
 }

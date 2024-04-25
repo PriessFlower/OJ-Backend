@@ -16,10 +16,12 @@ public final class AuthConst {
 
 	// --------------- 代表身份的权限 ---------------
 
-	// --------------- 所有权限码 ---------------
-
 	// 超级管理员
 	public static final String SUPER_ADMIN = "super-admin";
+	// 普通用户
+	public static final String USER = "user";
+
+	// --------------- 所有权限码 ---------------
 
 	// --------------- 其它常量 ---------------
 

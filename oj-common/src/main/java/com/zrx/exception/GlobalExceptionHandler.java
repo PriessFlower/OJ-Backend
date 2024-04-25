@@ -2,6 +2,7 @@ package com.zrx.exception;
 
 import cn.dev33.satoken.exception.NotLoginException;
 import cn.dev33.satoken.exception.NotPermissionException;
+import cn.dev33.satoken.exception.NotRoleException;
 import com.zrx.reuslt.Result;
 import com.zrx.reuslt.ResultCode;
 import lombok.extern.slf4j.Slf4j;
@@ -51,6 +52,15 @@ public class GlobalExceptionHandler {
 	public Result<?> notLoginExceptionHandler(NotLoginException e) {
 		log.error("未登录: ", e);
 		return Result.fail(ResultCode.UNAUTHORIZED.getCode(), "请登录");
+	}
+
+	/**
+	 * 角色权限异常 -- sa-token
+	 */
+	@ExceptionHandler({ NotRoleException.class })
+	public Result<?> notRoleExceptionHandler(NotRoleException e) {
+		log.error("角色权限异常: ", e);
+		return Result.fail(ResultCode.FORBIDDEN);
 	}
 
 	/**

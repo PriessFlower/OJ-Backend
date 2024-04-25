@@ -1,16 +1,15 @@
 package com.zrx.sys.model.entity;
 
 import com.mybatisflex.annotation.Id;
+import com.mybatisflex.annotation.KeyType;
 import com.mybatisflex.annotation.Table;
+import com.mybatisflex.core.keygen.KeyGenerators;
+import com.zrx.model.common.BaseEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
 /**
  * 角色用户关系 实体类。
@@ -18,13 +17,14 @@ import java.time.LocalDateTime;
  * @author zhang.rx
  * @since 2024/2/19
  */
+@EqualsAndHashCode(callSuper = false)
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Schema(description = "角色用户关系表")
 @Table(value = "sys_role_user")
-public class SysRoleUser implements Serializable {
+public class SysRoleUser extends BaseEntity implements Serializable {
 
 	@Serial
 	private static final long serialVersionUID = 1L;
@@ -32,7 +32,7 @@ public class SysRoleUser implements Serializable {
 	/**
 	 * id
 	 */
-	@Id
+	@Id(keyType = KeyType.Generator, value = KeyGenerators.snowFlakeId)
 	@Schema(description = "id")
 	private Long id;
 
@@ -40,24 +40,12 @@ public class SysRoleUser implements Serializable {
 	 * 角色ID
 	 */
 	@Schema(description = "角色ID")
-	private String roleId;
+	private Long roleId;
 
 	/**
 	 * 用户ID
 	 */
 	@Schema(description = "用户ID")
-	private String userId;
-
-	/**
-	 * 创建者
-	 */
-	@Schema(description = "创建者")
-	private String creator;
-
-	/**
-	 * 创建时间
-	 */
-	@Schema(description = "创建时间")
-	private LocalDateTime createTime;
+	private Long userId;
 
 }

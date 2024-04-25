@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 系统用户响应体
@@ -92,5 +93,11 @@ public class SysUserResponse {
 	 */
 	@Schema(description = "个人简介")
 	private String introduce;
+
+	/**
+	 * 角色
+	 */
+	@Schema(description = "角色")
+	private List<String> roles;
 
 }
