@@ -100,7 +100,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 
         // 账号停用
         if (user.getStatus() == UserStatusEnum.DISABLE.getValue()) {
-            throw new BusinessException(ResultCode.UNAUTHORIZED.getCode(), "当前用户已被系统停用");
+            throw new BusinessException(ResultCode.FORBIDDEN.getCode(), "当前用户已被系统停用");
         }
 
         // 删除之前的token信息
