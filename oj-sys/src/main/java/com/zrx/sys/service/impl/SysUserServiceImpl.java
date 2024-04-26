@@ -14,6 +14,7 @@ import com.zrx.reuslt.ResultCode;
 import com.zrx.security.model.dto.LoginRequest;
 import com.zrx.security.model.dto.RegisterRequest;
 import com.zrx.security.model.vo.LoginResponse;
+import com.zrx.security.satoken.AuthConst;
 import com.zrx.security.service.CaptchaService;
 import com.zrx.security.utils.Md5Util;
 import com.zrx.security.utils.SecurityHelper;
@@ -180,7 +181,10 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         if (sysUser == null) {
             throw new BusinessException("未找到该用户信息");
         }
-        return sysUserMap.toResp(sysUser);
+        SysUserResponse resp = sysUserMap.toResp(sysUser);
+        // TODO: 待实现，获取权限最大的角色（需要排序），返回角色列表。
+        resp.setRole(AuthConst.SUPER_ADMIN);
+        return resp;
     }
 
     @Override

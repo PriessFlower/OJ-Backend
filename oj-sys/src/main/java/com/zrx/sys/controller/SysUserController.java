@@ -1,6 +1,7 @@
 package com.zrx.sys.controller;
 
 import cn.dev33.satoken.annotation.SaCheckRole;
+import cn.dev33.satoken.annotation.SaMode;
 import com.mybatisflex.core.paginate.Page;
 import com.zrx.exception.BusinessException;
 import com.zrx.model.common.Paging;
@@ -91,7 +92,7 @@ public class SysUserController {
 	 */
 	@GetMapping("/getInfo")
 	@Operation(summary = "获取已登录的当前用户信息--用户使用")
-	@SaCheckRole(AuthConst.SUPER_ADMIN)
+	@SaCheckRole(value = {AuthConst.SUPER_ADMIN, AuthConst.USER}, mode = SaMode.OR)
 	public Result<SysUserResponse> getInfo() {
 		return Result.success(sysUserService.getInfo());
 	}

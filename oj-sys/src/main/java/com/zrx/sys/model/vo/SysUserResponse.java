@@ -95,6 +95,12 @@ public class SysUserResponse {
 	private String introduce;
 
 	/**
+	 * HACK: 权限最大的角色
+	 */
+	@Schema(description = "权限最大的角色")
+	private String role;
+
+	/**
 	 * 角色
 	 */
 	@Schema(description = "角色")
