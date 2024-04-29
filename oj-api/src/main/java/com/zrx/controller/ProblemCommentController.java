@@ -55,20 +55,10 @@ public class ProblemCommentController {
      * 查询所有题目评论。
      * @return 所有数据
      */
-    @GetMapping("/list/{problemId}")
+    @GetMapping("/list")
     @Operation(summary = "获取根节点评论")
-    public Result<List<ProblemCommentVo>> list(@PathVariable Long problemId) {
+    public Result<List<ProblemCommentVo>> list(@RequestParam Long problemId) {
         return Result.success(problemCommentService.list(problemId));
-    }
-
-    /**
-     * 查询子节点评论。
-     * @return 所有数据
-     */
-    @GetMapping("/list/{id}")
-    @Operation(summary = "获取子节点评论")
-    public Result<List<ProblemCommentVo>> listChildren(@PathVariable Long id) {
-        return Result.success(problemCommentService.listChildren(id));
     }
 
 }

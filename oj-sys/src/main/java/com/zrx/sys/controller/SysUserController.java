@@ -28,7 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @Tag(name = "SysUser", description = "系统用户管理接口")
 @RequestMapping("/sys/sysUser")
-public class SysUserController {
+public class  SysUserController {
 
 	@Resource
 	private SysUserService sysUserService;

@@ -298,7 +298,8 @@ public abstract class CodeSandboxTemplate implements CodeSandBox {
 			outputList.add(executeMessage.getMessage());
 		}
 		if (outputList.size() == executeMessagesList.size()) {
-			executeCodeResponse.setStatus(1);
+			executeCodeResponse.setMessage(QuestionExecuteResultEnum.ExecuteSuccess.getText());
+			executeCodeResponse.setStatus(2);
 		}
 		judgeResult.setMemory(maxMemory / 1024 / 8);
 		judgeResult.setTime(maxTime);

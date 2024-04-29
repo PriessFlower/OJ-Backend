@@ -6,6 +6,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * 代码沙箱运行结果的一个状态
+ */
 public enum QuestionExecuteResultEnum {
 
 	CompileFailure("编译失败", 0),

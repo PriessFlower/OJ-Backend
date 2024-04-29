@@ -31,7 +31,8 @@ public class OjProblemSubmitServiceImpl extends ServiceImpl<OjProblemSubmitMappe
 		ojProblemSubmit.setLanguage(problemSubmitAddRequest.getLanguage());
 		ojProblemSubmit.setCode(problemSubmitAddRequest.getCode());
 
-		Long questionId = ojProblemSubmit.getQuestionId();
+		// TODO: 2023/3/23 获取题目信息
+		Long questionId = problemSubmitAddRequest.getQuestionId();
 
 		OjProblem problem = ojProblemService.getById(questionId);
 

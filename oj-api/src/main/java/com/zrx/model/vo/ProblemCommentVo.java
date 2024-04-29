@@ -81,4 +81,10 @@ public class ProblemCommentVo implements Serializable {
     @Schema(description = "子评论")
     private List<ProblemCommentVo> children;
 
+    /**
+     * 是否展开
+     */
+    @Schema(description = "是否展开")
+    private Boolean expandedFlag;
+
 }

@@ -1,8 +1,12 @@
 package com.zrx.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
+import com.google.common.collect.Sets;
 import com.mybatisflex.core.query.QueryChain;
 import com.mybatisflex.core.query.QueryWrapper;
 import com.mybatisflex.spring.service.impl.ServiceImpl;
+import com.zrx.exception.BusinessException;
+import com.zrx.mapper.OjProblemMapper;
 import com.zrx.mapper.ProblemCommentMapper;
 import com.zrx.mapstruct.ProblemCommentMapstruct;
 import com.zrx.model.dto.problemComment.ProblemCommentRequest;
@@ -19,9 +23,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.zrx.model.entity.table.OjProblemTableDef.OJ_PROBLEM;
 import static com.zrx.model.entity.table.ProblemCommentTableDef.PROBLEM_COMMENT;
+import static com.zrx.sys.model.entity.table.SysUserTableDef.SYS_USER;
 
 /**
  * 题目评论 服务层实现。
@@ -38,9 +45,16 @@ public class ProblemCommentServiceImpl extends ServiceImpl<ProblemCommentMapper,
     @Resource
     private SysUserMapper userMapper;
 
+    @Resource
+    private OjProblemMapper problemMapper;
+
     @Override
     public Boolean save(ProblemCommentRequest req) {
         SysUser user = SecurityHelper.getUser();
+        long count = problemMapper.selectCountByCondition(OJ_PROBLEM.ID.eq(req.getProblemId(), req.getProblemId() != null));
+        if (count == 0) {
+            throw new BusinessException("题目不存在");
+        }
         ProblemComment entity = commentMapstruct.toEntity(req);
         entity.setAuthorId(user.getId());
         return save(entity);
@@ -52,31 +66,49 @@ public class ProblemCommentServiceImpl extends ServiceImpl<ProblemCommentMapper,
                 .where(PROBLEM_COMMENT.PROBLEM_ID.eq(problemId, problemId != null))
                 .and(PROBLEM_COMMENT.PARENT_ID.isNull());
         List<ProblemComment> problemComments = mapper.selectListByQuery(queryWrapper);
-        return findUserInfo(commentMapstruct.toVoList(problemComments));
+        List<ProblemCommentVo> voList = commentMapstruct.toVoList(problemComments);
+        Set<Long> userIds = Sets.newHashSet();
+        // 查询所有子节点
+        voList.forEach(e -> listChildren(e, userIds));
+        findUserInfo(voList, userIds);
+        return voList;
     }
 
     /**
      * 获取用户信息
      */
-    private List<ProblemCommentVo> findUserInfo(List<ProblemCommentVo> voList) {
-        Map<Long, List<ProblemCommentVo>> map =
-                voList.stream().collect(Collectors.groupingBy(ProblemCommentVo::getAuthorId));
-        map.forEach((k, v) -> {
-            SysUser user = userMapper.selectOneById(k);
-            v.forEach(e -> {
-                e.setAuthorAvatar(user.getAvatar());
-                e.setAuthorName(user.getNickName());
-            });
-        });
-        return map.values().stream().flatMap(List::stream).toList();
+    private void findUserInfo(List<ProblemCommentVo> voList, Set<Long> userIds) {
+        List<SysUser> sysUsers = userMapper.selectListByCondition(SYS_USER.ID.in(userIds));
+        setUserInfo(voList, sysUsers);
     }
 
-    @Override
-    public List<ProblemCommentVo> listChildren(Long parentId) {
+    /**
+     * 递归set用户信息
+     */
+    private void setUserInfo(List<ProblemCommentVo> voList, List<SysUser> sysUsers) {
+        if (CollUtil.isNotEmpty(voList)) {
+            voList.forEach(item -> {
+                SysUser sysUser = sysUsers.stream().filter(e -> e.getId().equals(item.getAuthorId())).findFirst().get();
+                item.setAuthorName(sysUser.getNickName());
+                item.setAuthorAvatar(sysUser.getAvatar());
+                setUserInfo(item.getChildren(), sysUsers);
+            });
+        }
+    }
+
+    /**
+     * 递归查询子节点
+     */
+    private void listChildren(ProblemCommentVo e, Set<Long> userIds) {
+        userIds.add(e.getAuthorId());
         List<ProblemComment> list = QueryChain.of(mapper)
-                .where(PROBLEM_COMMENT.PARENT_ID.eq(parentId))
+                .where(PROBLEM_COMMENT.PARENT_ID.eq(e.getId()))
                 .list();
-        return findUserInfo(commentMapstruct.toVoList(list));
+        if (CollUtil.isEmpty(list)) {
+            return;
+        }
+        e.setChildren(commentMapstruct.toVoList(list));
+        e.getChildren().forEach(child -> listChildren(child, userIds));
     }
 
     @Override
