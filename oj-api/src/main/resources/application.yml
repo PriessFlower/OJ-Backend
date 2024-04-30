@@ -55,3 +55,6 @@ knife4j:
     # 为了添加 basePath
     enable-host: true
     enable-host-text: "localhost:8101"
+
+codesandbox:
+  type: remote

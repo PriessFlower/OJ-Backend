@@ -7,6 +7,7 @@ import com.zrx.codesandbox.model.ExecuteCodeRequest;
 import com.zrx.codesandbox.model.ExecuteCodeResponse;
 import com.zrx.enums.ProblemJudgeResultEnum;
 import com.zrx.enums.ProblemSubmitStatusEnum;
+import com.zrx.execudeCode.CodeSandboxManager;
 import com.zrx.execudeCode.JudgeService;
 import com.zrx.judge.HandleJudgeTask;
 import com.zrx.model.dto.problem.JudgeCase;
@@ -16,6 +17,8 @@ import com.zrx.model.judge.JudgeTask;
 import com.zrx.service.OjProblemService;
 import com.zrx.service.OjProblemSubmitService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,6 +33,10 @@ public class JudgeServiceImpl implements JudgeService {
 	@Autowired
 	private OjProblemSubmitService ojProblemSubmitService;
 
+
+	@Value("${codesandbox.type:remote}")
+	private String type;
+
 	@Override
 	public void doJudge(Long ojProblemSubmitId) throws Exception {
 
@@ -38,7 +45,7 @@ public class JudgeServiceImpl implements JudgeService {
 
 		ExecuteCodeRequest executeCodeRequest = getExecuteCodeRequest(ojProblemSubmit, ojProblem);
 
-		CodeSandBox codeSandbox = CodeManager.getCodeSandbox(executeCodeRequest.getLanguage());
+		CodeSandBox codeSandbox = CodeSandboxManager.instance(type);
 		ojProblemSubmit.setStatus(ProblemSubmitStatusEnum.Waiting.getKey());
 		ojProblemSubmitService.updateById(ojProblemSubmit);
 		ExecuteCodeResponse executeCodeResponse = codeSandbox.executeCode(executeCodeRequest);
