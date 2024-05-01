@@ -44,7 +44,7 @@ public class JudgeServiceImpl implements JudgeService {
 		OjProblem ojProblem = ojProblemService.getById(ojProblemSubmit.getQuestionId());
 
 		ExecuteCodeRequest executeCodeRequest = getExecuteCodeRequest(ojProblemSubmit, ojProblem);
-
+		System.out.println(executeCodeRequest);
 		CodeSandBox codeSandbox = CodeSandboxManager.instance(type);
 		ojProblemSubmit.setStatus(ProblemSubmitStatusEnum.Waiting.getKey());
 		ojProblemSubmitService.updateById(ojProblemSubmit);
@@ -74,6 +74,7 @@ public class JudgeServiceImpl implements JudgeService {
 
 		ExecuteCodeRequest executeCodeRequest = new ExecuteCodeRequest();
 		executeCodeRequest.setCode(ojProblemSubmit.getCode());
+		executeCodeRequest.setLanguage(ojProblemSubmit.getLanguage());
 		List<JudgeCase> judgeCaseList = JSONUtil.toList(ojProblem.getJudgeCase(), JudgeCase.class);
 		List<String> inputList = judgeCaseList.stream().map(JudgeCase::getInput).collect(Collectors.toList());
 		executeCodeRequest.setInputList(inputList);

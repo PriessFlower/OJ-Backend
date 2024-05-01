@@ -26,7 +26,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Schema(description = "题目评论")
-@Table(value = "problem_comment")
+@Table(value = "oj_problem_comment")
 public class ProblemComment implements Serializable {
 
     @Serial

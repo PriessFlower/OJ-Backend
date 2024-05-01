@@ -22,9 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static com.zrx.model.entity.table.OjProblemTableDef.OJ_PROBLEM;
 import static com.zrx.model.entity.table.ProblemCommentTableDef.PROBLEM_COMMENT;
@@ -48,6 +46,9 @@ public class ProblemCommentServiceImpl extends ServiceImpl<ProblemCommentMapper,
     @Resource
     private OjProblemMapper problemMapper;
 
+    @Resource
+    private ProblemCommentMapper commentMapper;
+
     @Override
     public Boolean save(ProblemCommentRequest req) {
         SysUser user = SecurityHelper.getUser();
@@ -65,7 +66,7 @@ public class ProblemCommentServiceImpl extends ServiceImpl<ProblemCommentMapper,
         QueryWrapper queryWrapper = new QueryWrapper()
                 .where(PROBLEM_COMMENT.PROBLEM_ID.eq(problemId, problemId != null))
                 .and(PROBLEM_COMMENT.PARENT_ID.isNull());
-        List<ProblemComment> problemComments = mapper.selectListByQuery(queryWrapper);
+        List<ProblemComment> problemComments = commentMapper.selectListByQuery(queryWrapper);
         List<ProblemCommentVo> voList = commentMapstruct.toVoList(problemComments);
         Set<Long> userIds = Sets.newHashSet();
         // 查询所有子节点
@@ -101,7 +102,7 @@ public class ProblemCommentServiceImpl extends ServiceImpl<ProblemCommentMapper,
      */
     private void listChildren(ProblemCommentVo e, Set<Long> userIds) {
         userIds.add(e.getAuthorId());
-        List<ProblemComment> list = QueryChain.of(mapper)
+        List<ProblemComment> list = QueryChain.of(commentMapper)
                 .where(PROBLEM_COMMENT.PARENT_ID.eq(e.getId()))
                 .list();
         if (CollUtil.isEmpty(list)) {
@@ -120,7 +121,7 @@ public class ProblemCommentServiceImpl extends ServiceImpl<ProblemCommentMapper,
     }
 
     private void removeChildren(Serializable parentId) {
-        List<Long> childrenIds = QueryChain.of(mapper)
+        List<Long> childrenIds = QueryChain.of(commentMapper)
                 .select(PROBLEM_COMMENT.ID)
                 .where(PROBLEM_COMMENT.PARENT_ID.eq(parentId))
                 .listAs(Long.class);

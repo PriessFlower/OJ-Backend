@@ -9,7 +9,9 @@ import com.zrx.reuslt.ResultCode;
 import com.zrx.security.utils.SecurityHelper;
 import com.zrx.service.OjProblemSubmitService;
 import com.zrx.sys.model.entity.SysUser;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,10 +24,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/submit")
 public class OjProblemSubmitController {
 
-	@Autowired
+	@Resource
 	private OjProblemSubmitService ojProblemSubmitService;
 
 	@PostMapping("/")
+	@Operation(summary = "提交题目")
 	public Result<Long> doQuestionSubmit(@RequestBody ProblemSubmitAddRequest problemSubmitAddRequest,
 			HttpServletRequest request) throws Exception {
 		if (problemSubmitAddRequest == null || problemSubmitAddRequest.getQuestionId() <= 0) {

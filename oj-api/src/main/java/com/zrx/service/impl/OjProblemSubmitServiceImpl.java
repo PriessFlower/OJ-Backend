@@ -13,6 +13,7 @@ import com.zrx.service.OjProblemSubmitService;
 import com.zrx.sys.model.entity.SysUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class OjProblemSubmitServiceImpl extends ServiceImpl<OjProblemSubmitMapper, OjProblemSubmit>
@@ -25,6 +26,7 @@ public class OjProblemSubmitServiceImpl extends ServiceImpl<OjProblemSubmitMappe
 	private OjMessageProducer ojMessageProducer;
 
 	@Override
+	@Transactional(rollbackFor = Exception.class)
 	public Long doSubmit(ProblemSubmitAddRequest problemSubmitAddRequest, SysUser loginUser) throws Exception {
 		OjProblemSubmit ojProblemSubmit = new OjProblemSubmit();
 		ojProblemSubmit.setStatus(ProblemSubmitStatusEnum.Submitting.getKey());
