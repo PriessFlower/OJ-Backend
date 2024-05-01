@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.Serializable;
@@ -35,7 +36,7 @@ public class ProblemCommentController {
      */
     @PostMapping("/save")
     @Operation(summary = "评论题目")
-    public Result<Boolean> save(@RequestBody @Parameter(description = "题目评论") ProblemCommentRequest req) {
+    public Result<Boolean> save(@Valid @RequestBody @Parameter(description = "题目评论") ProblemCommentRequest req) {
         return Result.success(problemCommentService.save(req));
     }
 
