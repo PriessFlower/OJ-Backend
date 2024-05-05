@@ -1,5 +1,6 @@
 package com.zrx;
 
+import cn.hutool.json.JSONUtil;
 import com.zrx.queue.InitRabbitMq;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
@@ -20,7 +21,7 @@ import java.util.Optional;
 public class MainApplication {
 
 	public static void main(String[] args) throws UnknownHostException {
-		InitRabbitMq.init();
+//		InitRabbitMq.init();
 		SpringApplication application = new SpringApplication(MainApplication.class);
 		ConfigurableApplicationContext applicationContext = application.run(args);
 
@@ -37,6 +38,21 @@ public class MainApplication {
 				+ "Local 访问网址: \t\thttp://localhost:" + port + path + "/doc.html\n\t" + "External 访问网址: \thttp://" + ip
 				+ ":" + port + path + "/doc.html\n"
 				+ "------------------------------------------------------------------");
+		String json = "import java.util.Scanner;\n" +
+				"\n" +
+				"/**\n" +
+				" * test\n" +
+				" */\n" +
+				"public class Main {\n" +
+				"\n" +
+				"    public static void main(String[] args) {\n" +
+				"        Scanner sc = new Scanner(System.in);\n" +
+				"        sc.next();\n" +
+				"        System.out.println(\"asd\");\n" +
+				"    }\n" +
+				"    \n" +
+				"}";
+		log.info(json);
 	}
 
 }

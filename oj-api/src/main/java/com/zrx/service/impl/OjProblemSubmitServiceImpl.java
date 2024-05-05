@@ -3,6 +3,7 @@ package com.zrx.service.impl;
 import com.mybatisflex.spring.service.impl.ServiceImpl;
 import com.zrx.enums.ProblemSubmitStatusEnum;
 import com.zrx.exception.BusinessException;
+import com.zrx.execudeCode.JudgeService;
 import com.zrx.mapper.OjProblemSubmitMapper;
 import com.zrx.model.dto.problemSubmit.ProblemSubmitAddRequest;
 import com.zrx.model.entity.OjProblem;
@@ -11,9 +12,13 @@ import com.zrx.queue.OjMessageProducer;
 import com.zrx.service.OjProblemService;
 import com.zrx.service.OjProblemSubmitService;
 import com.zrx.sys.model.entity.SysUser;
+import jakarta.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.concurrent.CompletableFuture;
 
 @Service
 public class OjProblemSubmitServiceImpl extends ServiceImpl<OjProblemSubmitMapper, OjProblemSubmit>
@@ -22,8 +27,12 @@ public class OjProblemSubmitServiceImpl extends ServiceImpl<OjProblemSubmitMappe
 	@Autowired
 	private OjProblemService ojProblemService;
 
-	@Autowired
-	private OjMessageProducer ojMessageProducer;
+	@Resource
+	@Lazy
+	private JudgeService judgeService;
+
+//	@Autowired
+//	private OjMessageProducer ojMessageProducer;
 
 	@Override
 	@Transactional(rollbackFor = Exception.class)
@@ -53,7 +62,15 @@ public class OjProblemSubmitServiceImpl extends ServiceImpl<OjProblemSubmitMappe
 		}
 		boolean update = ojProblemService.updateById(problem);
 		// 消息队列
-		ojMessageProducer.sendMessage("luojialong", "shenming", String.valueOf(ojProblemSubmitId));
+//		ojMessageProducer.sendMessage("luojialong", "shenming", String.valueOf(ojProblemSubmitId));
+		CompletableFuture.runAsync(() -> {
+            try {
+                judgeService.doJudge(ojProblemSubmitId);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+
 		return ojProblemSubmitId;
 	}
 

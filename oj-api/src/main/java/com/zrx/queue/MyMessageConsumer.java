@@ -10,12 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Component;
 
-@Component
+//@Component
 @Slf4j
 public class MyMessageConsumer {
 
-	@Autowired
-	private JudgeService judgeService;
+//	@Autowired
+//	private JudgeService judgeService;
 
 	// 指定程序监听的消息队列和确认机制
 	@SneakyThrows
@@ -23,7 +23,7 @@ public class MyMessageConsumer {
 	public void receiveMessage(String message, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) long deliveryTag) {
 		log.info("receiveMessage message = {}", message);
 		long questionSubmitId = Long.parseLong(message);
-		judgeService.doJudge(questionSubmitId);
+//		judgeService.doJudge(questionSubmitId);
 		channel.basicAck(deliveryTag, false);
 		channel.basicNack(deliveryTag, false, false);
 	}

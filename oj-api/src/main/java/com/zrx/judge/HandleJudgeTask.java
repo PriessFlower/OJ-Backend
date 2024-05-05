@@ -18,6 +18,7 @@ public class HandleJudgeTask {
 
 	public OjProblemSubmit doHandle(JudgeTask judgeTask) {
 		ExecuteCodeResponse executeCodeResponse = judgeTask.getExecuteCodeResponse();
+		JudgeInfo judgeInfo = executeCodeResponse.getJudgeInfo();
 
 		OjProblem ojProblem = judgeTask.getOjProblem();
 
@@ -28,7 +29,9 @@ public class HandleJudgeTask {
 		QuestionExecuteResultEnum enumByValue = QuestionExecuteResultEnum.getEnumByValue(status);
 
 		if (enumByValue != QuestionExecuteResultEnum.ExecuteSuccess) {
-
+			JudgeInfo judgeInfoRes = new JudgeInfo();
+			judgeInfoRes.setMessage(executeCodeResponse.getMessage());
+			ojProblemSubmit.setJudgeInfo(JSONUtil.toJsonStr(judgeInfoRes));
 			if (enumByValue == QuestionExecuteResultEnum.CompileFailure) {
 				ojProblemSubmit.setCodeStatus(ProblemJudgeResultEnum.COMPILE_ERROR.getKey());
 				return ojProblemSubmit;
@@ -44,7 +47,6 @@ public class HandleJudgeTask {
 		}
 
 		String judgeConfigStr = ojProblem.getJudgeConfig();
-		JudgeInfo judgeInfo = executeCodeResponse.getJudgeInfo();
 		JudgeConfig judgeConfig = JSONUtil.toBean(judgeConfigStr, JudgeConfig.class);
 		if (judgeInfo.getTime() == null || judgeInfo.getMemory() == null) {
 			ojProblemSubmit.setCodeStatus(ProblemJudgeResultEnum.SYSTEM_ERROR.getKey());
