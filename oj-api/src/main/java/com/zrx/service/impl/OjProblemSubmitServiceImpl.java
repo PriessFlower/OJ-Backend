@@ -4,16 +4,14 @@ import com.mybatisflex.spring.service.impl.ServiceImpl;
 import com.zrx.enums.ProblemSubmitStatusEnum;
 import com.zrx.exception.BusinessException;
 import com.zrx.execudeCode.JudgeService;
+import com.zrx.mapper.OjProblemMapper;
 import com.zrx.mapper.OjProblemSubmitMapper;
 import com.zrx.model.dto.problemSubmit.ProblemSubmitAddRequest;
 import com.zrx.model.entity.OjProblem;
 import com.zrx.model.entity.OjProblemSubmit;
-import com.zrx.queue.OjMessageProducer;
-import com.zrx.service.OjProblemService;
 import com.zrx.service.OjProblemSubmitService;
 import com.zrx.sys.model.entity.SysUser;
 import jakarta.annotation.Resource;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,8 +22,8 @@ import java.util.concurrent.CompletableFuture;
 public class OjProblemSubmitServiceImpl extends ServiceImpl<OjProblemSubmitMapper, OjProblemSubmit>
 		implements OjProblemSubmitService {
 
-	@Autowired
-	private OjProblemService ojProblemService;
+	@Resource
+	private OjProblemMapper problemMapper;
 
 	@Resource
 	@Lazy
@@ -45,7 +43,7 @@ public class OjProblemSubmitServiceImpl extends ServiceImpl<OjProblemSubmitMappe
 		// TODO: 2023/3/23 获取题目信息
 		Long questionId = problemSubmitAddRequest.getQuestionId();
 
-		OjProblem problem = ojProblemService.getById(questionId);
+		OjProblem problem = problemMapper.selectOneById(questionId);
 
 		if (problem == null) {
 			throw new BusinessException("题目不存在");
@@ -60,7 +58,7 @@ public class OjProblemSubmitServiceImpl extends ServiceImpl<OjProblemSubmitMappe
 		else {
 			problem.setSubmitNum(problem.getSubmitNum() + 1);
 		}
-		boolean update = ojProblemService.updateById(problem);
+		problemMapper.update(problem);
 		// 消息队列
 //		ojMessageProducer.sendMessage("luojialong", "shenming", String.valueOf(ojProblemSubmitId));
 		CompletableFuture.runAsync(() -> {
