@@ -2,7 +2,6 @@ package com.zrx.execudeCode.service;
 
 import cn.hutool.json.JSONUtil;
 import com.zrx.codesandbox.CodeSandBox;
-import com.zrx.codesandbox.mannager.CodeManager;
 import com.zrx.codesandbox.model.ExecuteCodeRequest;
 import com.zrx.codesandbox.model.ExecuteCodeResponse;
 import com.zrx.enums.ProblemJudgeResultEnum;
@@ -17,9 +16,7 @@ import com.zrx.model.judge.JudgeTask;
 import com.zrx.service.OjProblemService;
 import com.zrx.service.OjProblemSubmitService;
 import jakarta.annotation.Resource;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
