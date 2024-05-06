@@ -75,6 +75,14 @@ public class ProblemCommentServiceImpl extends ServiceImpl<ProblemCommentMapper,
         return voList;
     }
 
+    @Override
+    public List<ProblemCommentVo> listChildren(Long parentId) {
+        QueryWrapper queryWrapper = new QueryWrapper()
+                .where(PROBLEM_COMMENT.PARENT_ID.eq(parentId, parentId != null));
+        List<ProblemComment> problemComments = commentMapper.selectListByQuery(queryWrapper);
+        return commentMapstruct.toVoList(problemComments);
+    }
+
     /**
      * 获取用户信息
      */

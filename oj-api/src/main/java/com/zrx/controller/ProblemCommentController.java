@@ -62,4 +62,14 @@ public class ProblemCommentController {
         return Result.success(problemCommentService.list(problemId));
     }
 
+    /**
+     * 根据父节点id获取题目子评论。
+     * @return 所有数据
+     */
+    @GetMapping("/listChildren")
+    @Operation(summary = "根据父节点id获取题目子评论")
+    public Result<List<ProblemCommentVo>> listChildren(@RequestParam Long problemId) {
+        return Result.success(problemCommentService.listChildren(problemId));
+    }
+
 }

@@ -1,5 +1,6 @@
 package com.zrx.model.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -72,6 +73,7 @@ public class ProblemCommentVo implements Serializable {
     /**
      * 创建时间
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Schema(description = "创建时间")
     private LocalDateTime createTime;
 

@@ -20,6 +20,8 @@ public interface ProblemCommentService extends IService<ProblemComment> {
 
     List<ProblemCommentVo> list(Long problemId);
 
+    List<ProblemCommentVo> listChildren(Long parentId);
+
     Boolean removeRecursionById(Serializable id);
 
 }

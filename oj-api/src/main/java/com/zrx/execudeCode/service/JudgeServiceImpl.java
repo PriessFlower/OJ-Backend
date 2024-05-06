@@ -16,6 +16,7 @@ import com.zrx.model.entity.OjProblemSubmit;
 import com.zrx.model.judge.JudgeTask;
 import com.zrx.service.OjProblemService;
 import com.zrx.service.OjProblemSubmitService;
+import jakarta.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -27,10 +28,10 @@ import java.util.stream.Collectors;
 @Service
 public class JudgeServiceImpl implements JudgeService {
 
-	@Autowired
+	@Resource
 	private OjProblemService ojProblemService;
 
-	@Autowired
+	@Resource
 	private OjProblemSubmitService ojProblemSubmitService;
 
 
@@ -44,7 +45,6 @@ public class JudgeServiceImpl implements JudgeService {
 		OjProblem ojProblem = ojProblemService.getById(ojProblemSubmit.getQuestionId());
 
 		ExecuteCodeRequest executeCodeRequest = getExecuteCodeRequest(ojProblemSubmit, ojProblem);
-		System.out.println(executeCodeRequest);
 		CodeSandBox codeSandbox = CodeSandboxManager.instance(type);
 		ojProblemSubmit.setStatus(ProblemSubmitStatusEnum.Waiting.getKey());
 		ojProblemSubmitService.updateById(ojProblemSubmit);
