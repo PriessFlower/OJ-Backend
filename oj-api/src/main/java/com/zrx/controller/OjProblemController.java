@@ -1,6 +1,7 @@
 package com.zrx.controller;
 
 import cn.dev33.satoken.annotation.SaCheckRole;
+import cn.dev33.satoken.annotation.SaMode;
 import com.alibaba.excel.EasyExcelFactory;
 import com.alibaba.excel.support.ExcelTypeEnum;
 import com.mybatisflex.core.paginate.Page;
@@ -90,7 +91,7 @@ public class OjProblemController {
 	 */
 	@GetMapping("/getInfo/{id}")
 	@Operation(summary = "根据主键获取题目")
-	@SaCheckRole(AuthConst.SUPER_ADMIN)
+	@SaCheckRole(value = {AuthConst.SUPER_ADMIN, AuthConst.USER}, mode = SaMode.OR)
 	public Result<OjProblemVo> getInfo(@PathVariable Serializable id) {
 		return Result.success(ojProblemService.getInfoById(id));
 	}
@@ -102,7 +103,7 @@ public class OjProblemController {
 	 */
 	@GetMapping("/page")
 	@Operation(summary = "分页查询题目")
-	@SaCheckRole(AuthConst.SUPER_ADMIN)
+	@SaCheckRole(value = {AuthConst.SUPER_ADMIN, AuthConst.USER}, mode = SaMode.OR)
 	public Result<Page<OjProblemPageVo>> page(@Parameter(description = "分页信息") Paging page,
 			@Parameter(description = "查询条件") OjProblemQueryRequest req) {
 		return Result.success(ojProblemService.page(page, req));
