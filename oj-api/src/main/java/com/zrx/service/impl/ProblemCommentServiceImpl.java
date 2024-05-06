@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.zrx.model.entity.table.OjProblemTableDef.OJ_PROBLEM;
 import static com.zrx.model.entity.table.ProblemCommentTableDef.PROBLEM_COMMENT;
@@ -80,7 +81,10 @@ public class ProblemCommentServiceImpl extends ServiceImpl<ProblemCommentMapper,
         QueryWrapper queryWrapper = new QueryWrapper()
                 .where(PROBLEM_COMMENT.PARENT_ID.eq(parentId, parentId != null));
         List<ProblemComment> problemComments = commentMapper.selectListByQuery(queryWrapper);
-        return commentMapstruct.toVoList(problemComments);
+        Set<Long> userIds = problemComments.stream().map(ProblemComment::getAuthorId).collect(Collectors.toSet());
+        List<ProblemCommentVo> voList = commentMapstruct.toVoList(problemComments);
+        findUserInfo(voList, userIds);
+        return voList;
     }
 
     /**
