@@ -21,7 +21,10 @@ import com.zrx.sys.model.entity.SysRoleUser;
 import com.zrx.sys.model.entity.SysUser;
 import com.zrx.sys.model.vo.SysRoleResponse;
 import com.zrx.sys.service.SysRoleService;
+import com.zrx.sys.utils.RoleUtil;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,8 +44,10 @@ import static com.zrx.sys.model.entity.table.SysRoleUserTableDef.SYS_ROLE_USER;
 @RequiredArgsConstructor
 public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> implements SysRoleService {
 
+    private static final Logger log = LoggerFactory.getLogger(SysRoleServiceImpl.class);
     private final SysRoleUserMapper roleUserMapper;
     private final SysRoleMap sysRoleMap;
+    private final RoleUtil roleUtil;
 
     @Override
     public Boolean save(SysRoleRequest req) {
@@ -55,7 +60,7 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
             throw new BusinessException("角色标识已存在");
         }
         // 判断创建的角色排序是否大于当前用户的最大权限角色
-        Integer maxRole = selectLoginUserMaxRole();
+        Integer maxRole = roleUtil.selectMaxRoleByUserId(SecurityHelper.getUser().getId()).getSort();
         if (req.getSort() < maxRole) {
             throw new BusinessException("排序不能小于当前用户最大权限角色");
         }
@@ -65,22 +70,6 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
             throw new BusinessException("新增失败");
         }
         return true;
-    }
-
-    /**
-     * 获取当前登录用户最大权限角色
-     */
-    private Integer selectLoginUserMaxRole() {
-        Long userId = SecurityHelper.getUser().getId();
-        QueryWrapper queryWrapper = new QueryWrapper();
-        queryWrapper.select(SYS_ROLE.SORT)
-                .from(SYS_ROLE)
-                .leftJoin(SYS_ROLE_USER)
-                .on(SYS_ROLE.ID.eq(SYS_ROLE_USER.ROLE_ID))
-                .where(SYS_ROLE_USER.USER_ID.eq(userId))
-                .orderBy(SYS_ROLE.SORT.asc())
-                .limit(1);
-        return mapper.selectOneByQueryAs(queryWrapper, Integer.class);
     }
 
     @Override
@@ -95,7 +84,7 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
         if (req.getId() == null) {
             throw new BusinessException("主键不能为空");
         }
-        Integer maxRole = selectLoginUserMaxRole();
+        Integer maxRole = roleUtil.selectMaxRoleByUserId(SecurityHelper.getUser().getId()).getSort();
         if (req.getSort() <= maxRole) {
             throw new BusinessException("排序不能小于或等于当前用户最大权限角色");
         }
@@ -159,6 +148,11 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
         if (userId.equals(user.getId())) {
             throw new BusinessException("不能修改自己的角色");
         }
+        SysRole targetMaxRole = roleUtil.selectMaxRoleByRoleIds(req.getRoleIds());
+        SysRole ownRole = roleUtil.selectMaxRoleByUserId(user.getId());
+        if (targetMaxRole.getSort() < ownRole.getSort()) {
+            throw new BusinessException("权限不足");
+        }
         roleUserMapper.deleteByQuery(
                 new QueryWrapper()
                         .where(SYS_ROLE_USER.USER_ID.eq(userId))
@@ -182,10 +176,11 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
             throw new BusinessException("该角色已经被用户使用，不允许删除");
         }
         // 不允许删除比自己权限大或者权限相同的角色
-        Integer maxRole = selectLoginUserMaxRole();
+        Integer maxRole = roleUtil.selectMaxRoleByUserId(SecurityHelper.getUser().getId()).getSort();
         SysRole sysRole = mapper.selectOneByCondition(SYS_ROLE.ID.eq(id));
         if (maxRole >= sysRole.getSort()) {
-            throw new BusinessException("该角色权限大于或等于当前用户最大权限角色，不允许删除");
+            log.warn("仅可删除比自己权限小的角色");
+            throw new BusinessException("权限不足");
         }
         return mapper.deleteById(id) == 1;
     }

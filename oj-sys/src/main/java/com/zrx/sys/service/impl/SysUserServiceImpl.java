@@ -26,11 +26,13 @@ import com.zrx.sys.mapper.SysUserMapper;
 import com.zrx.sys.mapstruct.SysUserMap;
 import com.zrx.sys.model.dto.SysUserRequest;
 import com.zrx.sys.model.dto.SysUserUpdateRequest;
+import com.zrx.sys.model.entity.SysRole;
 import com.zrx.sys.model.entity.SysRoleUser;
 import com.zrx.sys.model.entity.SysUser;
 import com.zrx.sys.model.vo.SysUserResponse;
 import com.zrx.sys.service.SysFileService;
 import com.zrx.sys.service.SysUserService;
+import com.zrx.sys.utils.RoleUtil;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -56,6 +58,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     private final SysFileService sysFileService;
     private final SysRoleUserMapper roleUserMapper;
     private final SysRoleMapper roleMapper;
+    private final RoleUtil roleUtil;
 
     @Override
     public String uploadAvatar(MultipartFile file) {
@@ -177,8 +180,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 
     @Override
     public SysUserResponse getInfo() {
-        Object loginId = StpUtil.getTokenInfo().loginId;
-        Long userId = Long.valueOf((String) loginId);
+        Long userId = SecurityHelper.getUser().getId();
         // TODO: 统一拦截脱敏、解除脱敏
         SysUser sysUser;
         try {
@@ -192,8 +194,8 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
             throw new BusinessException("未找到该用户信息");
         }
         SysUserResponse resp = sysUserMap.toResp(sysUser);
-        // TODO: 待实现，获取权限最大的角色（需要排序），返回角色列表。
-        resp.setRole(AuthConst.SUPER_ADMIN);
+        SysRole sysRole = roleUtil.selectMaxRoleByUserId(userId);
+        resp.setRole(sysRole.getRoleCode());
         return resp;
     }
 

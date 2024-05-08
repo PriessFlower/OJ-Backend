@@ -50,7 +50,7 @@ public class  SysUserController {
 	 * @return boolean
 	 */
 	@PutMapping("/update")
-	@Operation(summary = "修改用户信息--开放给个人用户使用")
+	@Operation(summary = "修改用户信息--用户使用")
 	@SaCheckRole(AuthConst.SUPER_ADMIN)
 	public Result<Boolean> updateUserInfo(@RequestBody SysUserUpdateRequest request) {
 		return Result.success(sysUserService.update(request));
@@ -92,7 +92,6 @@ public class  SysUserController {
 	 */
 	@GetMapping("/getInfo")
 	@Operation(summary = "获取已登录的当前用户信息--用户使用")
-	@SaCheckRole(value = {AuthConst.SUPER_ADMIN, AuthConst.USER}, mode = SaMode.OR)
 	public Result<SysUserResponse> getInfo() {
 		return Result.success(sysUserService.getInfo());
 	}
@@ -104,7 +103,7 @@ public class  SysUserController {
 	 */
 	@GetMapping("/page")
 	@Operation(summary = "分页查询")
-	@SaCheckRole(AuthConst.SUPER_ADMIN)
+	@SaCheckRole(value = {AuthConst.SUPER_ADMIN, AuthConst.ADMIN}, mode = SaMode.OR)
 	public Result<Page<SysUserResponse>> page(@Parameter(description = "分页条件") Paging page,
 			@Parameter(description = "查询条件") SysUserRequest request) {
 		return Result.success(sysUserService.page(page, request));

@@ -61,6 +61,9 @@ public class SysRole extends BaseEntity implements Serializable {
 	@Schema(description = "部门ID")
 	private String deptId;
 
+	/**
+	 * 逻辑删除 0-正常，1-已删除
+	 */
 	@Column(isLogicDelete = true)
 	@Schema(description = "逻辑删除 0-正常，1-已删除")
 	private Integer delFlag;
