@@ -25,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.Serializable;
 import java.util.List;
 
 import static com.zrx.sys.model.entity.table.SysRoleTableDef.SYS_ROLE;
@@ -53,11 +54,33 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
         if (count > 0) {
             throw new BusinessException("角色标识已存在");
         }
+        // 判断创建的角色排序是否大于当前用户的最大权限角色
+        Integer maxRole = selectLoginUserMaxRole();
+        if (req.getSort() < maxRole) {
+            throw new BusinessException("排序不能小于当前用户最大权限角色");
+        }
+        // 保存
         int insertFlag = mapper.insert(entity);
         if (insertFlag != 1) {
             throw new BusinessException("新增失败");
         }
         return true;
+    }
+
+    /**
+     * 获取当前登录用户最大权限角色
+     */
+    private Integer selectLoginUserMaxRole() {
+        Long userId = SecurityHelper.getUser().getId();
+        QueryWrapper queryWrapper = new QueryWrapper();
+        queryWrapper.select(SYS_ROLE.SORT)
+                .from(SYS_ROLE)
+                .leftJoin(SYS_ROLE_USER)
+                .on(SYS_ROLE.ID.eq(SYS_ROLE_USER.ROLE_ID))
+                .where(SYS_ROLE_USER.USER_ID.eq(userId))
+                .orderBy(SYS_ROLE.SORT.asc())
+                .limit(1);
+        return mapper.selectOneByQueryAs(queryWrapper, Integer.class);
     }
 
     @Override
@@ -71,6 +94,10 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
     public Boolean updateById(SysRoleRequest req) {
         if (req.getId() == null) {
             throw new BusinessException("主键不能为空");
+        }
+        Integer maxRole = selectLoginUserMaxRole();
+        if (req.getSort() <= maxRole) {
+            throw new BusinessException("排序不能小于或等于当前用户最大权限角色");
         }
         SysRole entity = sysRoleMap.toEntity(req);
         int updateFlag = mapper.update(entity);
@@ -86,7 +113,7 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
         queryWrapper.select()
                 .where(SYS_ROLE.ROLE_CODE.like(req.getRoleCode(), StringUtil::isNotBlank))
                 .and(SYS_ROLE.DEPT_ID.eq(req.getDeptId(), StringUtil::isNotBlank))
-                .orderBy(SYS_ROLE.CREATE_TIME, false);
+                .orderBy(SYS_ROLE.SORT.asc());
         Page<SysRole> paginate = mapper.paginate(Page.of(page.getPageNum(), page.getPageSize()), queryWrapper);
         return sysRoleMap.toVoPage(paginate);
     }
@@ -146,6 +173,21 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
             throw new BusinessException("赋权失败，请重试");
         }
         return true;
+    }
+
+    @Override
+    public Boolean removeRoleById(Serializable id) {
+        // 角色已经被用户使用，不允许删除
+        if (roleUserMapper.selectCountByCondition(SYS_ROLE_USER.ROLE_ID.eq(id)) != 0) {
+            throw new BusinessException("该角色已经被用户使用，不允许删除");
+        }
+        // 不允许删除比自己权限大或者权限相同的角色
+        Integer maxRole = selectLoginUserMaxRole();
+        SysRole sysRole = mapper.selectOneByCondition(SYS_ROLE.ID.eq(id));
+        if (maxRole >= sysRole.getSort()) {
+            throw new BusinessException("该角色权限大于或等于当前用户最大权限角色，不允许删除");
+        }
+        return mapper.deleteById(id) == 1;
     }
 
 }

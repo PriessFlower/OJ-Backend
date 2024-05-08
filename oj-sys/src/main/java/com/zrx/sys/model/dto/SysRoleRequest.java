@@ -32,6 +32,12 @@ public class SysRoleRequest implements Serializable {
 	private String roleCode;
 
 	/**
+	 * 排序
+	 */
+	@Schema(description = "排序")
+	private Integer sort;
+
+	/**
 	 * 备注
 	 */
 	@Schema(description = "备注")

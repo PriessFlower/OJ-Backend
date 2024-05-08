@@ -18,6 +18,8 @@ public final class AuthConst {
 
 	// 超级管理员
 	public static final String SUPER_ADMIN = "super-admin";
+	// 管理员
+	public static final String ADMIN = "admin";
 	// 普通用户
 	public static final String USER = "user";
 

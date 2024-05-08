@@ -20,11 +20,8 @@ import java.util.stream.Collectors;
 @Component
 @RequiredArgsConstructor
 public class StpInterfaceImpl implements StpInterface {
-
 	private final SysRoleService sysRoleService;
-
 	private final SysRolePermissionService sysRolePermissionService;
-
 	/**
 	 * 返回一个账号所拥有的权限码集合
 	 * @param loginId 登录账号ID（这里用的是用户id）
@@ -43,7 +40,6 @@ public class StpInterfaceImpl implements StpInterface {
 		}
 		return null;
 	}
-
 	/**
 	 * 返回一个账号所拥有的角色标识集合
 	 * @param loginId 登录账号ID（这里用的是用户id）
@@ -55,5 +51,4 @@ public class StpInterfaceImpl implements StpInterface {
 		String userId = SaFoxUtil.getValueByType(loginId, String.class);
 		return sysRoleService.getRoleListByUserId(userId);
 	}
-
 }

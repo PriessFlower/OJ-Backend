@@ -8,6 +8,7 @@ import com.zrx.sys.model.dto.UpdateUserRoleRequest;
 import com.zrx.sys.model.entity.SysRole;
 import com.zrx.sys.model.vo.SysRoleResponse;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -31,5 +32,7 @@ public interface SysRoleService extends IService<SysRole> {
 	Boolean save(SysRoleRequest req);
 
 	Boolean updateUserRole(UpdateUserRoleRequest req);
+
+    Boolean removeRoleById(Serializable id);
 
 }
