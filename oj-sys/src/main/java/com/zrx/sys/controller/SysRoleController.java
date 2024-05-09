@@ -34,8 +34,6 @@ public class SysRoleController {
 	@Resource
 	private SysRoleService sysRoleService;
 
-
-
 	/**
 	 * 添加系统角色。
 	 * @param req 系统角色

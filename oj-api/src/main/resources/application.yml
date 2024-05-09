@@ -38,7 +38,7 @@ springdoc:
     enabled: true   # 是否开启文档功能
   group-configs:
     - group: '核心接口'
-      paths-to-match: '/core/**'
+      paths-to-match: '/**'
       packages-to-scan: com.zrx
     - group: '系统接口'
       paths-to-match:

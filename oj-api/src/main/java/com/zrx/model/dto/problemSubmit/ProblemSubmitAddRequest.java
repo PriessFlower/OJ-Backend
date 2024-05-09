@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Schema(name = "ProblemSubmitAddRequest", description = "提交题目请求")
 public class ProblemSubmitAddRequest {
 
 	@Schema(description = "编程语言")

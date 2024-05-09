@@ -6,6 +6,8 @@ import com.zrx.exception.BusinessException;
 import com.zrx.execudeCode.JudgeService;
 import com.zrx.mapper.OjProblemMapper;
 import com.zrx.mapper.OjProblemSubmitMapper;
+import com.zrx.mapstruct.ProblemSubmitConverter;
+import com.zrx.model.dto.problemSubmit.OjProblemSubmitVo;
 import com.zrx.model.dto.problemSubmit.ProblemSubmitAddRequest;
 import com.zrx.model.entity.OjProblem;
 import com.zrx.model.entity.OjProblemSubmit;
@@ -28,6 +30,9 @@ public class OjProblemSubmitServiceImpl extends ServiceImpl<OjProblemSubmitMappe
 	@Resource
 	@Lazy
 	private JudgeService judgeService;
+
+	@Resource
+	private ProblemSubmitConverter problemSubmitConverter;
 
 //	@Autowired
 //	private OjMessageProducer ojMessageProducer;
@@ -69,6 +74,15 @@ public class OjProblemSubmitServiceImpl extends ServiceImpl<OjProblemSubmitMappe
         });
 
 		return ojProblemSubmitId;
+	}
+
+	@Override
+	public OjProblemSubmitVo getInfoById(Long id) {
+		OjProblemSubmit ojProblemSubmit = mapper.selectOneById(id);
+		if (ojProblemSubmit == null) {
+			throw new BusinessException("未找到该数据");
+		}
+		return problemSubmitConverter.toVo(ojProblemSubmit);
 	}
 
 }
