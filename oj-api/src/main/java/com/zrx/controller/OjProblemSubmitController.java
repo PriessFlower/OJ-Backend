@@ -1,10 +1,8 @@
 package com.zrx.controller;
 
-import com.zrx.exception.BusinessException;
 import com.zrx.model.dto.problemSubmit.OjProblemSubmitVo;
 import com.zrx.model.dto.problemSubmit.ProblemSubmitAddRequest;
 import com.zrx.reuslt.Result;
-import com.zrx.reuslt.ResultCode;
 import com.zrx.security.utils.SecurityHelper;
 import com.zrx.service.OjProblemSubmitService;
 import com.zrx.sys.model.entity.SysUser;
@@ -12,6 +10,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -24,11 +23,8 @@ public class OjProblemSubmitController {
 
     @PostMapping("/")
     @Operation(summary = "提交题目")
-    public Result<Long> doQuestionSubmit(@RequestBody ProblemSubmitAddRequest problemSubmitAddRequest,
+    public Result<Long> doQuestionSubmit(@Valid @RequestBody ProblemSubmitAddRequest problemSubmitAddRequest,
                                          HttpServletRequest request) throws Exception {
-        if (problemSubmitAddRequest == null || problemSubmitAddRequest.getQuestionId() <= 0) {
-            throw new BusinessException(ResultCode.PARAM_ERROR);
-        }
         SysUser user = SecurityHelper.getUser();
         Long problemSubmitId = ojProblemSubmitService.doSubmit(problemSubmitAddRequest, user);
         return Result.success(problemSubmitId);

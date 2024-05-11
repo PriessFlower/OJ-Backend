@@ -1,5 +1,6 @@
 package com.zrx.model.dto.problemSubmit;
 
+import com.zrx.codesandbox.model.JudgeInfo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -29,7 +30,7 @@ public class OjProblemSubmitVo implements Serializable {
 	private String output;
 
 	@Schema(description = "判题信息（json 对象）")
-	private String judgeInfo;
+	private JudgeInfo judgeInfo;
 
 	@Schema(description = "判题状态（0 - 待判题、1 - 判题中、2 - 成功、3 - 失败）")
 	private Integer status;

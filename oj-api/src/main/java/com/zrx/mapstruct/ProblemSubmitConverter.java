@@ -1,5 +1,7 @@
 package com.zrx.mapstruct;
 
+import cn.hutool.json.JSONUtil;
+import com.zrx.codesandbox.model.JudgeInfo;
 import com.zrx.model.dto.problemSubmit.OjProblemSubmitVo;
 import com.zrx.model.entity.OjProblemSubmit;
 import org.mapstruct.Mapper;
@@ -12,5 +14,9 @@ import org.mapstruct.Mapper;
 public interface ProblemSubmitConverter {
 
     OjProblemSubmitVo toVo(OjProblemSubmit entity);
+
+    default JudgeInfo judgeInfoStrToJudgeInfoObj(String judgeInfoStr) {
+        return JSONUtil.toBean(judgeInfoStr, JudgeInfo.class);
+    };
 
 }

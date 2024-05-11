@@ -14,16 +14,17 @@ import com.zrx.model.entity.OjProblemSubmit;
 import com.zrx.service.OjProblemSubmitService;
 import com.zrx.sys.model.entity.SysUser;
 import jakarta.annotation.Resource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.concurrent.CompletableFuture;
 
 @Service
 public class OjProblemSubmitServiceImpl extends ServiceImpl<OjProblemSubmitMapper, OjProblemSubmit>
 		implements OjProblemSubmitService {
 
+	private static final Logger log = LoggerFactory.getLogger(OjProblemSubmitServiceImpl.class);
 	@Resource
 	private OjProblemMapper problemMapper;
 
@@ -54,7 +55,7 @@ public class OjProblemSubmitServiceImpl extends ServiceImpl<OjProblemSubmitMappe
 		}
 		ojProblemSubmit.setQuestionId(problemSubmitAddRequest.getQuestionId());
 		ojProblemSubmit.setUserId(loginUser.getId());
-		this.save(ojProblemSubmit);
+		mapper.insert(ojProblemSubmit);
 		Long ojProblemSubmitId = ojProblemSubmit.getId();
 		if (problem.getSubmitNum() == null) {
 			problem.setSubmitNum(1);
@@ -65,13 +66,14 @@ public class OjProblemSubmitServiceImpl extends ServiceImpl<OjProblemSubmitMappe
 		problemMapper.update(problem);
 		// 消息队列
 //		ojMessageProducer.sendMessage("luojialong", "shenming", String.valueOf(ojProblemSubmitId));
-		CompletableFuture.runAsync(() -> {
+//		CompletableFuture.runAsync(() -> {
             try {
                 judgeService.doJudge(ojProblemSubmitId);
             } catch (Exception e) {
-                throw new RuntimeException(e);
+				log.error("判题失败", e);
+//                throw new RuntimeException(e);
             }
-        });
+//        });
 
 		return ojProblemSubmitId;
 	}

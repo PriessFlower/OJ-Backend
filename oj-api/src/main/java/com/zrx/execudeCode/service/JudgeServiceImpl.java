@@ -9,12 +9,12 @@ import com.zrx.enums.ProblemSubmitStatusEnum;
 import com.zrx.execudeCode.CodeSandboxManager;
 import com.zrx.execudeCode.JudgeService;
 import com.zrx.judge.HandleJudgeTask;
+import com.zrx.mapper.OjProblemSubmitMapper;
 import com.zrx.model.dto.problem.JudgeCase;
 import com.zrx.model.entity.OjProblem;
 import com.zrx.model.entity.OjProblemSubmit;
 import com.zrx.model.judge.JudgeTask;
 import com.zrx.service.OjProblemService;
-import com.zrx.service.OjProblemSubmitService;
 import jakarta.annotation.Resource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -29,7 +29,7 @@ public class JudgeServiceImpl implements JudgeService {
 	private OjProblemService ojProblemService;
 
 	@Resource
-	private OjProblemSubmitService ojProblemSubmitService;
+	private OjProblemSubmitMapper submitMapper;
 
 
 	@Value("${codesandbox.type:remote}")
@@ -38,31 +38,31 @@ public class JudgeServiceImpl implements JudgeService {
 	@Override
 	public void doJudge(Long ojProblemSubmitId) throws Exception {
 
-		OjProblemSubmit ojProblemSubmit = ojProblemSubmitService.getById(ojProblemSubmitId);
+		OjProblemSubmit ojProblemSubmit = submitMapper.selectOneById(ojProblemSubmitId);
 		OjProblem ojProblem = ojProblemService.getById(ojProblemSubmit.getQuestionId());
 
 		ExecuteCodeRequest executeCodeRequest = getExecuteCodeRequest(ojProblemSubmit, ojProblem);
 		CodeSandBox codeSandbox = CodeSandboxManager.instance(type);
 		ojProblemSubmit.setStatus(ProblemSubmitStatusEnum.Waiting.getKey());
-		ojProblemSubmitService.updateById(ojProblemSubmit);
+		submitMapper.update(ojProblemSubmit);
 		ExecuteCodeResponse executeCodeResponse = codeSandbox.executeCode(executeCodeRequest);
 		JudgeTask judgeTask = setJudgeTask(executeCodeResponse, ojProblem, ojProblemSubmit);
 		ojProblemSubmit.setStatus(ProblemSubmitStatusEnum.Judging.getKey());
-		ojProblemSubmitService.updateById(ojProblemSubmit);
+		submitMapper.update(ojProblemSubmit);
 		HandleJudgeTask handleJudgeTask = new HandleJudgeTask();
 		ojProblemSubmit.setOutput(JSONUtil.toJsonStr(executeCodeResponse.getOuputList()));
 		ojProblemSubmit.setJudgeInfo(JSONUtil.toJsonStr(executeCodeResponse.getJudgeInfo()));
 		ojProblemSubmit = handleJudgeTask.doHandle(judgeTask);
 		ojProblemSubmit.setCodeStatus(ProblemSubmitStatusEnum.Completed.getKey());
-		ojProblemSubmitService.updateById(ojProblemSubmit);
-		boolean save = ojProblemSubmitService.updateById(ojProblemSubmit);
+		submitMapper.update(ojProblemSubmit);
+		boolean saveFlag = submitMapper.update(ojProblemSubmit) == 1;
 		Integer codeStatus = ojProblemSubmit.getCodeStatus();
 		// TODO:
 		if (codeStatus.equals(ProblemJudgeResultEnum.ACCEPTED.getKey())) {
 			ojProblem.setAcceptedNum(ojProblem.getAcceptedNum() == null ? 1 : ojProblem.getAcceptedNum() + 1);
 			ojProblemService.updateById(ojProblem);
 		}
-		if (!save) {
+		if (!saveFlag) {
 			throw new Exception("代码提交保存失败");
 		}
 	}

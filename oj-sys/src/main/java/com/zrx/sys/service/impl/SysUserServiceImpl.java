@@ -25,6 +25,7 @@ import com.zrx.sys.mapper.SysRoleUserMapper;
 import com.zrx.sys.mapper.SysUserMapper;
 import com.zrx.sys.mapstruct.SysUserMap;
 import com.zrx.sys.model.dto.SysUserRequest;
+import com.zrx.sys.model.dto.SysUserRoleBo;
 import com.zrx.sys.model.dto.SysUserUpdateRequest;
 import com.zrx.sys.model.entity.SysRole;
 import com.zrx.sys.model.entity.SysRoleUser;
@@ -38,6 +39,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.zrx.sys.model.entity.table.SysRoleTableDef.SYS_ROLE;
 import static com.zrx.sys.model.entity.table.SysRoleUserTableDef.SYS_ROLE_USER;
@@ -202,22 +207,43 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     @Override
     public Page<SysUserResponse> page(Paging page, SysUserRequest request) {
         QueryWrapper queryWrapper = new QueryWrapper().select(SYS_USER.DEFAULT_COLUMNS)
-                .select(SYS_ROLE_USER.ROLE_ID, SYS_ROLE.REMARK.as("roles"))
-                .leftJoin(SYS_ROLE_USER).on(SYS_USER.ID.eq(SYS_ROLE_USER.USER_ID))
-                .leftJoin(SYS_ROLE).on(SYS_ROLE_USER.ROLE_ID.eq(SYS_ROLE.ID))
                 .where(SYS_USER.USERNAME.like(request.getUsername(), StringUtil::isNotBlank))
                 .and(SYS_USER.REAL_NAME.like(request.getRealName(), StringUtil::isNotBlank))
                 .and(SYS_USER.GENDER.eq(request.getGender()))
                 .and(SYS_USER.EMAIL.like(request.getEmail(), StringUtil::isNotBlank))
                 .and(SYS_USER.MOBILE.like(request.getMobile(), StringUtil::isNotBlank))
                 .and(SYS_USER.STATUS.eq(request.getStatus()))
-                .orderBy(SYS_USER.UPDATE_TIME.desc());
+                .orderBy(SYS_USER.CREATE_TIME.asc());
         Page<SysUserResponse> respPage = mapper.paginateAs(Page.of(page.getPageNum(), page.getPageSize()), queryWrapper, SysUserResponse.class);
+        // 获取用户角色
+        getUserRole(respPage.getRecords());
+        // 获取当前用户是否在线
         respPage.getRecords().forEach(item -> {
             SaSession session = StpUtil.getSessionByLoginId(item.getId(), false);
             item.setOnline(session != null);
         });
         return respPage;
+    }
+
+    /**
+     * 获取用户角色并填充
+     * @param respList
+     */
+    private void getUserRole(List<SysUserResponse> respList) {
+        List<Long> userIdList = respList.stream().map(SysUserResponse::getId).toList();
+        QueryWrapper queryWrapper = new QueryWrapper()
+                .select(SYS_ROLE_USER.USER_ID.as("userId"), SYS_ROLE.REMARK.as("roleNames"))
+                .from(SYS_ROLE)
+                .leftJoin(SYS_ROLE_USER).on(SYS_ROLE_USER.ROLE_ID.eq(SYS_ROLE.ID))
+                .where(SYS_ROLE_USER.USER_ID.in(userIdList));
+        Map<Long, List<String>> userRoleMap =
+                roleUserMapper.selectListByQueryAs(queryWrapper, SysUserRoleBo.class).stream()
+                        .collect(Collectors.toMap(SysUserRoleBo::getUserId, SysUserRoleBo::getRoleNames));
+        respList.forEach(item -> {
+            if (userRoleMap.containsKey(item.getId())) {
+                item.setRoles(userRoleMap.get(item.getId()));
+            }
+        });
     }
 
     @Override

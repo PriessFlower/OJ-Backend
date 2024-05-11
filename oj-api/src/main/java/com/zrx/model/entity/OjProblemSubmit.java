@@ -55,6 +55,7 @@ public class OjProblemSubmit implements Serializable {
 	@Schema(description = "创建用户id")
 	private Long userId;
 
+	@Column(onInsertValue = "now()")
 	@Schema(description = "创建时间")
 	private Date createTime;
 
