@@ -35,7 +35,7 @@ import java.io.Serializable;
  * @since 2024/3/20
  */
 @RestController
-@Tag(name = "OjProblem", description = "题目管理")
+@Tag(name = "OjProblemController", description = "题目管理")
 @RequestMapping("/ojProblem")
 public class OjProblemController {
 

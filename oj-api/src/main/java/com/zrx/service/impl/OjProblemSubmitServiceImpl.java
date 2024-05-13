@@ -20,6 +20,10 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
+import static com.zrx.model.entity.table.OjProblemSubmitTableDef.OJ_PROBLEM_SUBMIT;
+
 @Service
 public class OjProblemSubmitServiceImpl extends ServiceImpl<OjProblemSubmitMapper, OjProblemSubmit>
 		implements OjProblemSubmitService {
@@ -40,7 +44,7 @@ public class OjProblemSubmitServiceImpl extends ServiceImpl<OjProblemSubmitMappe
 
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public Long doSubmit(ProblemSubmitAddRequest problemSubmitAddRequest, SysUser loginUser) throws Exception {
+	public Long doSubmit(ProblemSubmitAddRequest problemSubmitAddRequest, SysUser loginUser) {
 		OjProblemSubmit ojProblemSubmit = new OjProblemSubmit();
 		ojProblemSubmit.setStatus(ProblemSubmitStatusEnum.Submitting.getKey());
 		ojProblemSubmit.setLanguage(problemSubmitAddRequest.getLanguage());
@@ -85,6 +89,15 @@ public class OjProblemSubmitServiceImpl extends ServiceImpl<OjProblemSubmitMappe
 			throw new BusinessException("未找到该数据");
 		}
 		return problemSubmitConverter.toVo(ojProblemSubmit);
+	}
+
+	@Override
+	public List<OjProblemSubmitVo> getInfoListByUserId(Long id) {
+		List<OjProblemSubmit> list = mapper.selectListByCondition(OJ_PROBLEM_SUBMIT.USER_ID.eq(id));
+		if (list.isEmpty()) {
+			return List.of();
+		}
+		return problemSubmitConverter.toVoList(list);
 	}
 
 }

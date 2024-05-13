@@ -32,13 +32,13 @@ public class Codegen {
 	public static GlobalConfig createGlobalConfigUseStyle1() {
 		// 创建配置内容
 		GlobalConfig globalConfig = new GlobalConfig();
-		globalConfig.getJavadocConfig().setAuthor("zhang.rx").setSince("2024/4/18");
+		globalConfig.getJavadocConfig().setAuthor("zhang.rx").setSince("2024/5/13");
 
 		// 设置根包
 		globalConfig.setBasePackage("com.zrx");
 
 		// 设置只生成哪些表
-		globalConfig.setGenerateTable("sys_file");
+		globalConfig.setGenerateTable("oj_post_thumb");
 		// 设置作者
 		globalConfig.setAuthor("zhang.rx");
 

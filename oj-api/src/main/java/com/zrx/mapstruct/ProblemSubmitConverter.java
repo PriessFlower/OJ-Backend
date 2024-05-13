@@ -6,6 +6,8 @@ import com.zrx.model.dto.problemSubmit.OjProblemSubmitVo;
 import com.zrx.model.entity.OjProblemSubmit;
 import org.mapstruct.Mapper;
 
+import java.util.List;
+
 /**
  * @author zhang.rx
  * @since 2024/5/8
@@ -17,6 +19,8 @@ public interface ProblemSubmitConverter {
 
     default JudgeInfo judgeInfoStrToJudgeInfoObj(String judgeInfoStr) {
         return JSONUtil.toBean(judgeInfoStr, JudgeInfo.class);
-    };
+    }
+
+    List<OjProblemSubmitVo> toVoList(List<OjProblemSubmit> list);
 
 }

@@ -9,9 +9,10 @@ import com.zrx.sys.model.entity.SysUser;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @Tag(name = "OjProblemSubmit", description = "题目提交管理")
@@ -23,8 +24,7 @@ public class OjProblemSubmitController {
 
     @PostMapping("/")
     @Operation(summary = "提交题目")
-    public Result<Long> doQuestionSubmit(@Valid @RequestBody ProblemSubmitAddRequest problemSubmitAddRequest,
-                                         HttpServletRequest request) throws Exception {
+    public Result<Long> doQuestionSubmit(@Valid @RequestBody ProblemSubmitAddRequest problemSubmitAddRequest) throws Exception {
         SysUser user = SecurityHelper.getUser();
         Long problemSubmitId = ojProblemSubmitService.doSubmit(problemSubmitAddRequest, user);
         return Result.success(problemSubmitId);
@@ -34,6 +34,12 @@ public class OjProblemSubmitController {
     @Operation(summary = "根据主键获取题目提交信息")
     public Result<OjProblemSubmitVo> getInfo(@PathVariable Long id) {
         return Result.success(ojProblemSubmitService.getInfoById(id));
+    }
+
+    @GetMapping("/getInfoByUserId/{id}")
+    @Operation(summary = "根据用户id获取题目提交信息列表")
+    public Result<List<OjProblemSubmitVo>> getInfoByUserId(@PathVariable Long id) {
+        return Result.success(ojProblemSubmitService.getInfoListByUserId(id));
     }
 
 }
