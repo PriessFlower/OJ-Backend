@@ -13,6 +13,6 @@ public class SysUserRoleBo {
 
     private Long userId;
 
-    private List<String> roleNames;
+    private List<String> remark;
 
 }

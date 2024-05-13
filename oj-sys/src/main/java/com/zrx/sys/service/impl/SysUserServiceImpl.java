@@ -232,13 +232,13 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     private void getUserRole(List<SysUserResponse> respList) {
         List<Long> userIdList = respList.stream().map(SysUserResponse::getId).toList();
         QueryWrapper queryWrapper = new QueryWrapper()
-                .select(SYS_ROLE_USER.USER_ID.as("userId"), SYS_ROLE.REMARK.as("roleNames"))
+                .select(SYS_ROLE_USER.USER_ID.as("userId"), SYS_ROLE.REMARK)
                 .from(SYS_ROLE)
                 .leftJoin(SYS_ROLE_USER).on(SYS_ROLE_USER.ROLE_ID.eq(SYS_ROLE.ID))
                 .where(SYS_ROLE_USER.USER_ID.in(userIdList));
         Map<Long, List<String>> userRoleMap =
                 roleUserMapper.selectListByQueryAs(queryWrapper, SysUserRoleBo.class).stream()
-                        .collect(Collectors.toMap(SysUserRoleBo::getUserId, SysUserRoleBo::getRoleNames));
+                        .collect(Collectors.toMap(SysUserRoleBo::getUserId, SysUserRoleBo::getRemark));
         respList.forEach(item -> {
             if (userRoleMap.containsKey(item.getId())) {
                 item.setRoles(userRoleMap.get(item.getId()));
