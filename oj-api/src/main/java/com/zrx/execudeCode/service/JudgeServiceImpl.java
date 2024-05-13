@@ -53,11 +53,8 @@ public class JudgeServiceImpl implements JudgeService {
 		ojProblemSubmit.setOutput(JSONUtil.toJsonStr(executeCodeResponse.getOuputList()));
 		ojProblemSubmit.setJudgeInfo(JSONUtil.toJsonStr(executeCodeResponse.getJudgeInfo()));
 		ojProblemSubmit = handleJudgeTask.doHandle(judgeTask);
-		ojProblemSubmit.setCodeStatus(ProblemSubmitStatusEnum.Completed.getKey());
-		submitMapper.update(ojProblemSubmit);
 		boolean saveFlag = submitMapper.update(ojProblemSubmit) == 1;
 		Integer codeStatus = ojProblemSubmit.getCodeStatus();
-		// TODO:
 		if (codeStatus.equals(ProblemJudgeResultEnum.ACCEPTED.getKey())) {
 			ojProblem.setAcceptedNum(ojProblem.getAcceptedNum() == null ? 1 : ojProblem.getAcceptedNum() + 1);
 			ojProblemService.updateById(ojProblem);
