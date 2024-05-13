@@ -21,9 +21,9 @@ import java.util.List;
  * @since 2024/4/18
  */
 @RestController
-@Tag(name = "ProblemCommentController", description = "题目评论接口")
+@Tag(name = "OjProblemCommentController", description = "题目评论接口")
 @RequestMapping("/problem/comment")
-public class ProblemCommentController {
+public class OjProblemCommentController {
 
     @Resource
     private ProblemCommentService problemCommentService;
