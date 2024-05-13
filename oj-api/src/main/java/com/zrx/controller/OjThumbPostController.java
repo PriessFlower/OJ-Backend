@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
  * @since 2024/5/13
  */
 @RestController
-@Tag(name = "OjThumbPostController", description = "帖子点赞接口")
+@Tag(name = "OjThumbPost", description = "帖子点赞接口")
 @RequestMapping("/oj/post/thumb")
 public class OjThumbPostController {
 

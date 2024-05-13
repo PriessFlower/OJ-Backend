@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
  * @since 2024/5/13
  */
 @RestController
-@Tag(name = "OjPostController", description = "帖子接口")
+@Tag(name = "OjPost", description = "帖子接口")
 @RequestMapping("/oj/post")
 public class OjPostController {
 

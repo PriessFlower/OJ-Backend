@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
  * @since 2024/5/13
  */
 @RestController
-@Tag(name = "OjFavourPostController", description = "帖子收藏接口")
+@Tag(name = "OjFavourPost", description = "帖子收藏接口")
 @RequestMapping("/oj/post/favour")
 public class OjFavourPostController {
 
