@@ -30,7 +30,7 @@ public class OjFavourPostController {
      */
     @PostMapping("/do/{id}")
     @Operation(summary = "收藏帖子")
-    public Result<Boolean> thumb(@PathVariable Long id) {
+    public Result<Boolean> favour(@PathVariable Long id) {
         return Result.success(postFavourService.favourPost(id));
     }
 
@@ -48,7 +48,7 @@ public class OjFavourPostController {
      */
     @GetMapping("/get/post/{id}")
     @Operation(summary = "根据用户id获取收藏过的帖子")
-    public Result<Page<OjPostVo>> getThumbPost(@Parameter(description = "分页信息") Paging page, @PathVariable("id") Long userId) {
+    public Result<Page<OjPostVo>> getFavourPost(@Parameter(description = "分页信息") Paging page, @PathVariable("id") Long userId) {
         return Result.success(postFavourService.page(page, userId));
     }
 
