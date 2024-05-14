@@ -61,8 +61,38 @@ public class OjPostVo implements Serializable {
     /**
      * 创建时间
      */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     @Schema(description = "创建时间")
     private LocalDateTime createTime;
+
+    /**
+     * 观看数
+     */
+    @Schema(description = "观看数")
+    private Integer viewNum;
+
+    /**
+     * 作者Id
+     */
+    @Schema(description = "作者Id")
+    private Long creator;
+
+    /**
+     * 作者
+     */
+    @Schema(description = "作者")
+    private String creatorName;
+
+    /**
+     * 作者简介
+     */
+    @Schema(description = "作者简介")
+    private String introduce;
+
+    /**
+     * 作者头像
+     */
+    @Schema(description = "作者头像")
+    private String avatar;
 
 }

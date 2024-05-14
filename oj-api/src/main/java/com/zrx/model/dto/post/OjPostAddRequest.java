@@ -30,6 +30,13 @@ public class OjPostAddRequest implements Serializable {
     private String title;
 
     /**
+     * 分区
+     */
+    @NotBlank(message = "请选择分区")
+    @Schema(description = "分区")
+    private String zone;
+
+    /**
      * 内容
      */
     @NotBlank(message = "请填写内容")

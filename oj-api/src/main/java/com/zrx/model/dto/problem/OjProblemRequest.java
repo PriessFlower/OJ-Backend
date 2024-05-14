@@ -38,7 +38,7 @@ public class OjProblemRequest {
 	 * 标签列表
 	 */
 	@Schema(description = "标签列表")
-	@NotNull(message = "请选择标签", groups = SaveGroup.class)
+	@NotNull(message = "请至少输入一个标签", groups = SaveGroup.class)
 	private List<String> tags;
 
 	/**

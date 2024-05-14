@@ -44,6 +44,13 @@ public class OjPostUpdateRequest implements Serializable {
     private String content;
 
     /**
+     * 分区
+     */
+    @NotBlank(message = "请选择分区")
+    @Schema(description = "分区")
+    private String zone;
+
+    /**
      * 标签列表（json 数组）
      */
     @NotNull(message = "请输入至少一个标签")
