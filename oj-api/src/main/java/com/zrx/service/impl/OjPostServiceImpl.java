@@ -108,7 +108,9 @@ public class OjPostServiceImpl extends ServiceImpl<OjPostMapper, OjPost> impleme
 
     @Override
     public Page<OjPostVo> page(Paging page, OjPostQueryRequest req) {
-        // TODO: 内容截断操作
+        if (StringUtil.isNotBlank(req.getZone()) && !PostZoneEnums.isValid(req.getZone())) {
+            return new Page<>();
+        }
         List<String> tags = req.getTags();
         QueryWrapper queryWrapper = new QueryWrapper();
         queryWrapper.select(OJ_POST.ID, OJ_POST.TITLE, OJ_POST.ZONE, OJ_POST.TAGS,
