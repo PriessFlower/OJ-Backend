@@ -49,14 +49,19 @@ public class OjPostFavourServiceImpl extends ServiceImpl<OjPostFavourMapper, OjP
             throw new BusinessException("帖子不存在");
         }
         Long userId = SecurityHelper.getUser().getId();
-        OjPostFavour favour = new OjPostFavour();
-        favour.setPostId(id);
-        favour.setUserId(userId);
-        favourMapper.insert(favour);
-        UpdateChain.of(postMapper)
-                .set(OJ_POST.FAVOUR_NUM, OJ_POST.FAVOUR_NUM.add(1))
-                .where(OJ_POST.ID.eq(id))
-                .update();
+        synchronized (this) {
+            if (favourMapper.selectOneByCondition(OJ_POST_FAVOUR.USER_ID.eq(userId).and(OJ_POST_FAVOUR.POST_ID.eq(id))) != null) {
+                throw new BusinessException("帖子已收藏");
+            }
+            OjPostFavour favour = new OjPostFavour();
+            favour.setPostId(id);
+            favour.setUserId(userId);
+            favourMapper.insert(favour);
+            UpdateChain.of(postMapper)
+                    .set(OJ_POST.FAVOUR_NUM, OJ_POST.FAVOUR_NUM.add(1))
+                    .where(OJ_POST.ID.eq(id))
+                    .update();
+        }
         return true;
     }
 
@@ -66,12 +71,17 @@ public class OjPostFavourServiceImpl extends ServiceImpl<OjPostFavourMapper, OjP
         if (postMapper.selectOneById(postId) == null) {
             throw new BusinessException("帖子不存在");
         }
-        Long userId = SecurityHelper.getUser().getId();
-        favourMapper.deleteByCondition(OJ_POST_FAVOUR.USER_ID.eq(userId).and(OJ_POST_FAVOUR.POST_ID.eq(postId)));
-        UpdateChain.of(postMapper)
-                .set(OJ_POST.FAVOUR_NUM, OJ_POST.FAVOUR_NUM.subtract(1))
-                .where(OJ_POST.ID.eq(postId))
-                .update();
+        synchronized (this) {
+            if (favourMapper.selectOneByCondition(OJ_POST_FAVOUR.USER_ID.eq(SecurityHelper.getUser().getId()).and(OJ_POST_FAVOUR.POST_ID.eq(postId))) == null) {
+                throw new BusinessException("帖子未收藏");
+            }
+            Long userId = SecurityHelper.getUser().getId();
+            favourMapper.deleteByCondition(OJ_POST_FAVOUR.USER_ID.eq(userId).and(OJ_POST_FAVOUR.POST_ID.eq(postId)));
+            UpdateChain.of(postMapper)
+                    .set(OJ_POST.FAVOUR_NUM, OJ_POST.FAVOUR_NUM.subtract(1))
+                    .where(OJ_POST.ID.eq(postId))
+                    .update();
+        }
         return true;
     }
 

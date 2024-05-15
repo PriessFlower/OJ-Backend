@@ -107,7 +107,24 @@ public class OjPostServiceImpl extends ServiceImpl<OjPostMapper, OjPost> impleme
         OjPostVo vo = postConverter.toVo(postMapper.selectOneById(id));
         setPostAuthor(Lists.newArrayList(vo));
         setZoneName(vo);
+        setThumbFlag(vo);
+        setFavourFlag(vo);
         return vo;
+    }
+
+    private void setThumbFlag(OjPostVo ojPostVo) {
+        Long userId = SecurityHelper.getUser().getId();
+        Long postId = ojPostVo.getId();
+        synchronized (this) {
+            ojPostVo.setThumbFlag(thumbMapper.selectCountByCondition(OJ_POST_THUMB.POST_ID.eq(postId).and(OJ_POST_THUMB.USER_ID.eq(userId))) > 0);
+        }
+    }
+
+    private void setFavourFlag(OjPostVo ojPostVo) {
+        Long userId = SecurityHelper.getUser().getId();
+        synchronized (this) {
+            ojPostVo.setFavourFlag(favourMapper.selectCountByCondition(OJ_POST_FAVOUR.POST_ID.eq(ojPostVo.getId()).and(OJ_POST_FAVOUR.USER_ID.eq(userId))) > 0);
+        }
     }
 
 

@@ -107,4 +107,16 @@ public class OjPostVo implements Serializable {
     @Schema(description = "作者头像")
     private String avatar;
 
+    /**
+     * 当前用户是否已点赞
+     */
+    @Schema(description = "当前用户是否已点赞")
+    private Boolean thumbFlag;
+
+    /**
+     * 当前用户是否已收藏
+     */
+    @Schema(description = "当前用户是否已收藏")
+    private Boolean favourFlag;
+
 }

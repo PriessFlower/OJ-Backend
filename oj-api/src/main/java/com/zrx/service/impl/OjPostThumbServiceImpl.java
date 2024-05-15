@@ -52,11 +52,17 @@ public class OjPostThumbServiceImpl extends ServiceImpl<OjPostThumbMapper, OjPos
         OjPostThumb thumb = new OjPostThumb();
         thumb.setPostId(id);
         thumb.setUserId(userId);
-        thumbMapper.insert(thumb);
-        UpdateChain.of(postMapper)
-                .set(OJ_POST.THUMB_NUM, OJ_POST.THUMB_NUM.add(1))
-                .where(OJ_POST.ID.eq(id))
-                .update();
+        synchronized (this) {
+            if (thumbMapper.selectOneByCondition(OJ_POST_THUMB.USER_ID.eq(userId)
+                    .and(OJ_POST_THUMB.POST_ID.eq(id))) != null) {
+                throw new BusinessException("帖子已点赞");
+            }
+            thumbMapper.insert(thumb);
+            UpdateChain.of(postMapper)
+                    .set(OJ_POST.THUMB_NUM, OJ_POST.THUMB_NUM.add(1))
+                    .where(OJ_POST.ID.eq(id))
+                    .update();
+        }
         return true;
     }
 
@@ -67,11 +73,17 @@ public class OjPostThumbServiceImpl extends ServiceImpl<OjPostThumbMapper, OjPos
             throw new BusinessException("帖子不存在");
         }
         Long userId = SecurityHelper.getUser().getId();
-        thumbMapper.deleteByCondition(OJ_POST_THUMB.USER_ID.eq(userId).and(OJ_POST_THUMB.POST_ID.eq(postId)));
-        UpdateChain.of(postMapper)
-                .set(OJ_POST.THUMB_NUM, OJ_POST.THUMB_NUM.subtract(1))
-                .where(OJ_POST.ID.eq(postId))
-                .update();
+        synchronized (this) {
+            if (thumbMapper.selectOneByCondition(OJ_POST_THUMB.USER_ID.eq(userId)
+                    .and(OJ_POST_THUMB.POST_ID.eq(postId))) == null) {
+                throw new BusinessException("帖子未点赞");
+            }
+            thumbMapper.deleteByCondition(OJ_POST_THUMB.USER_ID.eq(userId).and(OJ_POST_THUMB.POST_ID.eq(postId)));
+            UpdateChain.of(postMapper)
+                    .set(OJ_POST.THUMB_NUM, OJ_POST.THUMB_NUM.subtract(1))
+                    .where(OJ_POST.ID.eq(postId))
+                    .update();
+        }
         return true;
     }
 
