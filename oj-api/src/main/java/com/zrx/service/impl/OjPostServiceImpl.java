@@ -157,18 +157,20 @@ public class OjPostServiceImpl extends ServiceImpl<OjPostMapper, OjPost> impleme
     }
 
     private void setPostAuthor(List<OjPostVo> ojPostVos) {
-        Map<Long, List<OjPostVo>> map = ojPostVos.stream().collect(Collectors.groupingBy(OjPostVo::getCreator));
-        Map<Long, List<SysUser>> userMap = sysUserMapper.selectListByIds(map.keySet()).stream().collect(Collectors.groupingBy(SysUser::getId));
-        for (Map.Entry<Long, List<OjPostVo>> post : map.entrySet()) {
-            Long userId = post.getKey();
-            List<OjPostVo> posts = post.getValue();
-            for (OjPostVo ojPostVo : posts) {
-                List<SysUser> users = userMap.get(userId);
-                if (CollUtil.isNotEmpty(users)) {
-                    SysUser user = users.get(0);
-                    ojPostVo.setCreatorName(user.getNickName());
-                    ojPostVo.setAvatar(user.getAvatar());
-                    ojPostVo.setIntroduce(user.getIntroduce());
+        if (CollUtil.isNotEmpty(ojPostVos)) {
+            Map<Long, List<OjPostVo>> map = ojPostVos.stream().collect(Collectors.groupingBy(OjPostVo::getCreator));
+            Map<Long, List<SysUser>> userMap = sysUserMapper.selectListByIds(map.keySet()).stream().collect(Collectors.groupingBy(SysUser::getId));
+            for (Map.Entry<Long, List<OjPostVo>> post : map.entrySet()) {
+                Long userId = post.getKey();
+                List<OjPostVo> posts = post.getValue();
+                for (OjPostVo ojPostVo : posts) {
+                    List<SysUser> users = userMap.get(userId);
+                    if (CollUtil.isNotEmpty(users)) {
+                        SysUser user = users.get(0);
+                        ojPostVo.setCreatorName(user.getNickName());
+                        ojPostVo.setAvatar(user.getAvatar());
+                        ojPostVo.setIntroduce(user.getIntroduce());
+                    }
                 }
             }
         }
