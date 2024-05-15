@@ -51,7 +51,6 @@ public class  SysUserController {
 	 */
 	@PutMapping("/update")
 	@Operation(summary = "修改用户信息--用户使用")
-	@SaCheckRole(AuthConst.SUPER_ADMIN)
 	public Result<Boolean> updateUserInfo(@RequestBody SysUserUpdateRequest request) {
 		return Result.success(sysUserService.update(request));
 	}

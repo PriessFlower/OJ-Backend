@@ -41,6 +41,18 @@ public class OjPostVo implements Serializable {
     private String content;
 
     /**
+     * 分区
+     */
+    @Schema(description = "分区")
+    private String zone;
+
+    /**
+     * 分区名称
+     */
+    @Schema(description = "分区名称")
+    private String zoneName;
+
+    /**
      * 标签列表（json 数组）
      */
     @Schema(description = "标签列表（json 数组）")

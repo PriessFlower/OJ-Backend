@@ -1,6 +1,7 @@
 package com.zrx.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
+import com.google.common.collect.Lists;
 import com.mybatisflex.core.paginate.Page;
 import com.mybatisflex.core.query.QueryMethods;
 import com.mybatisflex.core.query.QueryWrapper;
@@ -103,7 +104,15 @@ public class OjPostServiceImpl extends ServiceImpl<OjPostMapper, OjPost> impleme
                 .set(OJ_POST.VIEW_NUM, OJ_POST.VIEW_NUM.add(1))
                 .where(OJ_POST.ID.eq(id))
                 .update();
-        return postConverter.toVo(postMapper.selectOneById(id));
+        OjPostVo vo = postConverter.toVo(postMapper.selectOneById(id));
+        setPostAuthor(Lists.newArrayList(vo));
+        setZoneName(vo);
+        return vo;
+    }
+
+
+    private void setZoneName(OjPostVo ojPostVo) {
+        ojPostVo.setZoneName(PostZoneEnums.getTextByValue(ojPostVo.getZone()));
     }
 
     @Override

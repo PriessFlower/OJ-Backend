@@ -79,8 +79,12 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 
     @Override
     public Boolean update(SysUserUpdateRequest request) {
+        SysUser user = SecurityHelper.getUser();
+        if (!user.getId().equals(request.getId())) {
+            throw new BusinessException("无权限");
+        }
         SysUser sysUser = sysUserMap.toEntityByUpdate(request);
-        return updateById(sysUser, true);
+        return mapper.update(sysUser) == 1;
     }
 
     @Override

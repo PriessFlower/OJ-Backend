@@ -32,4 +32,13 @@ public enum PostZoneEnums {
         return false;
     }
 
+    public static String getTextByValue(String value) {
+        for (PostZoneEnums postZoneEnums : PostZoneEnums.values()) {
+            if (postZoneEnums.getValue().equals(value)) {
+                return postZoneEnums.text;
+            }
+        }
+        return null;
+    }
+
 }
