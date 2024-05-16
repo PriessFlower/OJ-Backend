@@ -25,6 +25,6 @@ public interface OjPostService extends IService<OjPost> {
 
     OjPostVo getInfoById(Long id);
 
-    Page<OjPostVo> page(Paging page, OjPostQueryRequest req);
+    Page<OjPostVo> page(Paging page, OjPostQueryRequest req, Boolean selfFlag);
 
 }

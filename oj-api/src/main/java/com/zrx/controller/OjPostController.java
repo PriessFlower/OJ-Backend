@@ -86,7 +86,19 @@ public class OjPostController {
     @PostMapping("/page")
     @Operation(summary = "分页查询帖子")
     public Result<Page<OjPostVo>> page(@Parameter(description = "分页信息") Paging page, @RequestBody OjPostQueryRequest req) {
-        return Result.success(ojPostService.page(page, req));
+        return Result.success(ojPostService.page(page, req, false));
+    }
+
+    /**
+     * 分页查询帖子。
+     *
+     * @param page 分页对象
+     * @return 分页对象
+     */
+    @PostMapping("/pageSelf")
+    @Operation(summary = "分页查询自己的帖子")
+    public Result<Page<OjPostVo>> pageSelf(@Parameter(description = "分页查询自己的帖子") Paging page, @RequestBody OjPostQueryRequest req) {
+        return Result.success(ojPostService.page(page, req, true));
     }
 
 }

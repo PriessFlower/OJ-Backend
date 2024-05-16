@@ -133,7 +133,7 @@ public class OjPostServiceImpl extends ServiceImpl<OjPostMapper, OjPost> impleme
     }
 
     @Override
-    public Page<OjPostVo> page(Paging page, OjPostQueryRequest req) {
+    public Page<OjPostVo> page(Paging page, OjPostQueryRequest req, Boolean selfFlag) {
         if (StringUtil.isNotBlank(req.getZone()) && !PostZoneEnums.isValid(req.getZone())) {
             return new Page<>();
         }
@@ -149,10 +149,16 @@ public class OjPostServiceImpl extends ServiceImpl<OjPostMapper, OjPost> impleme
                 queryWrapper.and(OJ_POST.TAGS.like("\"" + tag + "\""));
             }
         }
+        if (selfFlag) {
+            // 查询当前用户的帖子
+            Long userId = SecurityHelper.getUser().getId();
+            queryWrapper.and(OJ_POST.CREATOR.eq(userId));
+        }
         queryWrapper.orderBy(OJ_POST.VIEW_NUM.desc());
         Page<OjPost> paginate = postMapper.paginate(Page.of(page.getPageNum(), page.getPageSize()), queryWrapper);
         Page<OjPostVo> voPage = postConverter.toVoPage(paginate);
         setPostAuthor(voPage.getRecords());
+        setPostZoneName(voPage.getRecords());
         return voPage;
     }
 
@@ -172,6 +178,14 @@ public class OjPostServiceImpl extends ServiceImpl<OjPostMapper, OjPost> impleme
                         ojPostVo.setIntroduce(user.getIntroduce());
                     }
                 }
+            }
+        }
+    }
+
+    private void setPostZoneName(List<OjPostVo> ojPostVos) {
+        if (CollUtil.isNotEmpty(ojPostVos)) {
+            for (OjPostVo ojPostVo : ojPostVos) {
+                ojPostVo.setZoneName(PostZoneEnums.getTextByValue(ojPostVo.getZone()));
             }
         }
     }
