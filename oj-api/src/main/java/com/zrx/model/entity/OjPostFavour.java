@@ -29,33 +29,33 @@ import java.time.LocalDateTime;
 @Table(value = "oj_post_favour")
 public class OjPostFavour implements Serializable {
 
-    @Serial
-    private static final long serialVersionUID = 1L;
+	@Serial
+	private static final long serialVersionUID = 1L;
 
-    /**
-     * id
-     */
-    @Id(keyType = KeyType.Generator, value = KeyGenerators.snowFlakeId)
-    @Schema(description = "id")
-    private Long id;
+	/**
+	 * id
+	 */
+	@Id(keyType = KeyType.Generator, value = KeyGenerators.snowFlakeId)
+	@Schema(description = "id")
+	private Long id;
 
-    /**
-     * 帖子 id
-     */
-    @Schema(description = "帖子 id")
-    private Long postId;
+	/**
+	 * 帖子 id
+	 */
+	@Schema(description = "帖子 id")
+	private Long postId;
 
-    /**
-     * 创建用户 id
-     */
-    @Schema(description = "创建用户 id")
-    private Long userId;
+	/**
+	 * 创建用户 id
+	 */
+	@Schema(description = "创建用户 id")
+	private Long userId;
 
-    /**
-     * 创建时间
-     */
-    @Column(onInsertValue = "now()")
-    @Schema(description = "创建时间")
-    private LocalDateTime createTime;
+	/**
+	 * 创建时间
+	 */
+	@Column(onInsertValue = "now()")
+	@Schema(description = "创建时间")
+	private LocalDateTime createTime;
 
 }

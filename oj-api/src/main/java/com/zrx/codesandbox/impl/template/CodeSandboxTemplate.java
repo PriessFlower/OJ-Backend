@@ -60,7 +60,7 @@ public abstract class CodeSandboxTemplate implements CodeSandBox {
 
 	protected String volumnName;
 
-	protected Long memory;
+	protected volatile Long memory;
 
 	static {
 		String property = System.getProperty("user.dir");
@@ -82,6 +82,8 @@ public abstract class CodeSandboxTemplate implements CodeSandBox {
 			createContiner();
 			runContainer();
 			StatsCmd statsCmd = calculateMemory();
+			while (memory < 0)
+				;
 			runExecuteMessageList = runFile(inputList);
 			stopContainer();
 			removeContainer(statsCmd);

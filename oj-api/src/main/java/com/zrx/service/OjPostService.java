@@ -20,16 +20,16 @@ import java.util.List;
  */
 public interface OjPostService extends IService<OjPost> {
 
-    Boolean save(OjPostAddRequest req);
+	Boolean save(OjPostAddRequest req);
 
-    Boolean removePostById(Long id);
+	Boolean removePostById(Long id);
 
-    Boolean updateById(OjPostUpdateRequest req);
+	Boolean updateById(OjPostUpdateRequest req);
 
-    OjPostVo getInfoById(String id);
+	OjPostVo getInfoById(String id);
 
-    Page<OjPostVo> page(Paging page, OjPostQueryRequest req, Boolean selfFlag);
+	Page<OjPostVo> page(Paging page, OjPostQueryRequest req, Boolean selfFlag);
 
-    List<OjPostSimpleVo> getFiveHotPost();
+	List<OjPostSimpleVo> getFiveHotPost();
 
 }

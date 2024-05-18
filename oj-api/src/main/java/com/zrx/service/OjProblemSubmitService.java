@@ -13,8 +13,8 @@ public interface OjProblemSubmitService extends IService<OjProblemSubmit> {
 
 	Long doSubmit(ProblemSubmitAddRequest problemSubmitAddRequest, SysUser loginUser) throws Exception;
 
-    OjProblemSubmitVo getInfoById(Long id);
+	OjProblemSubmitVo getInfoById(Long id);
 
-    Page<OjProblemSubmitVo> pageInfoByUserId(Long id, OjProblemSubmitQueryRequest req, Paging paging);
+	Page<OjProblemSubmitVo> pageInfoByUserId(Long id, OjProblemSubmitQueryRequest req, Paging paging);
 
 }

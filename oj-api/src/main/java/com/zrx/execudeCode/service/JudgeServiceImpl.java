@@ -31,7 +31,6 @@ public class JudgeServiceImpl implements JudgeService {
 	@Resource
 	private OjProblemSubmitMapper submitMapper;
 
-
 	@Value("${codesandbox.type:remote}")
 	private String type;
 

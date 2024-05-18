@@ -20,27 +20,29 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/submit")
 public class OjProblemSubmitController {
 
-    @Resource
-    private OjProblemSubmitService ojProblemSubmitService;
+	@Resource
+	private OjProblemSubmitService ojProblemSubmitService;
 
-    @PostMapping("/")
-    @Operation(summary = "提交题目")
-    public Result<Long> doQuestionSubmit(@Valid @RequestBody ProblemSubmitAddRequest problemSubmitAddRequest) throws Exception {
-        SysUser user = SecurityHelper.getUser();
-        Long problemSubmitId = ojProblemSubmitService.doSubmit(problemSubmitAddRequest, user);
-        return Result.success(problemSubmitId);
-    }
+	@PostMapping("/")
+	@Operation(summary = "提交题目")
+	public Result<Long> doQuestionSubmit(@Valid @RequestBody ProblemSubmitAddRequest problemSubmitAddRequest)
+			throws Exception {
+		SysUser user = SecurityHelper.getUser();
+		Long problemSubmitId = ojProblemSubmitService.doSubmit(problemSubmitAddRequest, user);
+		return Result.success(problemSubmitId);
+	}
 
-    @GetMapping("/getInfo/{id}")
-    @Operation(summary = "根据主键获取题目提交信息")
-    public Result<OjProblemSubmitVo> getInfo(@PathVariable Long id) {
-        return Result.success(ojProblemSubmitService.getInfoById(id));
-    }
+	@GetMapping("/getInfo/{id}")
+	@Operation(summary = "根据主键获取题目提交信息")
+	public Result<OjProblemSubmitVo> getInfo(@PathVariable Long id) {
+		return Result.success(ojProblemSubmitService.getInfoById(id));
+	}
 
-    @PostMapping("/pageInfoByUserId/{id}")
-    @Operation(summary = "根据用户id分页查询题目提交信息列表")
-    public Result<Page<OjProblemSubmitVo>> pageInfoByUserId(@PathVariable Long id, @RequestBody OjProblemSubmitQueryRequest req, Paging paging) {
-        return Result.success(ojProblemSubmitService.pageInfoByUserId(id, req, paging));
-    }
+	@PostMapping("/pageInfoByUserId/{id}")
+	@Operation(summary = "根据用户id分页查询题目提交信息列表")
+	public Result<Page<OjProblemSubmitVo>> pageInfoByUserId(@PathVariable Long id,
+			@RequestBody OjProblemSubmitQueryRequest req, Paging paging) {
+		return Result.success(ojProblemSubmitService.pageInfoByUserId(id, req, paging));
+	}
 
 }

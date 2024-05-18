@@ -27,66 +27,66 @@ import java.io.Serializable;
 @Table(value = "oj_post")
 public class OjPost extends BaseEntity implements Serializable {
 
-    @Serial
-    private static final long serialVersionUID = 1L;
+	@Serial
+	private static final long serialVersionUID = 1L;
 
-    /**
-     * id
-     */
-    @Id(keyType = KeyType.Generator, value = KeyGenerators.snowFlakeId)
-    @Schema(description = "id")
-    private Long id;
+	/**
+	 * id
+	 */
+	@Id(keyType = KeyType.Generator, value = KeyGenerators.snowFlakeId)
+	@Schema(description = "id")
+	private Long id;
 
-    /**
-     * 标题
-     */
-    @Schema(description = "标题")
-    private String title;
+	/**
+	 * 标题
+	 */
+	@Schema(description = "标题")
+	private String title;
 
-    /**
-     * 内容
-     */
-    @Schema(description = "内容")
-    private String content;
+	/**
+	 * 内容
+	 */
+	@Schema(description = "内容")
+	private String content;
 
-    /**
-     * 分区
-     */
-    @Schema(description = "分区")
-    private String zone;
+	/**
+	 * 分区
+	 */
+	@Schema(description = "分区")
+	private String zone;
 
-    /**
-     * 标签列表（json 数组）
-     */
-    @Schema(description = "标签列表（json 数组）")
-    private String tags;
+	/**
+	 * 标签列表（json 数组）
+	 */
+	@Schema(description = "标签列表（json 数组）")
+	private String tags;
 
-    /**
-     * 观看数
-     */
-    @Column(onInsertValue = "0")
-    @Schema(description = "观看数")
-    private Integer viewNum;
+	/**
+	 * 观看数
+	 */
+	@Column(onInsertValue = "0")
+	@Schema(description = "观看数")
+	private Integer viewNum;
 
-    /**
-     * 点赞数
-     */
-    @Column(onInsertValue = "0")
-    @Schema(description = "点赞数")
-    private Integer thumbNum;
+	/**
+	 * 点赞数
+	 */
+	@Column(onInsertValue = "0")
+	@Schema(description = "点赞数")
+	private Integer thumbNum;
 
-    /**
-     * 收藏数
-     */
-    @Column(onInsertValue = "0")
-    @Schema(description = "收藏数")
-    private Integer favourNum;
+	/**
+	 * 收藏数
+	 */
+	@Column(onInsertValue = "0")
+	@Schema(description = "收藏数")
+	private Integer favourNum;
 
-    /**
-     * 是否删除
-     */
-    @Column(isLogicDelete = true)
-    @Schema(description = "是否删除")
-    private Integer delFlag;
+	/**
+	 * 是否删除
+	 */
+	@Column(isLogicDelete = true)
+	@Schema(description = "是否删除")
+	private Integer delFlag;
 
 }

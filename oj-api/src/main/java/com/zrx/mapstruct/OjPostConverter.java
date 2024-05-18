@@ -19,24 +19,24 @@ import java.util.List;
 @Mapper(componentModel = "Spring")
 public interface OjPostConverter {
 
-    OjPostVo toVo(OjPost ojPost);
+	OjPostVo toVo(OjPost ojPost);
 
-    default List<String> toTagList(String tags) {
-        return JSONUtil.toList(tags, String.class);
-    }
+	default List<String> toTagList(String tags) {
+		return JSONUtil.toList(tags, String.class);
+	}
 
-    default String toTagString(List<String> tags) {
-        return JSON.toJSONString(tags);
-    }
+	default String toTagString(List<String> tags) {
+		return JSON.toJSONString(tags);
+	}
 
-    OjPost toEntity(OjPostAddRequest req);
+	OjPost toEntity(OjPostAddRequest req);
 
-    OjPost toEntityUpdate(OjPostUpdateRequest req);
+	OjPost toEntityUpdate(OjPostUpdateRequest req);
 
-    Page<OjPostVo> toVoPage(Page<OjPost> paginate);
+	Page<OjPostVo> toVoPage(Page<OjPost> paginate);
 
-    List<OjPostVo> toVoList(List<OjPost> ojPosts);
+	List<OjPostVo> toVoList(List<OjPost> ojPosts);
 
-    List<OjPostSimpleVo> toSimpleVoList(List<OjPost> ojPosts);
+	List<OjPostSimpleVo> toSimpleVoList(List<OjPost> ojPosts);
 
 }

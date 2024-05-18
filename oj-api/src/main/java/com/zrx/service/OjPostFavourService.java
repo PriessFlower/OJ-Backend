@@ -1,6 +1,5 @@
 package com.zrx.service;
 
-
 import com.mybatisflex.core.paginate.Page;
 import com.mybatisflex.core.service.IService;
 import com.zrx.model.common.Paging;
@@ -15,10 +14,10 @@ import com.zrx.model.vo.OjPostVo;
  */
 public interface OjPostFavourService extends IService<OjPostFavour> {
 
-    Boolean favourPost(Long id);
+	Boolean favourPost(Long id);
 
-    Boolean cancelFavourPost(Long id);
+	Boolean cancelFavourPost(Long id);
 
-    Page<OjPostVo> page(Paging page, String userId);
+	Page<OjPostVo> page(Paging page, String userId);
 
 }
