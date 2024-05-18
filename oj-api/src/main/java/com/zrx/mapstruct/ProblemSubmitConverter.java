@@ -1,6 +1,7 @@
 package com.zrx.mapstruct;
 
 import cn.hutool.json.JSONUtil;
+import com.mybatisflex.core.paginate.Page;
 import com.zrx.codesandbox.model.JudgeInfo;
 import com.zrx.model.dto.problemSubmit.OjProblemSubmitVo;
 import com.zrx.model.entity.OjProblemSubmit;
@@ -22,5 +23,7 @@ public interface ProblemSubmitConverter {
     }
 
     List<OjProblemSubmitVo> toVoList(List<OjProblemSubmit> list);
+
+    Page<OjProblemSubmitVo> toVoPage(Page<OjProblemSubmit> paginate);
 
 }

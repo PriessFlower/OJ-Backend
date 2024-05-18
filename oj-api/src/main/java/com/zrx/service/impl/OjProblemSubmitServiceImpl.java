@@ -1,5 +1,8 @@
 package com.zrx.service.impl;
 
+import com.mybatisflex.core.paginate.Page;
+import com.mybatisflex.core.query.QueryWrapper;
+import com.mybatisflex.core.util.StringUtil;
 import com.mybatisflex.spring.service.impl.ServiceImpl;
 import com.zrx.enums.ProblemSubmitStatusEnum;
 import com.zrx.exception.BusinessException;
@@ -7,6 +10,8 @@ import com.zrx.execudeCode.JudgeService;
 import com.zrx.mapper.OjProblemMapper;
 import com.zrx.mapper.OjProblemSubmitMapper;
 import com.zrx.mapstruct.ProblemSubmitConverter;
+import com.zrx.model.common.Paging;
+import com.zrx.model.dto.problemSubmit.OjProblemSubmitQueryRequest;
 import com.zrx.model.dto.problemSubmit.OjProblemSubmitVo;
 import com.zrx.model.dto.problemSubmit.ProblemSubmitAddRequest;
 import com.zrx.model.entity.OjProblem;
@@ -19,8 +24,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 import static com.zrx.model.entity.table.OjProblemSubmitTableDef.OJ_PROBLEM_SUBMIT;
 
@@ -92,12 +95,23 @@ public class OjProblemSubmitServiceImpl extends ServiceImpl<OjProblemSubmitMappe
 	}
 
 	@Override
-	public List<OjProblemSubmitVo> getInfoListByUserId(Long id) {
-		List<OjProblemSubmit> list = mapper.selectListByCondition(OJ_PROBLEM_SUBMIT.USER_ID.eq(id));
-		if (list.isEmpty()) {
-			return List.of();
-		}
-		return problemSubmitConverter.toVoList(list);
-	}
+	public Page<OjProblemSubmitVo> pageInfoByUserId(Long id, OjProblemSubmitQueryRequest req, Paging paging) {
+		String language = req.getLanguage();
+		String code = req.getCode();
+		Integer codeStatus = req.getCodeStatus();
+		Integer status = req.getStatus();
+		Long questionId = req.getQuestionId();
 
+		QueryWrapper queryWrapper = new QueryWrapper()
+				.select()
+				.where(OJ_PROBLEM_SUBMIT.USER_ID.eq(id))
+				.and(OJ_PROBLEM_SUBMIT.LANGUAGE.eq(language, StringUtil::isNotBlank))
+				.and(OJ_PROBLEM_SUBMIT.CODE.eq(code, StringUtil::isNotBlank))
+				.and(OJ_PROBLEM_SUBMIT.CODE_STATUS.eq(codeStatus, codeStatus != null))
+				.and(OJ_PROBLEM_SUBMIT.STATUS.eq(status, status != null))
+				.and(OJ_PROBLEM_SUBMIT.QUESTION_ID.eq(questionId, questionId != null))
+				.orderBy(OJ_PROBLEM_SUBMIT.CREATE_TIME.desc());
+		Page<OjProblemSubmit> paginate = mapper.paginate(Page.of(paging.getPageNum(), paging.getPageSize()), queryWrapper);
+		return problemSubmitConverter.toVoPage(paginate);
+	}
 }

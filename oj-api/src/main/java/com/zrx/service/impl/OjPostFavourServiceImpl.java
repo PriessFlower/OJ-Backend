@@ -15,6 +15,7 @@ import com.zrx.model.entity.OjPostFavour;
 import com.zrx.model.vo.OjPostVo;
 import com.zrx.security.utils.SecurityHelper;
 import com.zrx.service.OjPostFavourService;
+import com.zrx.utils.PostUtil;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,6 +42,9 @@ public class OjPostFavourServiceImpl extends ServiceImpl<OjPostFavourMapper, OjP
 
     @Resource
     private OjPostConverter postConverter;
+
+    @Resource
+    private PostUtil postUtil;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -96,6 +100,7 @@ public class OjPostFavourServiceImpl extends ServiceImpl<OjPostFavourMapper, OjP
         ojPostVoPage.setTotalPage(paginate.getTotalPage());
         ojPostVoPage.setTotalRow(paginate.getTotalRow());
         ojPostVoPage.setRecords(postConverter.toVoList(ojPosts));
+        postUtil.setPostAuthor(ojPostVoPage.getRecords());
         return ojPostVoPage;
     }
 

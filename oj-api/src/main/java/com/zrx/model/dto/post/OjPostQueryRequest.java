@@ -21,6 +21,12 @@ public class OjPostQueryRequest implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
+     * 用户Id
+     */
+    @Schema(description = "用户Id")
+    private String userId;
+
+    /**
      * 标题
      */
     @Schema(description = "标题")

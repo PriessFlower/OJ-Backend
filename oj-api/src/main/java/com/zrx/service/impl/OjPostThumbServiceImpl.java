@@ -15,6 +15,7 @@ import com.zrx.model.entity.OjPostThumb;
 import com.zrx.model.vo.OjPostVo;
 import com.zrx.security.utils.SecurityHelper;
 import com.zrx.service.OjPostThumbService;
+import com.zrx.utils.PostUtil;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,6 +42,9 @@ public class OjPostThumbServiceImpl extends ServiceImpl<OjPostThumbMapper, OjPos
 
     @Resource
     private OjPostConverter postConverter;
+
+    @Resource
+    private PostUtil postUtil;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -98,6 +102,7 @@ public class OjPostThumbServiceImpl extends ServiceImpl<OjPostThumbMapper, OjPos
         ojPostVoPage.setTotalPage(paginate.getTotalPage());
         ojPostVoPage.setTotalRow(paginate.getTotalRow());
         ojPostVoPage.setRecords(postConverter.toVoList(ojPosts));
+        postUtil.setPostAuthor(ojPostVoPage.getRecords());
         return ojPostVoPage;
     }
 

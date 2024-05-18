@@ -22,15 +22,12 @@ import com.zrx.model.entity.OjPost;
 import com.zrx.model.vo.OjPostVo;
 import com.zrx.security.utils.SecurityHelper;
 import com.zrx.service.OjPostService;
-import com.zrx.sys.mapper.SysUserMapper;
-import com.zrx.sys.model.entity.SysUser;
+import com.zrx.utils.PostUtil;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import static com.zrx.model.entity.table.OjPostFavourTableDef.OJ_POST_FAVOUR;
 import static com.zrx.model.entity.table.OjPostTableDef.OJ_POST;
@@ -58,7 +55,7 @@ public class OjPostServiceImpl extends ServiceImpl<OjPostMapper, OjPost> impleme
     private OjPostFavourMapper favourMapper;
 
     @Resource
-    private SysUserMapper sysUserMapper;
+    private PostUtil postUtil;
 
     @Override
     public Boolean save(OjPostAddRequest req) {
@@ -105,7 +102,7 @@ public class OjPostServiceImpl extends ServiceImpl<OjPostMapper, OjPost> impleme
                 .where(OJ_POST.ID.eq(id))
                 .update();
         OjPostVo vo = postConverter.toVo(postMapper.selectOneById(id));
-        setPostAuthor(Lists.newArrayList(vo));
+        postUtil.setPostAuthor(Lists.newArrayList(vo));
         setZoneName(vo);
         setThumbFlag(vo);
         setFavourFlag(vo);
@@ -143,6 +140,7 @@ public class OjPostServiceImpl extends ServiceImpl<OjPostMapper, OjPost> impleme
                         OJ_POST.CREATE_TIME, OJ_POST.THUMB_NUM, OJ_POST.FAVOUR_NUM,
                         OJ_POST.VIEW_NUM, OJ_POST.CREATOR, QueryMethods.substring(OJ_POST.CONTENT, 1, 100).as("content"))
                 .where(OJ_POST.TITLE.like(req.getTitle(), StringUtil::isNotBlank))
+                .and(OJ_POST.CREATOR.eq(req.getUserId(), StringUtil::isNotBlank))
                 .and(OJ_POST.ZONE.eq(req.getZone(), StringUtil::isNotBlank));
         if (CollUtil.isNotEmpty(tags)) {
             for (String tag : tags) {
@@ -157,37 +155,9 @@ public class OjPostServiceImpl extends ServiceImpl<OjPostMapper, OjPost> impleme
         queryWrapper.orderBy(OJ_POST.VIEW_NUM.desc());
         Page<OjPost> paginate = postMapper.paginate(Page.of(page.getPageNum(), page.getPageSize()), queryWrapper);
         Page<OjPostVo> voPage = postConverter.toVoPage(paginate);
-        setPostAuthor(voPage.getRecords());
-        setPostZoneName(voPage.getRecords());
+        postUtil.setPostAuthor(voPage.getRecords());
+        postUtil.setPostZoneName(voPage.getRecords());
         return voPage;
-    }
-
-    private void setPostAuthor(List<OjPostVo> ojPostVos) {
-        if (CollUtil.isNotEmpty(ojPostVos)) {
-            Map<Long, List<OjPostVo>> map = ojPostVos.stream().collect(Collectors.groupingBy(OjPostVo::getCreator));
-            Map<Long, List<SysUser>> userMap = sysUserMapper.selectListByIds(map.keySet()).stream().collect(Collectors.groupingBy(SysUser::getId));
-            for (Map.Entry<Long, List<OjPostVo>> post : map.entrySet()) {
-                Long userId = post.getKey();
-                List<OjPostVo> posts = post.getValue();
-                for (OjPostVo ojPostVo : posts) {
-                    List<SysUser> users = userMap.get(userId);
-                    if (CollUtil.isNotEmpty(users)) {
-                        SysUser user = users.get(0);
-                        ojPostVo.setCreatorName(user.getNickName());
-                        ojPostVo.setAvatar(user.getAvatar());
-                        ojPostVo.setIntroduce(user.getIntroduce());
-                    }
-                }
-            }
-        }
-    }
-
-    private void setPostZoneName(List<OjPostVo> ojPostVos) {
-        if (CollUtil.isNotEmpty(ojPostVos)) {
-            for (OjPostVo ojPostVo : ojPostVos) {
-                ojPostVo.setZoneName(PostZoneEnums.getTextByValue(ojPostVo.getZone()));
-            }
-        }
     }
 
 }

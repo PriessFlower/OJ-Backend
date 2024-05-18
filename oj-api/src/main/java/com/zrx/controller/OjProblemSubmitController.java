@@ -1,5 +1,8 @@
 package com.zrx.controller;
 
+import com.mybatisflex.core.paginate.Page;
+import com.zrx.model.common.Paging;
+import com.zrx.model.dto.problemSubmit.OjProblemSubmitQueryRequest;
 import com.zrx.model.dto.problemSubmit.OjProblemSubmitVo;
 import com.zrx.model.dto.problemSubmit.ProblemSubmitAddRequest;
 import com.zrx.reuslt.Result;
@@ -11,8 +14,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @Tag(name = "OjProblemSubmit", description = "题目提交管理")
@@ -36,10 +37,10 @@ public class OjProblemSubmitController {
         return Result.success(ojProblemSubmitService.getInfoById(id));
     }
 
-    @GetMapping("/getInfoByUserId/{id}")
-    @Operation(summary = "根据用户id获取题目提交信息列表")
-    public Result<List<OjProblemSubmitVo>> getInfoByUserId(@PathVariable Long id) {
-        return Result.success(ojProblemSubmitService.getInfoListByUserId(id));
+    @PostMapping("/pageInfoByUserId/{id}")
+    @Operation(summary = "根据用户id分页查询题目提交信息列表")
+    public Result<Page<OjProblemSubmitVo>> pageInfoByUserId(@PathVariable Long id, @RequestBody OjProblemSubmitQueryRequest req, Paging paging) {
+        return Result.success(ojProblemSubmitService.pageInfoByUserId(id, req, paging));
     }
 
 }
