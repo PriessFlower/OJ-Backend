@@ -5,6 +5,7 @@ import com.zrx.model.common.Paging;
 import com.zrx.model.dto.post.OjPostAddRequest;
 import com.zrx.model.dto.post.OjPostQueryRequest;
 import com.zrx.model.dto.post.OjPostUpdateRequest;
+import com.zrx.model.vo.OjPostSimpleVo;
 import com.zrx.model.vo.OjPostVo;
 import com.zrx.reuslt.Result;
 import com.zrx.service.OjPostService;
@@ -14,6 +15,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 帖子 控制层。
@@ -73,7 +76,7 @@ public class OjPostController {
      */
     @GetMapping("/getInfo/{id}")
     @Operation(summary = "根据主键获取帖子")
-    public Result<OjPostVo> getInfo(@PathVariable Long id) {
+    public Result<OjPostVo> getInfo(@PathVariable String id) {
         return Result.success((ojPostService.getInfoById(id)));
     }
 
@@ -99,6 +102,12 @@ public class OjPostController {
     @Operation(summary = "分页查询自己的帖子")
     public Result<Page<OjPostVo>> pageSelf(@Parameter(description = "分页查询自己的帖子") Paging page, @RequestBody OjPostQueryRequest req) {
         return Result.success(ojPostService.page(page, req, true));
+    }
+
+    @GetMapping("/get/fiveHotPost")
+    @Operation(summary = "获取五个热门帖子")
+    public Result<List<OjPostSimpleVo>> getFiveHotPost() {
+        return Result.success(ojPostService.getFiveHotPost());
     }
 
 }

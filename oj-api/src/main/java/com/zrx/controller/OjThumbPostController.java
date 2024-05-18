@@ -48,7 +48,7 @@ public class OjThumbPostController {
      */
     @GetMapping("/get/post/{id}")
     @Operation(summary = "根据用户id获取点赞过的帖子")
-    public Result<Page<OjPostVo>> getThumbPost(@Parameter(description = "分页信息") Paging page, @PathVariable("id") Long userId) {
+    public Result<Page<OjPostVo>> getThumbPost(@Parameter(description = "分页信息") Paging page, @PathVariable("id") String userId) {
         return Result.success(postThumbService.page(page, userId));
     }
 

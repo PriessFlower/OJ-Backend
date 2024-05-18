@@ -48,7 +48,7 @@ public class OjFavourPostController {
      */
     @GetMapping("/get/post/{id}")
     @Operation(summary = "根据用户id获取收藏过的帖子")
-    public Result<Page<OjPostVo>> getFavourPost(@Parameter(description = "分页信息") Paging page, @PathVariable("id") Long userId) {
+    public Result<Page<OjPostVo>> getFavourPost(@Parameter(description = "分页信息") Paging page, @PathVariable("id") String userId) {
         return Result.success(postFavourService.page(page, userId));
     }
 

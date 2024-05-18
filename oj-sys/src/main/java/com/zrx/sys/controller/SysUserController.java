@@ -11,6 +11,7 @@ import com.zrx.sys.model.dto.SysUserRequest;
 import com.zrx.sys.model.dto.SysUserUpdateRequest;
 import com.zrx.sys.model.entity.SysUser;
 import com.zrx.sys.model.vo.SysUserResponse;
+import com.zrx.sys.model.vo.SysUserSimpleResponse;
 import com.zrx.sys.service.SysUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -94,6 +95,17 @@ public class  SysUserController {
 	public Result<SysUserResponse> getInfo() {
 		return Result.success(sysUserService.getInfo());
 	}
+
+	/**
+	 * 根据主键获取系统用户信息。
+	 * @return 详情
+	 */
+	@GetMapping("/getInfoById/{id}")
+	@Operation(summary = "根据主键获取系统用户信息--用户使用")
+	public Result<SysUserSimpleResponse> getInfoById(@PathVariable("id") String userId) {
+		return Result.success(sysUserService.getInfoById(userId));
+	}
+
 
 	/**
 	 * 分页查询。

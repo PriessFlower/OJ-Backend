@@ -10,6 +10,7 @@ import com.zrx.sys.model.dto.SysUserRequest;
 import com.zrx.sys.model.dto.SysUserUpdateRequest;
 import com.zrx.sys.model.entity.SysUser;
 import com.zrx.sys.model.vo.SysUserResponse;
+import com.zrx.sys.model.vo.SysUserSimpleResponse;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -33,6 +34,8 @@ public interface SysUserService extends IService<SysUser> {
 	Boolean enable(String id);
 
 	SysUserResponse getInfo();
+
+	SysUserSimpleResponse getInfoById(String userId);
 
 	Page<SysUserResponse> page(Paging page, SysUserRequest request);
 

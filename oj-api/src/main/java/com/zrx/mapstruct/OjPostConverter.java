@@ -6,6 +6,7 @@ import com.mybatisflex.core.paginate.Page;
 import com.zrx.model.dto.post.OjPostAddRequest;
 import com.zrx.model.dto.post.OjPostUpdateRequest;
 import com.zrx.model.entity.OjPost;
+import com.zrx.model.vo.OjPostSimpleVo;
 import com.zrx.model.vo.OjPostVo;
 import org.mapstruct.Mapper;
 
@@ -35,5 +36,7 @@ public interface OjPostConverter {
     Page<OjPostVo> toVoPage(Page<OjPost> paginate);
 
     List<OjPostVo> toVoList(List<OjPost> ojPosts);
+
+    List<OjPostSimpleVo> toSimpleVoList(List<OjPost> ojPosts);
 
 }

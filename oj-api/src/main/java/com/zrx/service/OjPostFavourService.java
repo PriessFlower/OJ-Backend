@@ -19,6 +19,6 @@ public interface OjPostFavourService extends IService<OjPostFavour> {
 
     Boolean cancelFavourPost(Long id);
 
-    Page<OjPostVo> page(Paging page, Long userId);
+    Page<OjPostVo> page(Paging page, String userId);
 
 }

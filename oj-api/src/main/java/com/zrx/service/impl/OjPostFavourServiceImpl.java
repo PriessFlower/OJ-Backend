@@ -90,12 +90,18 @@ public class OjPostFavourServiceImpl extends ServiceImpl<OjPostFavourMapper, OjP
     }
 
     @Override
-    public Page<OjPostVo> page(Paging page, Long userId) {
+    public Page<OjPostVo> page(Paging page, String userId) {
         Page<OjPostFavour> paginate = favourMapper.paginate(Page.of(page.getPageNum(), page.getPageSize()), new QueryWrapper()
                 .where(OJ_POST_FAVOUR.USER_ID.eq(userId)));
         List<Long> postIdList =
                 paginate.getRecords().stream().map(OjPostFavour::getPostId).toList();
+        if (postIdList.isEmpty()) {
+            return new Page<>();
+        }
         List<OjPost> ojPosts = postMapper.selectListByIds(postIdList);
+        if (ojPosts.isEmpty()) {
+            return new Page<>();
+        }
         Page<OjPostVo> ojPostVoPage = new Page<>(paginate.getPageNumber(), paginate.getPageSize());
         ojPostVoPage.setTotalPage(paginate.getTotalPage());
         ojPostVoPage.setTotalRow(paginate.getTotalRow());

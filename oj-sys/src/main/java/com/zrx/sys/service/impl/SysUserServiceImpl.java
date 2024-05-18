@@ -31,6 +31,7 @@ import com.zrx.sys.model.entity.SysRole;
 import com.zrx.sys.model.entity.SysRoleUser;
 import com.zrx.sys.model.entity.SysUser;
 import com.zrx.sys.model.vo.SysUserResponse;
+import com.zrx.sys.model.vo.SysUserSimpleResponse;
 import com.zrx.sys.service.SysFileService;
 import com.zrx.sys.service.SysUserService;
 import com.zrx.sys.utils.RoleUtil;
@@ -209,6 +210,12 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     }
 
     @Override
+    public SysUserSimpleResponse getInfoById(String userId) {
+        SysUser sysUser = mapper.selectOneByCondition(SYS_USER.ID.eq(userId, StringUtil::isNotBlank));
+        return sysUserMap.toSimpleResp(sysUser);
+    }
+
+    @Override
     public Page<SysUserResponse> page(Paging page, SysUserRequest request) {
         QueryWrapper queryWrapper = new QueryWrapper().select(SYS_USER.DEFAULT_COLUMNS)
                 .where(SYS_USER.USERNAME.like(request.getUsername(), StringUtil::isNotBlank))
@@ -231,7 +238,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 
     /**
      * 获取用户角色并填充
-     * @param respList
+     * @param respList respList
      */
     private void getUserRole(List<SysUserResponse> respList) {
         List<Long> userIdList = respList.stream().map(SysUserResponse::getId).toList();

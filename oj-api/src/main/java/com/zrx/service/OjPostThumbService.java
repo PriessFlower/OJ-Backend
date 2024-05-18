@@ -19,6 +19,6 @@ public interface OjPostThumbService extends IService<OjPostThumb> {
 
     Boolean cancelThumbPost(Long id);
 
-    Page<OjPostVo> page(Paging page, Long userId);
+    Page<OjPostVo> page(Paging page, String userId);
 
 }

@@ -19,6 +19,7 @@ import com.zrx.model.dto.post.OjPostAddRequest;
 import com.zrx.model.dto.post.OjPostQueryRequest;
 import com.zrx.model.dto.post.OjPostUpdateRequest;
 import com.zrx.model.entity.OjPost;
+import com.zrx.model.vo.OjPostSimpleVo;
 import com.zrx.model.vo.OjPostVo;
 import com.zrx.security.utils.SecurityHelper;
 import com.zrx.service.OjPostService;
@@ -96,7 +97,7 @@ public class OjPostServiceImpl extends ServiceImpl<OjPostMapper, OjPost> impleme
     }
 
     @Override
-    public OjPostVo getInfoById(Long id) {
+    public OjPostVo getInfoById(String id) {
         UpdateChain.of(postMapper)
                 .set(OJ_POST.VIEW_NUM, OJ_POST.VIEW_NUM.add(1))
                 .where(OJ_POST.ID.eq(id))
@@ -158,6 +159,16 @@ public class OjPostServiceImpl extends ServiceImpl<OjPostMapper, OjPost> impleme
         postUtil.setPostAuthor(voPage.getRecords());
         postUtil.setPostZoneName(voPage.getRecords());
         return voPage;
+    }
+
+    @Override
+    public List<OjPostSimpleVo> getFiveHotPost() {
+        QueryWrapper queryWrapper = new QueryWrapper();
+        queryWrapper.select(OJ_POST.ID, OJ_POST.TITLE)
+                .orderBy(OJ_POST.VIEW_NUM.desc(), OJ_POST.THUMB_NUM.desc(), OJ_POST.FAVOUR_NUM.desc())
+                .limit(5);
+        List<OjPost> ojPosts = mapper.selectListByQuery(queryWrapper);
+        return postConverter.toSimpleVoList(ojPosts);
     }
 
 }
