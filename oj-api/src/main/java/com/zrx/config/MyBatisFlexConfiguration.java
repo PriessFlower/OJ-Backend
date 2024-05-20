@@ -20,8 +20,7 @@ public class MyBatisFlexConfiguration implements MyBatisFlexCustomizer {
 		flexGlobalConfig.registerInsertListener(insertListener, OjProblem.class, SysFile.class, SysRole.class,
 				OjPost.class);
 		// 为实体类设置更新监听器
-		flexGlobalConfig.registerUpdateListener(updateListener, OjProblem.class, SysUser.class, SysFile.class,
-				OjPost.class);
+		flexGlobalConfig.registerUpdateListener(updateListener, OjProblem.class, SysUser.class, SysFile.class);
 	}
 
 }

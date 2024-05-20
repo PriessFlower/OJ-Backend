@@ -1,5 +1,6 @@
 package com.zrx.service.impl;
 
+import cn.dev33.satoken.exception.NotLoginException;
 import cn.hutool.core.collection.CollUtil;
 import com.google.common.collect.Lists;
 import com.mybatisflex.core.paginate.Page;
@@ -98,12 +99,20 @@ public class OjPostServiceImpl extends ServiceImpl<OjPostMapper, OjPost> impleme
 
 	@Override
 	public OjPostVo getInfoById(String id) {
+		OjPost post = postMapper.selectOneById(id);
+		if (post == null) {
+			throw new BusinessException("未找到该帖子");
+		}
 		UpdateChain.of(postMapper).set(OJ_POST.VIEW_NUM, OJ_POST.VIEW_NUM.add(1)).where(OJ_POST.ID.eq(id)).update();
-		OjPostVo vo = postConverter.toVo(postMapper.selectOneById(id));
+		OjPostVo vo = postConverter.toVo(post);
 		postUtil.setPostAuthor(Lists.newArrayList(vo));
 		setZoneName(vo);
-		setThumbFlag(vo);
-		setFavourFlag(vo);
+		try {
+			setThumbFlag(vo);
+			setFavourFlag(vo);
+		} catch (NotLoginException e) {
+			// 未登录，不做处理
+		}
 		return vo;
 	}
 
