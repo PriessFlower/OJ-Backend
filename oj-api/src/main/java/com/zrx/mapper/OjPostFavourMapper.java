@@ -1,6 +1,5 @@
 package com.zrx.mapper;
 
-
 import com.mybatisflex.core.BaseMapper;
 import com.zrx.model.entity.OjPostFavour;
 

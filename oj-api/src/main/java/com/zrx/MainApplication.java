@@ -19,7 +19,7 @@ import java.util.Optional;
 public class MainApplication {
 
 	public static void main(String[] args) throws UnknownHostException {
-//		InitRabbitMq.init();
+		// InitRabbitMq.init();
 		SpringApplication application = new SpringApplication(MainApplication.class);
 		ConfigurableApplicationContext applicationContext = application.run(args);
 

@@ -1,6 +1,5 @@
 package com.zrx.service;
 
-
 import com.mybatisflex.core.paginate.Page;
 import com.mybatisflex.core.service.IService;
 import com.zrx.model.common.Paging;
@@ -15,10 +14,10 @@ import com.zrx.model.vo.OjPostVo;
  */
 public interface OjPostThumbService extends IService<OjPostThumb> {
 
-    Boolean thumbPost(Long id);
+	Boolean thumbPost(Long id);
 
-    Boolean cancelThumbPost(Long id);
+	Boolean cancelThumbPost(Long id);
 
-    Page<OjPostVo> page(Paging page, String userId);
+	Page<OjPostVo> page(Paging page, String userId);
 
 }

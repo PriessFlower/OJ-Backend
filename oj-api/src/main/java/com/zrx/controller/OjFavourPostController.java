@@ -22,34 +22,35 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/oj/post/favour")
 public class OjFavourPostController {
 
-    @Resource
-    private OjPostFavourService postFavourService;
+	@Resource
+	private OjPostFavourService postFavourService;
 
-    /**
-     * 收藏帖子
-     */
-    @PostMapping("/do/{id}")
-    @Operation(summary = "收藏帖子")
-    public Result<Boolean> favour(@PathVariable Long id) {
-        return Result.success(postFavourService.favourPost(id));
-    }
+	/**
+	 * 收藏帖子
+	 */
+	@PostMapping("/do/{id}")
+	@Operation(summary = "收藏帖子")
+	public Result<Boolean> favour(@PathVariable Long id) {
+		return Result.success(postFavourService.favourPost(id));
+	}
 
-    /**
-     * 取消点赞
-     */
-    @PostMapping("/cancel/{id}")
-    @Operation(summary = "取消收藏")
-    public Result<Boolean> cancel(@PathVariable @Parameter(description = "帖子id") Long id) {
-        return Result.success(postFavourService.cancelFavourPost(id));
-    }
+	/**
+	 * 取消点赞
+	 */
+	@PostMapping("/cancel/{id}")
+	@Operation(summary = "取消收藏")
+	public Result<Boolean> cancel(@PathVariable @Parameter(description = "帖子id") Long id) {
+		return Result.success(postFavourService.cancelFavourPost(id));
+	}
 
-    /**
-     * 根据用户id获取收藏过的帖子
-     */
-    @GetMapping("/get/post/{id}")
-    @Operation(summary = "根据用户id获取收藏过的帖子")
-    public Result<Page<OjPostVo>> getFavourPost(@Parameter(description = "分页信息") Paging page, @PathVariable("id") String userId) {
-        return Result.success(postFavourService.page(page, userId));
-    }
+	/**
+	 * 根据用户id获取收藏过的帖子
+	 */
+	@GetMapping("/get/post/{id}")
+	@Operation(summary = "根据用户id获取收藏过的帖子")
+	public Result<Page<OjPostVo>> getFavourPost(@Parameter(description = "分页信息") Paging page,
+			@PathVariable("id") String userId) {
+		return Result.success(postFavourService.page(page, userId));
+	}
 
 }

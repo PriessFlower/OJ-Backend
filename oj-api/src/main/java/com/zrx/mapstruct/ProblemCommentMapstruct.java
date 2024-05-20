@@ -14,8 +14,13 @@ import java.util.List;
  */
 @Mapper(componentModel = "Spring")
 public interface ProblemCommentMapstruct {
-    ProblemComment toEntity(ProblemCommentRequest req);
-    ProblemCommentVo toVo(ProblemComment entity);
-    List<ProblemCommentVo> toVoList(List<ProblemComment> entity);
-    Page<ProblemCommentVo> toVoPage(Page<ProblemComment> entity);
+
+	ProblemComment toEntity(ProblemCommentRequest req);
+
+	ProblemCommentVo toVo(ProblemComment entity);
+
+	List<ProblemCommentVo> toVoList(List<ProblemComment> entity);
+
+	Page<ProblemCommentVo> toVoPage(Page<ProblemComment> entity);
+
 }

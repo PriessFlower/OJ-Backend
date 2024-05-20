@@ -29,58 +29,58 @@ import java.time.LocalDateTime;
 @Table(value = "oj_problem_comment")
 public class ProblemComment implements Serializable {
 
-    @Serial
-    private static final long serialVersionUID = 1L;
+	@Serial
+	private static final long serialVersionUID = 1L;
 
-    /**
-     * 主键
-     */
-    @Id(keyType = KeyType.Generator, value = KeyGenerators.snowFlakeId)
-    @Schema(description = "主键")
-    private Long id;
+	/**
+	 * 主键
+	 */
+	@Id(keyType = KeyType.Generator, value = KeyGenerators.snowFlakeId)
+	@Schema(description = "主键")
+	private Long id;
 
-    /**
-     * 标签列表（json 数组）
-     */
-    @Schema(description = "标签列表（json 数组）")
-    private String tags;
+	/**
+	 * 标签列表（json 数组）
+	 */
+	@Schema(description = "标签列表（json 数组）")
+	private String tags;
 
-    /**
-     * 父id
-     */
-    @Schema(description = "父id")
-    private Long parentId;
+	/**
+	 * 父id
+	 */
+	@Schema(description = "父id")
+	private Long parentId;
 
-    /**
-     * 题目id
-     */
-    @Schema(description = "题目id")
-    private Long problemId;
+	/**
+	 * 题目id
+	 */
+	@Schema(description = "题目id")
+	private Long problemId;
 
-    /**
-     * 内容
-     */
-    @Schema(description = "内容")
-    private String content;
+	/**
+	 * 内容
+	 */
+	@Schema(description = "内容")
+	private String content;
 
-    /**
-     * 作者id
-     */
-    @Schema(description = "作者id")
-    private Long authorId;
+	/**
+	 * 作者id
+	 */
+	@Schema(description = "作者id")
+	private Long authorId;
 
-    /**
-     * 创建时间
-     */
-    @Column(onInsertValue = "now()")
-    @Schema(description = "创建时间")
-    private LocalDateTime createTime;
+	/**
+	 * 创建时间
+	 */
+	@Column(onInsertValue = "now()")
+	@Schema(description = "创建时间")
+	private LocalDateTime createTime;
 
-    /**
-     * 逻辑删除（0-未删除，1-已删除）
-     */
-    @Column(isLogicDelete = true)
-    @Schema(description = "逻辑删除（0-未删除，1-已删除）")
-    private Integer delFlag;
+	/**
+	 * 逻辑删除（0-未删除，1-已删除）
+	 */
+	@Column(isLogicDelete = true)
+	@Schema(description = "逻辑删除（0-未删除，1-已删除）")
+	private Integer delFlag;
 
 }

@@ -16,19 +16,19 @@ import java.io.Serializable;
 @Schema(name = "OjPostSimpleVo", description = "帖子简单Vo")
 public class OjPostSimpleVo implements Serializable {
 
-    @Serial
-    private static final long serialVersionUID = 1L;
+	@Serial
+	private static final long serialVersionUID = 1L;
 
-    /**
-     * id
-     */
-    @Schema(description = "id")
-    private Long id;
+	/**
+	 * id
+	 */
+	@Schema(description = "id")
+	private Long id;
 
-    /**
-     * 标题
-     */
-    @Schema(description = "标题")
-    private String title;
+	/**
+	 * 标题
+	 */
+	@Schema(description = "标题")
+	private String title;
 
 }

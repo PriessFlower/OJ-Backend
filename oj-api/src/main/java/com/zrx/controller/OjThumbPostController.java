@@ -22,34 +22,35 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/oj/post/thumb")
 public class OjThumbPostController {
 
-    @Resource
-    private OjPostThumbService postThumbService;
+	@Resource
+	private OjPostThumbService postThumbService;
 
-    /**
-     * 点赞帖子
-     */
-    @PostMapping("/do/{id}")
-    @Operation(summary = "点赞帖子")
-    public Result<Boolean> thumb(@PathVariable Long id) {
-        return Result.success(postThumbService.thumbPost(id));
-    }
+	/**
+	 * 点赞帖子
+	 */
+	@PostMapping("/do/{id}")
+	@Operation(summary = "点赞帖子")
+	public Result<Boolean> thumb(@PathVariable Long id) {
+		return Result.success(postThumbService.thumbPost(id));
+	}
 
-    /**
-     * 取消点赞
-     */
-    @PostMapping("/cancel/{id}")
-    @Operation(summary = "取消点赞")
-    public Result<Boolean> cancel(@PathVariable @Parameter(description = "帖子id") Long id) {
-        return Result.success(postThumbService.cancelThumbPost(id));
-    }
+	/**
+	 * 取消点赞
+	 */
+	@PostMapping("/cancel/{id}")
+	@Operation(summary = "取消点赞")
+	public Result<Boolean> cancel(@PathVariable @Parameter(description = "帖子id") Long id) {
+		return Result.success(postThumbService.cancelThumbPost(id));
+	}
 
-    /**
-     * 根据用户id获取点赞过的帖子
-     */
-    @GetMapping("/get/post/{id}")
-    @Operation(summary = "根据用户id获取点赞过的帖子")
-    public Result<Page<OjPostVo>> getThumbPost(@Parameter(description = "分页信息") Paging page, @PathVariable("id") String userId) {
-        return Result.success(postThumbService.page(page, userId));
-    }
+	/**
+	 * 根据用户id获取点赞过的帖子
+	 */
+	@GetMapping("/get/post/{id}")
+	@Operation(summary = "根据用户id获取点赞过的帖子")
+	public Result<Page<OjPostVo>> getThumbPost(@Parameter(description = "分页信息") Paging page,
+			@PathVariable("id") String userId) {
+		return Result.success(postThumbService.page(page, userId));
+	}
 
 }

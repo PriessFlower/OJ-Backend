@@ -13,32 +13,29 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum PostZoneEnums {
 
-    SYNTHESIS("综合", "synthesis"),
-    FRONTEND("前端", "frontend"),
-    BACKEND("后端", "backend"),
-    HARMONY("鸿蒙", "harmony"),
-    AIGC("AIGC", "aigc");
+	SYNTHESIS("综合", "synthesis"), FRONTEND("前端", "frontend"), BACKEND("后端", "backend"), HARMONY("鸿蒙", "harmony"),
+	AIGC("AIGC", "aigc");
 
-    private final String text;
+	private final String text;
 
-    private final String value;
+	private final String value;
 
-    public static Boolean isValid(String value) {
-        for (PostZoneEnums postZoneEnums : PostZoneEnums.values()) {
-            if (postZoneEnums.getValue().equals(value)) {
-                return true;
-            }
-        }
-        return false;
-    }
+	public static Boolean isValid(String value) {
+		for (PostZoneEnums postZoneEnums : PostZoneEnums.values()) {
+			if (postZoneEnums.getValue().equals(value)) {
+				return true;
+			}
+		}
+		return false;
+	}
 
-    public static String getTextByValue(String value) {
-        for (PostZoneEnums postZoneEnums : PostZoneEnums.values()) {
-            if (postZoneEnums.getValue().equals(value)) {
-                return postZoneEnums.text;
-            }
-        }
-        return null;
-    }
+	public static String getTextByValue(String value) {
+		for (PostZoneEnums postZoneEnums : PostZoneEnums.values()) {
+			if (postZoneEnums.getValue().equals(value)) {
+				return postZoneEnums.text;
+			}
+		}
+		return null;
+	}
 
 }

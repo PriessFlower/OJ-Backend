@@ -18,39 +18,39 @@ import java.io.Serializable;
 @Schema(description = "题目评论")
 public class ProblemCommentRequest implements Serializable {
 
-    @Serial
-    private static final long serialVersionUID = 1L;
+	@Serial
+	private static final long serialVersionUID = 1L;
 
-    /**
-     * 主键
-     */
-    @Schema(description = "主键")
-    private Long id;
+	/**
+	 * 主键
+	 */
+	@Schema(description = "主键")
+	private Long id;
 
-    /**
-     * 标签列表（json 数组）
-     */
-    @Schema(description = "标签列表（json 数组）")
-    private String tags;
+	/**
+	 * 标签列表（json 数组）
+	 */
+	@Schema(description = "标签列表（json 数组）")
+	private String tags;
 
-    /**
-     * 父id
-     */
-    @Schema(description = "父id")
-    private Long parentId;
+	/**
+	 * 父id
+	 */
+	@Schema(description = "父id")
+	private Long parentId;
 
-    /**
-     * 题目id
-     */
-    @NotNull(message = "题目id不能为空")
-    @Schema(description = "题目id")
-    private Long problemId;
+	/**
+	 * 题目id
+	 */
+	@NotNull(message = "题目id不能为空")
+	@Schema(description = "题目id")
+	private Long problemId;
 
-    /**
-     * 内容
-     */
-    @NotBlank(message = "内容不能为空")
-    @Schema(description = "内容")
-    private String content;
+	/**
+	 * 内容
+	 */
+	@NotBlank(message = "内容不能为空")
+	@Schema(description = "内容")
+	private String content;
 
 }

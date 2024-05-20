@@ -16,12 +16,12 @@ import java.util.List;
  */
 public interface ProblemCommentService extends IService<ProblemComment> {
 
-    Boolean save(ProblemCommentRequest req);
+	Boolean save(ProblemCommentRequest req);
 
-    List<ProblemCommentVo> list(Long problemId);
+	List<ProblemCommentVo> list(Long problemId);
 
-    List<ProblemCommentVo> listChildren(Long parentId);
+	List<ProblemCommentVo> listChildren(Long parentId);
 
-    Boolean removeRecursionById(Serializable id);
+	Boolean removeRecursionById(Serializable id);
 
 }

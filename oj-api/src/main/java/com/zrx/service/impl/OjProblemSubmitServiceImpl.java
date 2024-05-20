@@ -32,6 +32,7 @@ public class OjProblemSubmitServiceImpl extends ServiceImpl<OjProblemSubmitMappe
 		implements OjProblemSubmitService {
 
 	private static final Logger log = LoggerFactory.getLogger(OjProblemSubmitServiceImpl.class);
+
 	@Resource
 	private OjProblemMapper problemMapper;
 
@@ -42,8 +43,8 @@ public class OjProblemSubmitServiceImpl extends ServiceImpl<OjProblemSubmitMappe
 	@Resource
 	private ProblemSubmitConverter problemSubmitConverter;
 
-//	@Autowired
-//	private OjMessageProducer ojMessageProducer;
+	// @Autowired
+	// private OjMessageProducer ojMessageProducer;
 
 	@Override
 	@Transactional(rollbackFor = Exception.class)
@@ -72,15 +73,17 @@ public class OjProblemSubmitServiceImpl extends ServiceImpl<OjProblemSubmitMappe
 		}
 		problemMapper.update(problem);
 		// 消息队列
-//		ojMessageProducer.sendMessage("luojialong", "shenming", String.valueOf(ojProblemSubmitId));
-//		CompletableFuture.runAsync(() -> {
-            try {
-                judgeService.doJudge(ojProblemSubmitId);
-            } catch (Exception e) {
-				log.error("判题失败", e);
-//                throw new RuntimeException(e);
-            }
-//        });
+		// ojMessageProducer.sendMessage("luojialong", "shenming",
+		// String.valueOf(ojProblemSubmitId));
+		// CompletableFuture.runAsync(() -> {
+		try {
+			judgeService.doJudge(ojProblemSubmitId);
+		}
+		catch (Exception e) {
+			log.error("判题失败", e);
+			// throw new RuntimeException(e);
+		}
+		// });
 
 		return ojProblemSubmitId;
 	}
@@ -102,16 +105,17 @@ public class OjProblemSubmitServiceImpl extends ServiceImpl<OjProblemSubmitMappe
 		Integer status = req.getStatus();
 		Long questionId = req.getQuestionId();
 
-		QueryWrapper queryWrapper = new QueryWrapper()
-				.select()
-				.where(OJ_PROBLEM_SUBMIT.USER_ID.eq(id))
-				.and(OJ_PROBLEM_SUBMIT.LANGUAGE.eq(language, StringUtil::isNotBlank))
-				.and(OJ_PROBLEM_SUBMIT.CODE.eq(code, StringUtil::isNotBlank))
-				.and(OJ_PROBLEM_SUBMIT.CODE_STATUS.eq(codeStatus, codeStatus != null))
-				.and(OJ_PROBLEM_SUBMIT.STATUS.eq(status, status != null))
-				.and(OJ_PROBLEM_SUBMIT.QUESTION_ID.eq(questionId, questionId != null))
-				.orderBy(OJ_PROBLEM_SUBMIT.CREATE_TIME.desc());
-		Page<OjProblemSubmit> paginate = mapper.paginate(Page.of(paging.getPageNum(), paging.getPageSize()), queryWrapper);
+		QueryWrapper queryWrapper = new QueryWrapper().select()
+			.where(OJ_PROBLEM_SUBMIT.USER_ID.eq(id))
+			.and(OJ_PROBLEM_SUBMIT.LANGUAGE.eq(language, StringUtil::isNotBlank))
+			.and(OJ_PROBLEM_SUBMIT.CODE.eq(code, StringUtil::isNotBlank))
+			.and(OJ_PROBLEM_SUBMIT.CODE_STATUS.eq(codeStatus, codeStatus != null))
+			.and(OJ_PROBLEM_SUBMIT.STATUS.eq(status, status != null))
+			.and(OJ_PROBLEM_SUBMIT.QUESTION_ID.eq(questionId, questionId != null))
+			.orderBy(OJ_PROBLEM_SUBMIT.CREATE_TIME.desc());
+		Page<OjProblemSubmit> paginate = mapper.paginate(Page.of(paging.getPageNum(), paging.getPageSize()),
+				queryWrapper);
 		return problemSubmitConverter.toVoPage(paginate);
 	}
+
 }

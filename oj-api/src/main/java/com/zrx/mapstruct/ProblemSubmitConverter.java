@@ -16,14 +16,14 @@ import java.util.List;
 @Mapper(componentModel = "Spring")
 public interface ProblemSubmitConverter {
 
-    OjProblemSubmitVo toVo(OjProblemSubmit entity);
+	OjProblemSubmitVo toVo(OjProblemSubmit entity);
 
-    default JudgeInfo judgeInfoStrToJudgeInfoObj(String judgeInfoStr) {
-        return JSONUtil.toBean(judgeInfoStr, JudgeInfo.class);
-    }
+	default JudgeInfo judgeInfoStrToJudgeInfoObj(String judgeInfoStr) {
+		return JSONUtil.toBean(judgeInfoStr, JudgeInfo.class);
+	}
 
-    List<OjProblemSubmitVo> toVoList(List<OjProblemSubmit> list);
+	List<OjProblemSubmitVo> toVoList(List<OjProblemSubmit> list);
 
-    Page<OjProblemSubmitVo> toVoPage(Page<OjProblemSubmit> paginate);
+	Page<OjProblemSubmitVo> toVoPage(Page<OjProblemSubmit> paginate);
 
 }
