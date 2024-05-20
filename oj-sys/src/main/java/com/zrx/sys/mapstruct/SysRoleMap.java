@@ -15,12 +15,12 @@ import java.util.List;
 @Mapper(componentModel = "Spring")
 public interface SysRoleMap {
 
-    SysRole toEntity(SysRoleRequest req);
+	SysRole toEntity(SysRoleRequest req);
 
-    SysRoleResponse toVo(SysRole entity);
+	SysRoleResponse toVo(SysRole entity);
 
-    List<SysRoleResponse> toVoList(List<SysRole> entityList);
+	List<SysRoleResponse> toVoList(List<SysRole> entityList);
 
-    Page<SysRoleResponse> toVoPage(Page<SysRole> entityPage);
+	Page<SysRoleResponse> toVoPage(Page<SysRole> entityPage);
 
 }

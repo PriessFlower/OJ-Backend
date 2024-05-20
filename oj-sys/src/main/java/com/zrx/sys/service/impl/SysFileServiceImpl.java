@@ -23,37 +23,37 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 public class SysFileServiceImpl extends ServiceImpl<SysFileMapper, SysFile> implements SysFileService {
 
-    @Resource
-    private MinioUtil minioUtil;
+	@Resource
+	private MinioUtil minioUtil;
 
-    @Value("${minio.endpoint}")
-    private String endpoint;
+	@Value("${minio.endpoint}")
+	private String endpoint;
 
-    @Value("${minio.bucketName}")
-    private String bucketName;
+	@Value("${minio.bucketName}")
+	private String bucketName;
 
-    @Override
-    public String upload(MultipartFile file) {
-        // TODO: 处理大文件上传
-        String fileName = file.getOriginalFilename();
-        fileName = NanoId.randomNanoId(10) + "-" + FileNameUtil.getName(fileName);
-        SysFile sysFile = new SysFile();
-        sysFile.setFileName(fileName);
-        String url = minioUtil.upload(file, fileName);
-        if (StringUtils.isEmpty(url)) {
-            throw new BusinessException("上传失败! ");
-        }
-        sysFile.setUrl(url);
-        sysFile.setFileSize(file.getSize());
-        boolean save = save(sysFile);
-        if (!save) {
-            throw new BusinessException("上传失败");
-        }
-        return getUrl(url);
-    }
+	@Override
+	public String upload(MultipartFile file) {
+		// TODO: 处理大文件上传
+		String fileName = file.getOriginalFilename();
+		fileName = NanoId.randomNanoId(10) + "-" + FileNameUtil.getName(fileName);
+		SysFile sysFile = new SysFile();
+		sysFile.setFileName(fileName);
+		String url = minioUtil.upload(file, fileName);
+		if (StringUtils.isEmpty(url)) {
+			throw new BusinessException("上传失败! ");
+		}
+		sysFile.setUrl(url);
+		sysFile.setFileSize(file.getSize());
+		boolean save = save(sysFile);
+		if (!save) {
+			throw new BusinessException("上传失败");
+		}
+		return getUrl(url);
+	}
 
-    private String getUrl(String url) {
-        return endpoint + "/" + bucketName + "/" + url;
-    }
+	private String getUrl(String url) {
+		return endpoint + "/" + bucketName + "/" + url;
+	}
 
 }

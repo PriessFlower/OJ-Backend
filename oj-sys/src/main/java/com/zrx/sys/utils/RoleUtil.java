@@ -20,36 +20,36 @@ import static com.zrx.sys.model.entity.table.SysRoleUserTableDef.SYS_ROLE_USER;
 @Component
 public class RoleUtil {
 
-    @Resource
-    private SysRoleMapper sysRoleMapper;
+	@Resource
+	private SysRoleMapper sysRoleMapper;
 
-    /**
-     * 根据用户id获取其最大角色
-     * @return SysRole
-     */
-    public SysRole selectMaxRoleByUserId(Long userId) {
-        QueryWrapper queryWrapper = new QueryWrapper();
-        queryWrapper.select(SYS_ROLE.DEFAULT_COLUMNS)
-                .from(SYS_ROLE)
-                .leftJoin(SYS_ROLE_USER)
-                .on(SYS_ROLE.ID.eq(SYS_ROLE_USER.ROLE_ID))
-                .where(SYS_ROLE_USER.USER_ID.eq(userId))
-                .orderBy(SYS_ROLE.SORT.asc())
-                .limit(1);
-        return sysRoleMapper.selectOneByQuery(queryWrapper);
-    }
+	/**
+	 * 根据用户id获取其最大角色
+	 * @return SysRole
+	 */
+	public SysRole selectMaxRoleByUserId(Long userId) {
+		QueryWrapper queryWrapper = new QueryWrapper();
+		queryWrapper.select(SYS_ROLE.DEFAULT_COLUMNS)
+			.from(SYS_ROLE)
+			.leftJoin(SYS_ROLE_USER)
+			.on(SYS_ROLE.ID.eq(SYS_ROLE_USER.ROLE_ID))
+			.where(SYS_ROLE_USER.USER_ID.eq(userId))
+			.orderBy(SYS_ROLE.SORT.asc())
+			.limit(1);
+		return sysRoleMapper.selectOneByQuery(queryWrapper);
+	}
 
-    /**
-     * 根据roleId列表获取最高权限角色
-     */
-    public SysRole selectMaxRoleByRoleIds(List<Long> roleIds) {
-        QueryWrapper queryWrapper = new QueryWrapper();
-        queryWrapper.select(SYS_ROLE.DEFAULT_COLUMNS)
-                .from(SYS_ROLE)
-                .where(SYS_ROLE.ID.in(roleIds))
-                .orderBy(SYS_ROLE.SORT.asc())
-                .limit(1);
-        return sysRoleMapper.selectOneByQuery(queryWrapper);
-    }
+	/**
+	 * 根据roleId列表获取最高权限角色
+	 */
+	public SysRole selectMaxRoleByRoleIds(List<Long> roleIds) {
+		QueryWrapper queryWrapper = new QueryWrapper();
+		queryWrapper.select(SYS_ROLE.DEFAULT_COLUMNS)
+			.from(SYS_ROLE)
+			.where(SYS_ROLE.ID.in(roleIds))
+			.orderBy(SYS_ROLE.SORT.asc())
+			.limit(1);
+		return sysRoleMapper.selectOneByQuery(queryWrapper);
+	}
 
 }

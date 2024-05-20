@@ -11,8 +11,8 @@ import java.util.List;
 @Data
 public class SysUserRoleBo {
 
-    private Long userId;
+	private Long userId;
 
-    private List<String> remark;
+	private List<String> remark;
 
 }

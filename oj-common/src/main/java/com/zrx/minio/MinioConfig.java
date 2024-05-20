@@ -17,17 +17,17 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "minio")
 public class MinioConfig {
 
-    private String endpoint;
-    private String accessKey;
-    private String secretKey;
-    private String bucketName;
+	private String endpoint;
 
-    @Bean
-    public MinioClient minioClient() {
-        return MinioClient.builder()
-                .endpoint(endpoint)
-                .credentials(accessKey, secretKey)
-                .build();
-    }
+	private String accessKey;
+
+	private String secretKey;
+
+	private String bucketName;
+
+	@Bean
+	public MinioClient minioClient() {
+		return MinioClient.builder().endpoint(endpoint).credentials(accessKey, secretKey).build();
+	}
 
 }

@@ -27,39 +27,39 @@ import java.io.Serializable;
 @Table(value = "sys_file")
 public class SysFile extends BaseEntity implements Serializable {
 
-    @Serial
-    private static final long serialVersionUID = 1L;
+	@Serial
+	private static final long serialVersionUID = 1L;
 
-    /**
-     * 主键
-     */
-    @Id(keyType = KeyType.Generator, value = KeyGenerators.snowFlakeId)
-    @Schema(description = "主键")
-    private Long id;
+	/**
+	 * 主键
+	 */
+	@Id(keyType = KeyType.Generator, value = KeyGenerators.snowFlakeId)
+	@Schema(description = "主键")
+	private Long id;
 
-    /**
-     * 文件名
-     */
-    @Schema(description = "文件名")
-    private String fileName;
+	/**
+	 * 文件名
+	 */
+	@Schema(description = "文件名")
+	private String fileName;
 
-    /**
-     * 访问路径
-     */
-    @Schema(description = "访问路径")
-    private String url;
+	/**
+	 * 访问路径
+	 */
+	@Schema(description = "访问路径")
+	private String url;
 
-    /**
-     * 文件大小
-     */
-    @Schema(description = "文件大小")
-    private Long fileSize;
+	/**
+	 * 文件大小
+	 */
+	@Schema(description = "文件大小")
+	private Long fileSize;
 
-    /**
-     * 逻辑删除
-     */
-    @Column(isLogicDelete = true)
-    @Schema(description = "逻辑删除")
-    private Integer delFlag;
+	/**
+	 * 逻辑删除
+	 */
+	@Column(isLogicDelete = true)
+	@Schema(description = "逻辑删除")
+	private Integer delFlag;
 
 }

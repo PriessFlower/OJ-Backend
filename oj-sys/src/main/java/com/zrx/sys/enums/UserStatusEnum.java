@@ -13,10 +13,10 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum UserStatusEnum {
 
-    DISABLE("禁用", 1), ENABLED("正常", 0);
+	DISABLE("禁用", 1), ENABLED("正常", 0);
 
-    private final String text;
+	private final String text;
 
-    private final int value;
+	private final int value;
 
 }

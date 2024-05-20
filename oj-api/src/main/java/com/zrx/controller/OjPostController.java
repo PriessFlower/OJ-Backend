@@ -100,14 +100,14 @@ public class OjPostController {
 		return Result.success(ojPostService.page(page, req, true));
 	}
 
-    /**
-     * 获取五个热门帖子
-     * @return 帖子简单信息Vo
-     */
-    @GetMapping("/get/fiveHotPost")
-    @Operation(summary = "获取五个热门帖子")
-    public Result<List<OjPostSimpleVo>> getFiveHotPost() {
-        return Result.success(ojPostService.getFiveHotPost());
-    }
+	/**
+	 * 获取五个热门帖子
+	 * @return 帖子简单信息Vo
+	 */
+	@GetMapping("/get/fiveHotPost")
+	@Operation(summary = "获取五个热门帖子")
+	public Result<List<OjPostSimpleVo>> getFiveHotPost() {
+		return Result.success(ojPostService.getFiveHotPost());
+	}
 
 }

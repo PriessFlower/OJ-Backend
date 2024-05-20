@@ -1,6 +1,5 @@
 package com.zrx.sys.service;
 
-
 import com.mybatisflex.core.service.IService;
 import com.zrx.sys.entity.SysFile;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,6 +12,6 @@ import org.springframework.web.multipart.MultipartFile;
  */
 public interface SysFileService extends IService<SysFile> {
 
-    String upload(MultipartFile file);
+	String upload(MultipartFile file);
 
 }

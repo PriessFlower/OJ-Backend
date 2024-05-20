@@ -33,6 +33,6 @@ public interface SysRoleService extends IService<SysRole> {
 
 	Boolean updateUserRole(UpdateUserRoleRequest req);
 
-    Boolean removeRoleById(Serializable id);
+	Boolean removeRoleById(Serializable id);
 
 }

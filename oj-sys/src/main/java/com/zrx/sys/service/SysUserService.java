@@ -41,6 +41,6 @@ public interface SysUserService extends IService<SysUser> {
 
 	String uploadAvatar(MultipartFile file);
 
-    Boolean kick(Long id);
+	Boolean kick(Long id);
 
 }

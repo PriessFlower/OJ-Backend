@@ -29,7 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @Tag(name = "SysUser", description = "系统用户管理接口")
 @RequestMapping("/sys/sysUser")
-public class  SysUserController {
+public class SysUserController {
 
 	@Resource
 	private SysUserService sysUserService;
@@ -106,7 +106,6 @@ public class  SysUserController {
 		return Result.success(sysUserService.getInfoById(userId));
 	}
 
-
 	/**
 	 * 分页查询。
 	 * @param page 分页对象
@@ -114,7 +113,7 @@ public class  SysUserController {
 	 */
 	@GetMapping("/page")
 	@Operation(summary = "分页查询")
-	@SaCheckRole(value = {AuthConst.SUPER_ADMIN, AuthConst.ADMIN}, mode = SaMode.OR)
+	@SaCheckRole(value = { AuthConst.SUPER_ADMIN, AuthConst.ADMIN }, mode = SaMode.OR)
 	public Result<Page<SysUserResponse>> page(@Parameter(description = "分页条件") Paging page,
 			@Parameter(description = "查询条件") SysUserRequest request) {
 		return Result.success(sysUserService.page(page, request));

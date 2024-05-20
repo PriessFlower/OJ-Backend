@@ -41,7 +41,7 @@ public class SysRoleController {
 	 */
 	@PostMapping("/save")
 	@Operation(summary = "保存")
-	@SaCheckRole(value = {AuthConst.SUPER_ADMIN, AuthConst.ADMIN}, mode = SaMode.OR)
+	@SaCheckRole(value = { AuthConst.SUPER_ADMIN, AuthConst.ADMIN }, mode = SaMode.OR)
 	public Result<Boolean> save(@RequestBody @Parameter(description = "系统角色") SysRoleRequest req) {
 		return Result.success(sysRoleService.save(req));
 	}
@@ -52,7 +52,7 @@ public class SysRoleController {
 	 */
 	@GetMapping("/list")
 	@Operation(summary = "查询所有系统角色")
-	@SaCheckRole(value = {AuthConst.SUPER_ADMIN, AuthConst.ADMIN}, mode = SaMode.OR)
+	@SaCheckRole(value = { AuthConst.SUPER_ADMIN, AuthConst.ADMIN }, mode = SaMode.OR)
 	public Result<List<SysRoleResponse>> list() {
 		return Result.success(sysRoleService.listRole());
 	}
@@ -64,7 +64,7 @@ public class SysRoleController {
 	 */
 	@DeleteMapping("/remove/{id}")
 	@Operation(summary = "根据主键列表删除系统角色")
-	@SaCheckRole(value = {AuthConst.SUPER_ADMIN, AuthConst.ADMIN}, mode = SaMode.OR)
+	@SaCheckRole(value = { AuthConst.SUPER_ADMIN, AuthConst.ADMIN }, mode = SaMode.OR)
 	public Result<Boolean> remove(@PathVariable @Parameter(description = "主键") Serializable id) {
 		return Result.success(sysRoleService.removeRoleById(id));
 	}
@@ -76,7 +76,7 @@ public class SysRoleController {
 	 */
 	@PutMapping("/update")
 	@Operation(summary = "根据主键更新系统角色")
-	@SaCheckRole(value = {AuthConst.SUPER_ADMIN, AuthConst.ADMIN}, mode = SaMode.OR)
+	@SaCheckRole(value = { AuthConst.SUPER_ADMIN, AuthConst.ADMIN }, mode = SaMode.OR)
 	public Result<Boolean> update(@RequestBody @Parameter(description = "系统角色") SysRoleRequest req) {
 		return Result.success(sysRoleService.updateById(req));
 	}
@@ -88,8 +88,9 @@ public class SysRoleController {
 	 */
 	@GetMapping("/page")
 	@Operation(summary = "分页查询")
-	@SaCheckRole(value = {AuthConst.SUPER_ADMIN, AuthConst.ADMIN}, mode = SaMode.OR)
-	public Result<Page<SysRoleResponse>> page(@Parameter(description = "分页信息") Paging page, @Parameter(description = "查询参数") SysRoleRequest req) {
+	@SaCheckRole(value = { AuthConst.SUPER_ADMIN, AuthConst.ADMIN }, mode = SaMode.OR)
+	public Result<Page<SysRoleResponse>> page(@Parameter(description = "分页信息") Paging page,
+			@Parameter(description = "查询参数") SysRoleRequest req) {
 		return Result.success(sysRoleService.page(page, req));
 	}
 
@@ -100,7 +101,7 @@ public class SysRoleController {
 	 */
 	@PutMapping("/update/userRole")
 	@Operation(summary = "修改系统用户角色")
-	@SaCheckRole(value = {AuthConst.SUPER_ADMIN, AuthConst.ADMIN}, mode = SaMode.OR)
+	@SaCheckRole(value = { AuthConst.SUPER_ADMIN, AuthConst.ADMIN }, mode = SaMode.OR)
 	public Result<Boolean> update(@Valid @RequestBody @Parameter(description = "更改用户角色请求") UpdateUserRoleRequest req) {
 		return Result.success(sysRoleService.updateUserRole(req));
 	}
