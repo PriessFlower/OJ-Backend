@@ -144,4 +144,13 @@ public class OjPostCommentServiceImpl extends ServiceImpl<OjPostCommentMapper, O
         }
     }
 
+    @Override
+    public Long getNum(String postId) {
+        long count = postMapper
+                .selectCountByCondition(OJ_POST.ID.eq(postId, StringUtil::isNotBlank));
+        if (count == 0) {
+            throw new BusinessException("帖子不存在");
+        }
+        return commentMapper.selectCountByCondition(OJ_POST_COMMENT.POST_ID.eq(postId, StringUtil::isNotBlank));
+    }
 }

@@ -25,4 +25,6 @@ public interface OjPostCommentService extends IService<OjPostComment> {
 
     List<PostCommentVo> list(String postId);
 
+    Long getNum(String postId);
+
 }

@@ -70,4 +70,10 @@ public class OjPostCommentController {
         return Result.success(ojPostCommentService.listChildren(postId));
     }
 
+    @GetMapping("/get/num")
+    @Operation(summary = "根据帖子id获取评论数量")
+    public Result<Long> getNum(@RequestParam String postId) {
+        return Result.success(ojPostCommentService.getNum(postId));
+    }
+
 }
