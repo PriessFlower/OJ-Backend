@@ -64,8 +64,8 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
 		}
 		// 判断创建的角色排序是否大于当前用户的最大权限角色
 		Integer maxRole = roleUtil.selectMaxRoleByUserId(SecurityHelper.getUser().getId()).getSort();
-		if (req.getSort() < maxRole) {
-			throw new BusinessException("排序不能小于当前用户最大权限角色");
+		if (req.getSort() <= maxRole) {
+			throw new BusinessException("排序不能小于或等于当前用户最大权限角色");
 		}
 		// 保存
 		int insertFlag = mapper.insert(entity);
