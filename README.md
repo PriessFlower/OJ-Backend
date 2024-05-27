@@ -1,5 +1,5 @@
 ## 感谢以下开源项目
-1. [arco-design](https://gitee.com/LIjiANChen/arco-admin)
+1. [arco-admin](https://gitee.com/LIjiANChen/arco-admin)
 2. [arco-design](https://arco.design/)
 3. [renren-security](https://gitee.com/renrenio/renren-security)
 4. [sa-token](https://gitee.com/dromara/sa-token)
