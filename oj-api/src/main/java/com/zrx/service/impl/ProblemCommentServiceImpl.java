@@ -73,7 +73,7 @@ public class ProblemCommentServiceImpl extends ServiceImpl<ProblemCommentMapper,
 		List<ProblemCommentVo> voList = commentMapstruct.toVoList(problemComments);
 		Set<Long> userIds = Sets.newHashSet();
 		// 查询所有子节点
-		voList.forEach(e -> listChildren(e, userIds));
+		voList.forEach(e -> findChildren(e, userIds));
 		findUserInfo(voList, userIds);
 		return voList;
 	}
@@ -113,14 +113,14 @@ public class ProblemCommentServiceImpl extends ServiceImpl<ProblemCommentMapper,
 	/**
 	 * 递归查询子节点
 	 */
-	private void listChildren(ProblemCommentVo e, Set<Long> userIds) {
+	private void findChildren(ProblemCommentVo e, Set<Long> userIds) {
 		userIds.add(e.getAuthorId());
 		List<ProblemComment> list = QueryChain.of(commentMapper).where(PROBLEM_COMMENT.PARENT_ID.eq(e.getId())).list();
 		if (CollUtil.isEmpty(list)) {
 			return;
 		}
 		e.setChildren(commentMapstruct.toVoList(list));
-		e.getChildren().forEach(child -> listChildren(child, userIds));
+		e.getChildren().forEach(child -> findChildren(child, userIds));
 	}
 
 	@Override

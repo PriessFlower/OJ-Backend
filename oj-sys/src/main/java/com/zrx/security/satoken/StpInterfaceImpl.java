@@ -26,6 +26,18 @@ public class StpInterfaceImpl implements StpInterface {
 	private final SysRolePermissionService sysRolePermissionService;
 
 	/**
+	 * 返回一个账号所拥有的角色标识集合
+	 * @param loginId 登录账号ID（这里用的是用户id）
+	 * @param loginType 登录类型
+	 * @return 权限码集合
+	 */
+	@Override
+	public List<String> getRoleList(Object loginId, String loginType) {
+		String userId = SaFoxUtil.getValueByType(loginId, String.class);
+		return sysRoleService.getRoleListByUserId(userId);
+	}
+
+	/**
 	 * 返回一个账号所拥有的权限码集合
 	 * @param loginId 登录账号ID（这里用的是用户id）
 	 * @param loginType 登录类型
@@ -42,18 +54,6 @@ public class StpInterfaceImpl implements StpInterface {
 				.collect(Collectors.toList());
 		}
 		return null;
-	}
-
-	/**
-	 * 返回一个账号所拥有的角色标识集合
-	 * @param loginId 登录账号ID（这里用的是用户id）
-	 * @param loginType 登录类型
-	 * @return 权限码集合
-	 */
-	@Override
-	public List<String> getRoleList(Object loginId, String loginType) {
-		String userId = SaFoxUtil.getValueByType(loginId, String.class);
-		return sysRoleService.getRoleListByUserId(userId);
 	}
 
 }
