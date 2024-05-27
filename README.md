@@ -9,10 +9,10 @@
 
 ## 文档（刚开始写）
 
+http://7122teamblog.top
+
 ## 前端代码仓库
 https://gitee.com/zhang-rui-xin/oj-ui-vue3-arco
-
-http://7122teamblog.top
 
 # 系统截图
 
