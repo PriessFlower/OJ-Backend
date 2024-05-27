@@ -1,4 +1,13 @@
-# 文档（刚开始写）
+## 感谢以下开源项目
+1. [arco-design](https://gitee.com/LIjiANChen/arco-admin)
+2. [arco-design](https://arco.design/)
+3. [renren-security](https://gitee.com/renrenio/renren-security)
+4. [sa-token](https://gitee.com/dromara/sa-token)
+5. [mybatis-flex](https://mybatis-flex.com/)
+6. ......
+
+
+## 文档（刚开始写）
 
 ## 前端代码仓库
 https://gitee.com/zhang-rui-xin/oj-ui-vue3-arco
