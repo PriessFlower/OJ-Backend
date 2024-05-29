@@ -1,9 +1,11 @@
 package com.zrx.service.impl;
 
+import com.google.common.collect.Lists;
 import com.mybatisflex.core.paginate.Page;
 import com.mybatisflex.core.query.QueryWrapper;
 import com.mybatisflex.core.util.StringUtil;
 import com.mybatisflex.spring.service.impl.ServiceImpl;
+import com.zrx.enums.ProblemJudgeResultEnum;
 import com.zrx.enums.ProblemSubmitStatusEnum;
 import com.zrx.exception.BusinessException;
 import com.zrx.execudeCode.JudgeService;
@@ -24,6 +26,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 import static com.zrx.model.entity.table.OjProblemSubmitTableDef.OJ_PROBLEM_SUBMIT;
 
@@ -94,7 +98,11 @@ public class OjProblemSubmitServiceImpl extends ServiceImpl<OjProblemSubmitMappe
 		if (ojProblemSubmit == null) {
 			throw new BusinessException("未找到该数据");
 		}
-		return problemSubmitConverter.toVo(ojProblemSubmit);
+		OjProblemSubmitVo vo = problemSubmitConverter.toVo(ojProblemSubmit);
+		List<OjProblemSubmitVo> voList = Lists.newArrayList(vo);
+		setCodeStatus(voList);
+		setStatus(voList);
+		return voList.get(0);
 	}
 
 	@Override
@@ -105,7 +113,8 @@ public class OjProblemSubmitServiceImpl extends ServiceImpl<OjProblemSubmitMappe
 		Integer status = req.getStatus();
 		Long questionId = req.getQuestionId();
 
-		QueryWrapper queryWrapper = new QueryWrapper().select()
+		QueryWrapper queryWrapper = new QueryWrapper().select(OJ_PROBLEM_SUBMIT.ID, OJ_PROBLEM_SUBMIT.LANGUAGE, OJ_PROBLEM_SUBMIT.CODE_STATUS
+				, OJ_PROBLEM_SUBMIT.STATUS, OJ_PROBLEM_SUBMIT.CREATE_TIME, OJ_PROBLEM_SUBMIT.JUDGE_INFO)
 			.where(OJ_PROBLEM_SUBMIT.USER_ID.eq(id))
 			.and(OJ_PROBLEM_SUBMIT.LANGUAGE.eq(language, StringUtil::isNotBlank))
 			.and(OJ_PROBLEM_SUBMIT.CODE.eq(code, StringUtil::isNotBlank))
@@ -115,7 +124,31 @@ public class OjProblemSubmitServiceImpl extends ServiceImpl<OjProblemSubmitMappe
 			.orderBy(OJ_PROBLEM_SUBMIT.CREATE_TIME.desc());
 		Page<OjProblemSubmit> paginate = mapper.paginate(Page.of(paging.getPageNum(), paging.getPageSize()),
 				queryWrapper);
-		return problemSubmitConverter.toVoPage(paginate);
+		Page<OjProblemSubmitVo> voPage = problemSubmitConverter.toVoPage(paginate);
+		setCodeStatus(voPage.getRecords());
+		setStatus(voPage.getRecords());
+		return voPage;
+	}
+
+	/**
+	 * set 代码执行状态
+	 */
+	private void setCodeStatus(List<OjProblemSubmitVo> voList) {
+		voList.forEach(item -> {
+			ProblemJudgeResultEnum anEnum = ProblemJudgeResultEnum.getEnum(Integer.valueOf(item.getCodeStatus()));
+			if (anEnum != null) {
+				item.setCodeStatus(anEnum.getValue());
+			}
+		});
+	}
+
+	private void setStatus(List<OjProblemSubmitVo> voList) {
+		voList.forEach(item -> {
+			ProblemSubmitStatusEnum anEnum = ProblemSubmitStatusEnum.getEnum(Integer.valueOf(item.getStatus()));
+			if (anEnum != null) {
+				item.setStatus(anEnum.getValue());
+			}
+		});
 	}
 
 }

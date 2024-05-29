@@ -1,23 +1,23 @@
 package com.zrx.enums;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public enum ProblemSubmitStatusEnum {
 
-	Submitting(0, "代码提交中"),
+	Submitting(0, "待判题"),
 
-	Waiting(1, "等待中"),
+	Waiting(1, "判题中"),
 
-	Judging(2, "判题中"),
+	Judging(2, "成功"),
 
-	Completed(3, "判题完成");
+	Completed(3, "失败");
 
 	private final Integer key;
 
 	private final String value;
-
-	ProblemSubmitStatusEnum(Integer key, String value) {
-		this.key = key;
-		this.value = value;
-	}
 
 	public static ProblemSubmitStatusEnum getEnum(Integer key) {
 		ProblemSubmitStatusEnum[] enums = ProblemSubmitStatusEnum.values();
@@ -27,14 +27,6 @@ public enum ProblemSubmitStatusEnum {
 			}
 		}
 		return null;
-	}
-
-	public Integer getKey() {
-		return key;
-	}
-
-	public String getValue() {
-		return value;
 	}
 
 }
