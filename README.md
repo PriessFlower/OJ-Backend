@@ -7,9 +7,14 @@
 6. ......
 
 
-## 文档（刚开始写）
+## 文档
+> 已无法访问，[点此转到文档源码](https://gitee.com/zhang-rui-xin/oj-document)
+> 
 
-http://7122teamblog.top
+#### 默认管理员账号密码
+
+zrxzrx
+abc123456
 
 ## 前端代码仓库
 https://gitee.com/zhang-rui-xin/oj-ui-vue3-arco
