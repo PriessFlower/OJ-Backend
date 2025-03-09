@@ -4,7 +4,9 @@ import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.async.ResultCallback;
-import com.github.dockerjava.api.command.*;
+import com.github.dockerjava.api.command.CreateContainerCmd;
+import com.github.dockerjava.api.command.CreateContainerResponse;
+import com.github.dockerjava.api.command.StatsCmd;
 import com.github.dockerjava.api.model.Bind;
 import com.github.dockerjava.api.model.HostConfig;
 import com.github.dockerjava.api.model.Statistics;
@@ -12,6 +14,8 @@ import com.github.dockerjava.api.model.Volume;
 import com.github.dockerjava.core.DefaultDockerClientConfig;
 import com.github.dockerjava.core.DockerClientBuilder;
 import com.github.dockerjava.core.DockerClientConfig;
+import com.github.dockerjava.httpclient5.ApacheDockerHttpClient;
+import com.github.dockerjava.transport.DockerHttpClient;
 import com.zrx.codesandbox.CodeSandBox;
 import com.zrx.codesandbox.enums.QuestionExecuteResultEnum;
 import com.zrx.codesandbox.model.ExecuteCodeRequest;
@@ -79,7 +83,7 @@ public abstract class CodeSandboxTemplate implements CodeSandBox {
 		try {
 			compileExecuteMessage = compileFile(userCodeFile);
 			startDocker();
-			createContiner();
+			createContainer();
 			runContainer();
 			StatsCmd statsCmd = calculateMemory();
 			while (memory < 0)
@@ -103,13 +107,24 @@ public abstract class CodeSandboxTemplate implements CodeSandBox {
 	}
 
 	public void startDocker() {
-		DockerClientConfig custom = DefaultDockerClientConfig.createDefaultConfigBuilder()
-			.withDockerHost("unix:///var/run/docker.sock")
-			.build();
-		dockerClient = DockerClientBuilder.getInstance(custom).build();
+		DockerClientConfig config = DefaultDockerClientConfig.createDefaultConfigBuilder()
+				// .withDockerHost("unix:///var/run/docker.sock")
+				// windows 使用管道连接
+				.withDockerHost("npipe:////./pipe/docker_engine")
+				// 禁用TLS验证（测试环境）
+				.withDockerTlsVerify(false)
+				.build();
+        DockerHttpClient httpClient = new ApacheDockerHttpClient.Builder()
+				.dockerHost(config.getDockerHost())
+				.sslConfig(config.getSSLConfig())
+				.build();
+
+		dockerClient = DockerClientBuilder.getInstance(config)
+				.withDockerHttpClient(httpClient)
+				.build();
 	}
 
-	public void createContiner() throws Exception {
+	public void createContainer() {
 		CreateContainerCmd containerCmd = dockerClient.createContainerCmd(ImageName);
 		HostConfig hostConfig = new HostConfig();
 		hostConfig.setBinds(new Bind(userCodeParentPath, new Volume(volumnName)));

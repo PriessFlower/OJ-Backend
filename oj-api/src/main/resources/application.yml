@@ -57,6 +57,6 @@ knife4j:
     enable-host-text: "localhost:8101"
 
 codesandbox:
-   type: remote
+#   type: remote
   # 改为local后就是访问本地沙箱
-#  type: local
+  type: local
