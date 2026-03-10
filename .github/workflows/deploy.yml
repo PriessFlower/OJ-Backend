@@ -58,7 +58,7 @@ jobs:
             
             # 启动新容器，并核心挂载 /var/run/docker.sock 赋予容器调用宿主机 Docker 的能力！
             docker run -d \
-              -p 8080:8080 \
+              --network host \
               -v /var/run/docker.sock:/var/run/docker.sock \
               --name oj-backend-container \
               ${{ secrets.DOCKER_USERNAME }}/oj-backend:latest
