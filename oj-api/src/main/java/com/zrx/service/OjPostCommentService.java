@@ -1,6 +1,5 @@
 package com.zrx.service;
 
-
 import com.mybatisflex.core.service.IService;
 import com.zrx.model.dto.postComment.PostCommentRequest;
 import com.zrx.model.entity.OjPostComment;
@@ -17,14 +16,14 @@ import java.util.List;
  */
 public interface OjPostCommentService extends IService<OjPostComment> {
 
-    Boolean removeRecursionById(Serializable id);
+	Boolean removeRecursionById(Serializable id);
 
-    Boolean save(PostCommentRequest req);
+	Boolean save(PostCommentRequest req);
 
-    List<PostCommentVo> listChildren(String postId);
+	List<PostCommentVo> listChildren(String postId);
 
-    List<PostCommentVo> list(String postId);
+	List<PostCommentVo> list(String postId);
 
-    Long getNum(String postId);
+	Long getNum(String postId);
 
 }

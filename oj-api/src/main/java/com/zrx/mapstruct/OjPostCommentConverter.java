@@ -14,10 +14,10 @@ import java.util.List;
 @Mapper(componentModel = "Spring")
 public interface OjPostCommentConverter {
 
-    OjPostComment toEntity(PostCommentRequest req);
+	OjPostComment toEntity(PostCommentRequest req);
 
-    PostCommentVo toVo(OjPostComment comment);
+	PostCommentVo toVo(OjPostComment comment);
 
-    List<PostCommentVo> toVoList(List<OjPostComment> list);
+	List<PostCommentVo> toVoList(List<OjPostComment> list);
 
 }

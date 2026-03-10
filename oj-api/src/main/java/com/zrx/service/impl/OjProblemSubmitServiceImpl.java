@@ -28,6 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import static com.zrx.model.entity.table.OjProblemSubmitTableDef.OJ_PROBLEM_SUBMIT;
 
@@ -80,14 +81,23 @@ public class OjProblemSubmitServiceImpl extends ServiceImpl<OjProblemSubmitMappe
 		// ojMessageProducer.sendMessage("luojialong", "shenming",
 		// String.valueOf(ojProblemSubmitId));
 		// CompletableFuture.runAsync(() -> {
-		try {
-			judgeService.doJudge(ojProblemSubmitId);
-		}
-		catch (Exception e) {
-			log.error("判题失败", e);
-			// throw new RuntimeException(e);
-		}
-		// });
+//		try {
+//			judgeService.doJudge(ojProblemSubmitId);
+//		}
+//		catch (Exception e) {
+//			log.error("判题失败", e);
+//			// throw new RuntimeException(e);
+//		}
+//		// });
+        // 改用异步方式，我现在知道为什么它不用异步方式了，因为用了异步方式，无法正确的显示判题时间和内存消耗
+        CompletableFuture.runAsync(() -> {
+            try {
+                judgeService.doJudge(ojProblemSubmitId);
+            }
+            catch (Exception e) {
+                log.error("判题失败", e);
+            }
+        });
 
 		return ojProblemSubmitId;
 	}
@@ -113,8 +123,9 @@ public class OjProblemSubmitServiceImpl extends ServiceImpl<OjProblemSubmitMappe
 		Integer status = req.getStatus();
 		Long questionId = req.getQuestionId();
 
-		QueryWrapper queryWrapper = new QueryWrapper().select(OJ_PROBLEM_SUBMIT.ID, OJ_PROBLEM_SUBMIT.LANGUAGE, OJ_PROBLEM_SUBMIT.CODE_STATUS
-				, OJ_PROBLEM_SUBMIT.STATUS, OJ_PROBLEM_SUBMIT.CREATE_TIME, OJ_PROBLEM_SUBMIT.JUDGE_INFO)
+		QueryWrapper queryWrapper = new QueryWrapper()
+			.select(OJ_PROBLEM_SUBMIT.ID, OJ_PROBLEM_SUBMIT.LANGUAGE, OJ_PROBLEM_SUBMIT.CODE_STATUS,
+					OJ_PROBLEM_SUBMIT.STATUS, OJ_PROBLEM_SUBMIT.CREATE_TIME, OJ_PROBLEM_SUBMIT.JUDGE_INFO)
 			.where(OJ_PROBLEM_SUBMIT.USER_ID.eq(id))
 			.and(OJ_PROBLEM_SUBMIT.LANGUAGE.eq(language, StringUtil::isNotBlank))
 			.and(OJ_PROBLEM_SUBMIT.CODE.eq(code, StringUtil::isNotBlank))
@@ -133,22 +144,28 @@ public class OjProblemSubmitServiceImpl extends ServiceImpl<OjProblemSubmitMappe
 	/**
 	 * set 代码执行状态
 	 */
-	private void setCodeStatus(List<OjProblemSubmitVo> voList) {
-		voList.forEach(item -> {
-			ProblemJudgeResultEnum anEnum = ProblemJudgeResultEnum.getEnum(Integer.valueOf(item.getCodeStatus()));
-			if (anEnum != null) {
-				item.setCodeStatus(anEnum.getValue());
-			}
-		});
-	}
+    private void setCodeStatus(List<OjProblemSubmitVo> voList) {
+        voList.forEach(item -> {
+            // 增加非空判断
+            if (item.getCodeStatus() != null && !item.getCodeStatus().isEmpty()) {
+                ProblemJudgeResultEnum anEnum = ProblemJudgeResultEnum.getEnum(Integer.valueOf(item.getCodeStatus()));
+                if (anEnum != null) {
+                    item.setCodeStatus(anEnum.getValue());
+                }
+            }
+        });
+    }
 
-	private void setStatus(List<OjProblemSubmitVo> voList) {
-		voList.forEach(item -> {
-			ProblemSubmitStatusEnum anEnum = ProblemSubmitStatusEnum.getEnum(Integer.valueOf(item.getStatus()));
-			if (anEnum != null) {
-				item.setStatus(anEnum.getValue());
-			}
-		});
-	}
+    private void setStatus(List<OjProblemSubmitVo> voList) {
+        voList.forEach(item -> {
+            // 同样为 status 增加非空判断以防万一
+            if (item.getStatus() != null && !String.valueOf(item.getStatus()).isEmpty()) {
+                ProblemSubmitStatusEnum anEnum = ProblemSubmitStatusEnum.getEnum(Integer.valueOf(item.getStatus()));
+                if (anEnum != null) {
+                    item.setStatus(anEnum.getValue());
+                }
+            }
+        });
+    }
 
 }

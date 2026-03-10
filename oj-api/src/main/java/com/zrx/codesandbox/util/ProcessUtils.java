@@ -1,119 +1,91 @@
 package com.zrx.codesandbox.util;
 
 import com.zrx.codesandbox.model.ExecuteMessage;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
 
+@Slf4j
 public class ProcessUtils {
 
-	public static ExecuteMessage compileCode(Process compileProcess) {
-		ExecuteMessage executeMessage = new ExecuteMessage();
-		InputStream inputStream = null;
-		BufferedReader bufferedReader = null;
-		BufferedReader errorBufferedReader = null;
-		InputStream errorInputStream = null;
-		try {
-			int exitValue = 0;
-			inputStream = compileProcess.getInputStream();
-			exitValue = compileProcess.waitFor();
-			executeMessage.setExitValue(exitValue);
-			if (exitValue == 0) {
-				StringBuilder compileResultStr = new StringBuilder("");
-				bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-				String compileOutputLine;
-				while ((compileOutputLine = bufferedReader.readLine()) != null) {
-					compileResultStr.append(compileOutputLine).append("\n");
-				}
-				executeMessage.setMessage(compileResultStr.toString());
-			}
-			else {
-				StringBuilder compileResultStr = new StringBuilder("");
-				bufferedReader = new BufferedReader(new InputStreamReader(compileProcess.getInputStream(), "GBK"));
-				String compileOutputLine;
-				while ((compileOutputLine = bufferedReader.readLine()) != null) {
-					compileResultStr.append(compileOutputLine).append("\n");
-				}
-				executeMessage.setMessage(compileResultStr.toString());
-				errorInputStream = compileProcess.getErrorStream();
-				StringBuilder compileErrorResultStr = new StringBuilder("");
-				errorBufferedReader = new BufferedReader(new InputStreamReader(errorInputStream));
-				String errorCompileOutputLine;
-				while ((errorCompileOutputLine = errorBufferedReader.readLine()) != null) {
-					compileErrorResultStr.append(errorCompileOutputLine).append("\n");
-				}
-				executeMessage.setErrorMessage(compileErrorResultStr.toString());
-			}
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-		}
-		finally {
-			try {
-				inputStream.close();
-				bufferedReader.close();
-				if (errorInputStream != null) {
-					errorInputStream.close();
-				}
-				if (errorBufferedReader != null) {
-					errorBufferedReader.close();
-				}
-			}
-			catch (IOException e) {
-				throw new RuntimeException(e);
-			}
-			compileProcess.destroy();
-		}
-		return executeMessage;
-	}
+    public static ExecuteMessage compileCode(Process compileProcess) {
+        ExecuteMessage executeMessage = new ExecuteMessage();
+        try {
+            // 先读取输出流（防止死锁）
+            String message = readStream(compileProcess.getInputStream());
+            String errorMessage = readStream(compileProcess.getErrorStream());
 
-	public static ExecuteMessage runCode(Process runProcess, String args) {
-		ExecuteMessage executeMessage = new ExecuteMessage();
-		OutputStream outputStream = null;
-		OutputStreamWriter outputStreamWriter = null;
-		InputStream inputStream = null;
-		BufferedReader bufferedReader = null;
+            int exitValue = compileProcess.waitFor();
+            executeMessage.setExitValue(exitValue);
 
-		InputStream errorInputStream = null;
-		BufferedReader errorBufferedReader = null;
-		try {
-			if (args != null) {
-				inputArgs(runProcess, args, outputStream, outputStreamWriter);
-			}
-			setTime(executeMessage, runProcess);
-			setRunResult(runProcess, executeMessage, inputStream, bufferedReader, errorInputStream,
-					errorBufferedReader);
-		}
-		catch (Exception e) {
-			System.out.println(e.getMessage());
-		}
-		finally {
-			try {
-				if (outputStream != null) {
-					outputStream.close();
-				}
-				if (outputStreamWriter != null) {
-					outputStreamWriter.close();
-				}
-				if (inputStream != null) {
-					inputStream.close();
-				}
-				if (bufferedReader != null) {
-					bufferedReader.close();
-				}
-				if (errorInputStream != null) {
-					errorInputStream.close();
-				}
-				if (errorBufferedReader != null) {
-					errorBufferedReader.close();
-				}
-			}
-			catch (IOException e) {
-				throw new RuntimeException(e);
-			}
-			runProcess.destroy();
-		}
-		return executeMessage;
-	}
+            if (exitValue == 0) {
+                executeMessage.setMessage(message);
+            } else {
+                executeMessage.setMessage(message);
+                executeMessage.setErrorMessage(errorMessage);
+            }
+        } catch (Exception e) {
+            log.error("编译进程执行失败", e);
+            executeMessage.setErrorMessage(e.getMessage());
+        } finally {
+            compileProcess.destroy();
+        }
+        return executeMessage;
+    }
+
+    public static ExecuteMessage runCode(Process runProcess, String args) {
+        ExecuteMessage executeMessage = new ExecuteMessage();
+        long start = System.currentTimeMillis();
+
+        try {
+            // 1. 如果有输入参数，先写入输入流并立刻关闭
+            if (args != null) {
+                try (OutputStream outputStream = runProcess.getOutputStream();
+                     OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputStream)) {
+                    outputStreamWriter.write(args + "\n");
+                    outputStreamWriter.flush();
+                }
+            }
+
+            // 2. 立即读取正常输出和错误输出（必须在 waitFor 之前读完，防止缓冲区满导致死锁）
+            String message = readStream(runProcess.getInputStream());
+            String errorMessage = readStream(runProcess.getErrorStream());
+
+            // 3. 等待进程结束
+            runProcess.waitFor();
+            long end = System.currentTimeMillis();
+
+            executeMessage.setTime(end - start);
+            executeMessage.setMessage(message);
+            executeMessage.setErrorMessage(errorMessage);
+
+        } catch (Exception e) {
+            log.error("运行进程执行失败", e);
+            executeMessage.setErrorMessage(e.getMessage());
+        } finally {
+            runProcess.destroy();
+        }
+        return executeMessage;
+    }
+
+    /**
+     * 提取的公共读取流方法
+     */
+    private static String readStream(InputStream inputStream) throws IOException {
+        if (inputStream == null) {
+            return "";
+        }
+        StringBuilder result = new StringBuilder();
+        // try-with-resources 会自动关闭 BufferedReader 和 InputStream，无需在 finally 中手动处理
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                result.append(line);
+            }
+        }
+        return result.toString();
+    }
+
 
 	private static void setTime(ExecuteMessage executeMessage, Process process) throws InterruptedException {
 		long start = 0L;

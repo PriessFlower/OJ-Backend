@@ -30,52 +30,52 @@ import java.time.LocalDateTime;
 
 public class OjPostComment implements Serializable {
 
-    @Serial
-    private static final long serialVersionUID = 1L;
+	@Serial
+	private static final long serialVersionUID = 1L;
 
-    /**
-     * 主键
-     */
-    @Id(keyType = KeyType.Generator, value = KeyGenerators.snowFlakeId)
-    @Schema(description = "主键")
-    private Long id;
+	/**
+	 * 主键
+	 */
+	@Id(keyType = KeyType.Generator, value = KeyGenerators.snowFlakeId)
+	@Schema(description = "主键")
+	private Long id;
 
-    /**
-     * 父id
-     */
-    @Schema(description = "父id")
-    private Long parentId;
+	/**
+	 * 父id
+	 */
+	@Schema(description = "父id")
+	private Long parentId;
 
-    /**
-     * 帖子id
-     */
-    @Schema(description = "帖子id")
-    private Long postId;
+	/**
+	 * 帖子id
+	 */
+	@Schema(description = "帖子id")
+	private Long postId;
 
-    /**
-     * 内容
-     */
-    @Schema(description = "内容")
-    private String content;
+	/**
+	 * 内容
+	 */
+	@Schema(description = "内容")
+	private String content;
 
-    /**
-     * 作者id
-     */
-    @Schema(description = "作者id")
-    private Long authorId;
+	/**
+	 * 作者id
+	 */
+	@Schema(description = "作者id")
+	private Long authorId;
 
-    /**
-     * 创建时间
-     */
-    @Column(onInsertValue = "now()")
-    @Schema(description = "创建时间")
-    private LocalDateTime createTime;
+	/**
+	 * 创建时间
+	 */
+	@Column(onInsertValue = "now()")
+	@Schema(description = "创建时间")
+	private LocalDateTime createTime;
 
-    /**
-     * 逻辑删除（0-未删除，1-已删除）
-     */
-    @Column(isLogicDelete = true)
-    @Schema(description = "逻辑删除（0-未删除，1-已删除）")
-    private Integer delFlag;
+	/**
+	 * 逻辑删除（0-未删除，1-已删除）
+	 */
+	@Column(isLogicDelete = true)
+	@Schema(description = "逻辑删除（0-未删除，1-已删除）")
+	private Integer delFlag;
 
 }

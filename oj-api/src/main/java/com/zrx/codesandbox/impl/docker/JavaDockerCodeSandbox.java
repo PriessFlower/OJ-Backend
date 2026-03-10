@@ -11,7 +11,7 @@ public class JavaDockerCodeSandbox extends CodeSandboxTemplate {
 	public JavaDockerCodeSandbox() {
 		super();
 		super.GLOBAL_CODE_FILE_NAME = "Main.java";
-		super.ImageName = "phenompeople/openjdk17:latest";
+		super.ImageName = "eclipse-temurin:21-jre-alpine";
 		super.volumnName = "/java";
 	}
 

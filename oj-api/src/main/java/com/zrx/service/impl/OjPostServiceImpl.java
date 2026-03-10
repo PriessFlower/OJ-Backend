@@ -110,7 +110,8 @@ public class OjPostServiceImpl extends ServiceImpl<OjPostMapper, OjPost> impleme
 		try {
 			setThumbFlag(vo);
 			setFavourFlag(vo);
-		} catch (NotLoginException e) {
+		}
+		catch (NotLoginException e) {
 			// 未登录，不做处理
 		}
 		return vo;

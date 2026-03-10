@@ -25,11 +25,11 @@ spring:
       # Redis数据库索引（默认为0）
       database: 0
       # Redis服务器地址
-      host: 127.0.0.1
+      host: 101.34.92.18
       # Redis服务器连接端口
       port: 6379
+      password: ZTzt5201314.
       # Redis服务器连接密码（默认为空）
-      #        password: zhangruixin
       # 连接超时时间（毫秒）
       timeout: 5000ms
       lettuce:
@@ -49,10 +49,10 @@ oj:
 
 minio:
   # Minio服务所在地址
-  endpoint: http://127.0.0.1:9005
+  endpoint: http://101.34.92.18
   # 存储桶名称
   bucketName: oj-bucket
   # 访问的key
   accessKey: minio
   #访问的秘钥
-  secretKey: abc123456
+  secretKey: YafcXDBhHmMZTceh

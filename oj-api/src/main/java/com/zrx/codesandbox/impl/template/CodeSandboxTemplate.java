@@ -7,6 +7,7 @@ import com.github.dockerjava.api.async.ResultCallback;
 import com.github.dockerjava.api.command.CreateContainerCmd;
 import com.github.dockerjava.api.command.CreateContainerResponse;
 import com.github.dockerjava.api.command.StatsCmd;
+import com.github.dockerjava.api.exception.NotModifiedException;
 import com.github.dockerjava.api.model.Bind;
 import com.github.dockerjava.api.model.HostConfig;
 import com.github.dockerjava.api.model.Statistics;
@@ -80,21 +81,42 @@ public abstract class CodeSandboxTemplate implements CodeSandBox {
 
 		ExecuteMessage compileExecuteMessage = null;
 		List<ExecuteMessage> runExecuteMessageList = null;
+        StatsCmd statsCmd = null;
+
+        //需要用finally清理资源！！！
 		try {
 			compileExecuteMessage = compileFile(userCodeFile);
 			startDocker();
 			createContainer();
 			runContainer();
-			StatsCmd statsCmd = calculateMemory();
-			while (memory < 0)
-				;
+			statsCmd = calculateMemory();
+//			while (memory < 0) 不适用忙等待，cpu占用率太高
+//				;
+            int waitCount = 0;
+            while(memory < 0 && waitCount < 30){//为了确保拿到docker监控的数据，需要等待一会
+                Thread.sleep(100); //每次休眠100ms，让出CPU
+                waitCount++;
+            }
 			runExecuteMessageList = runFile(inputList);
 			stopContainer();
 			removeContainer(statsCmd);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
+            log.error("代码沙箱执行过程中发生致命异常:", e);
 			return getErrorResponse(e);
-		}
+		} finally {
+            try {
+                if (containerId != null) {
+                    stopContainer();
+                    if (statsCmd != null) {
+                        removeContainer(statsCmd);
+                    } else {
+                        removeContainer(); // 调用那个不带参数的 removeContainer
+                    }
+                }
+            } catch (Exception e) {
+                log.error("清理 Docker 容器失败, containerId={}", containerId, e);
+            }
+        }
 
 		ExecuteCodeResponse executeCodeResponse = getOutputResponse(runExecuteMessageList);
 
@@ -108,20 +130,17 @@ public abstract class CodeSandboxTemplate implements CodeSandBox {
 
 	public void startDocker() {
 		DockerClientConfig config = DefaultDockerClientConfig.createDefaultConfigBuilder()
-				// .withDockerHost("unix:///var/run/docker.sock")
-				// windows 使用管道连接
-				.withDockerHost("npipe:////./pipe/docker_engine")
-				// 禁用TLS验证（测试环境）
-				.withDockerTlsVerify(false)
-				.build();
-        DockerHttpClient httpClient = new ApacheDockerHttpClient.Builder()
-				.dockerHost(config.getDockerHost())
-				.sslConfig(config.getSSLConfig())
-				.build();
+			// .withDockerHost("unix:///var/run/docker.sock")
+			// windows 使用管道连接
+			.withDockerHost("npipe:////./pipe/docker_engine")
+			// 禁用TLS验证（测试环境）
+			.withDockerTlsVerify(false)
+			.build();
+		DockerHttpClient httpClient = new ApacheDockerHttpClient.Builder().dockerHost(config.getDockerHost())
+			.sslConfig(config.getSSLConfig())
+			.build();
 
-		dockerClient = DockerClientBuilder.getInstance(config)
-				.withDockerHttpClient(httpClient)
-				.build();
+		dockerClient = DockerClientBuilder.getInstance(config).withDockerHttpClient(httpClient).build();
 	}
 
 	public void createContainer() {
@@ -130,14 +149,14 @@ public abstract class CodeSandboxTemplate implements CodeSandBox {
 		hostConfig.setBinds(new Bind(userCodeParentPath, new Volume(volumnName)));
 		hostConfig.withCpuCount(1L);
 		hostConfig.withMemorySwap(0L);
-		hostConfig.withMemory(100 * 1000 * 1000L);
+		hostConfig.withMemory(256 * 1000 * 1000L);
 		CreateContainerResponse createContainerResponse = containerCmd.withHostConfig(hostConfig)
 			.withNetworkDisabled(true)
-			.withReadonlyRootfs(true)
 			.withAttachStderr(true)
 			.withAttachStdin(true)
 			.withAttachStdout(true)
 			.withTty(true)
+            .withCmd("tail", "-f", "/dev/null")
 			.exec();
 		String responseId = createContainerResponse.getId();
 		containerId = responseId;
@@ -150,47 +169,42 @@ public abstract class CodeSandboxTemplate implements CodeSandBox {
 	public StatsCmd calculateMemory() {
 		memory = Long.MIN_VALUE;
 		StatsCmd statsCmd = dockerClient.statsCmd(containerId);
-		ResultCallback<Statistics> statisticsResultCallback = statsCmd.exec(new ResultCallback<Statistics>() {
+        ResultCallback<Statistics> statisticsResultCallback = new ResultCallback<Statistics>() {
+            @Override
+            public void onStart(Closeable closeable) {
+            }
 
-			@Override
-			public void onStart(Closeable closeable) {
+            @Override
+            public void onNext(Statistics statistics) {
+                System.out.println("内存占用：" + statistics.getMemoryStats().getUsage());
+                memory = Math.max(statistics.getMemoryStats().getUsage(), memory);
+            }
 
-			}
+            @Override
+            public void close() throws IOException {
+            }
 
-			@Override
-			public void onNext(Statistics statistics) {
-				System.out.println("内存占用：" + statistics.getMemoryStats().getUsage());
-				memory = Math.max(statistics.getMemoryStats().getUsage(), memory);
-			}
+            @Override
+            public void onError(Throwable throwable) {
+            }
 
-			@Override
-			public void close() throws IOException {
-
-			}
-
-			@Override
-			public void onError(Throwable throwable) {
-
-			}
-
-			@Override
-			public void onComplete() {
-
-			}
-		});
+            @Override
+            public void onComplete() {
+            }
+        };
 		statsCmd.exec(statisticsResultCallback);
 		return statsCmd;
 	}
 
-	public void stopContainer() {
-		try {
-			Runtime.getRuntime().exec(String.format("docker stop -f %s", containerId));
-			// dockerClient.stopContainerCmd(containerId).exec();
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
+    public void stopContainer() {
+        try {
+            if (containerId != null) {
+                dockerClient.stopContainerCmd(containerId).exec();
+            }
+        } catch (NotModifiedException e) {} catch (Exception e) {
+            log.error("停止容器失败, containerId: {}", containerId, e);
+        }
+    }
 
 	public void removeContainer(StatsCmd statsCmd) {
 		try {
@@ -235,6 +249,7 @@ public abstract class CodeSandboxTemplate implements CodeSandBox {
 			Process compileProcess = Runtime.getRuntime().exec(compileCmd);
 			ExecuteMessage executeMessage = ProcessUtils.compileCode(compileProcess);
 			if (executeMessage.getExitValue() != 0) {
+				log.error("编译失败:" + executeMessage.getErrorMessage());
 				throw new RuntimeException("编译错误：\n错误的原因是：" + executeMessage.getErrorMessage());
 			}
 			return executeMessage;
@@ -263,7 +278,7 @@ public abstract class CodeSandboxTemplate implements CodeSandBox {
 			if (timeManagerThread.IsTime_out()) {
 				throw new RuntimeException("超时异常");
 			}
-			timeManagerThread.stop();
+			timeManagerThread.interrupt();
 		}
 		else {
 			for (String inputArgs : inputList) {
@@ -285,7 +300,7 @@ public abstract class CodeSandboxTemplate implements CodeSandBox {
 						removeContainer();
 						throw new RuntimeException("超时异常");
 					}
-					timeManagerThread.stop();
+					timeManagerThread.interrupt();
 				}
 				catch (Exception e) {
 					throw e;
@@ -304,6 +319,9 @@ public abstract class CodeSandboxTemplate implements CodeSandBox {
 		for (ExecuteMessage executeMessage : executeMessagesList) {
 			String errorMessageStr = executeMessage.getErrorMessage();
 			if (StrUtil.isNotBlank(errorMessageStr)) {
+
+                log.error("【Docker容器运行真实报错】: {}", errorMessageStr);
+
 				executeCodeResponse.setMessage(QuestionExecuteResultEnum.RunException.getText());
 				executeCodeResponse.setStatus(QuestionExecuteResultEnum.RunException.getValue());
 				break;
@@ -339,30 +357,31 @@ public abstract class CodeSandboxTemplate implements CodeSandBox {
 		executeCodeResponse.setOuputList(new ArrayList<>());
 		JudgeInfo judgeInfo = new JudgeInfo();
 		judgeInfo.setMessage(e.getMessage());
-		if (memory > 0) {
+		if (memory != null && memory > 0) {
 			judgeInfo.setMemory(memory / 1024 / 8);
 		}
 		judgeInfo.setMessage(desensitizationStr(e.getMessage()));
-		if (e.getMessage().contains("编译")) {
-			executeCodeResponse.setMessage(QuestionExecuteResultEnum.CompileFailure.getText());
-			executeCodeResponse.setStatus(QuestionExecuteResultEnum.CompileFailure.getValue());
-		}
-		else if (e.getMessage().contains("超时")) {
-			executeCodeResponse.setMessage(QuestionExecuteResultEnum.OutOfTimeException.getText());
-			executeCodeResponse.setStatus(QuestionExecuteResultEnum.OutOfTimeException.getValue());
-		}
-		else {
-			executeCodeResponse.setMessage(QuestionExecuteResultEnum.RunException.getText());
-			executeCodeResponse.setStatus(QuestionExecuteResultEnum.RunException.getValue());
-		}
+        String errorMessage = e.getMessage() == null ? "" : e.getMessage();
+        if (errorMessage.contains("编译")) {
+            executeCodeResponse.setMessage(QuestionExecuteResultEnum.CompileFailure.getText());
+            executeCodeResponse.setStatus(QuestionExecuteResultEnum.CompileFailure.getValue());
+        }
+        else if (errorMessage.contains("超时")) {
+            executeCodeResponse.setMessage(QuestionExecuteResultEnum.OutOfTimeException.getText());
+            executeCodeResponse.setStatus(QuestionExecuteResultEnum.OutOfTimeException.getValue());
+        }
+        else {
+            executeCodeResponse.setMessage(QuestionExecuteResultEnum.RunException.getText());
+            executeCodeResponse.setStatus(QuestionExecuteResultEnum.RunException.getValue());
+        }
 		executeCodeResponse.setJudgeInfo(new JudgeInfo());
 		return executeCodeResponse;
 	}
 
 	public String desensitizationStr(String information) {
 		if (information != null) {
-			information = information.replaceAll(userCodePath, "");
-			information = information.replaceAll(userCodeParentPath, "");
+			information = information.replace(userCodePath, "");
+			information = information.replace(userCodeParentPath, "");
 		}
 		return information;
 	}

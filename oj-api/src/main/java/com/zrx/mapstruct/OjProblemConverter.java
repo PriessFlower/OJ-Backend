@@ -1,6 +1,7 @@
 package com.zrx.mapstruct;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.alibaba.fastjson.JSON;
 import com.zrx.enums.ProblemDifficultyEnum;
@@ -13,6 +14,7 @@ import com.zrx.model.vo.OjProblemPageVo;
 import com.zrx.model.vo.OjProblemVo;
 import org.mapstruct.Mapper;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -73,8 +75,12 @@ public interface OjProblemConverter {
 		pageVo.setId(id);
 		pageVo.setTitle(title);
 		pageVo.setContent(content);
-		pageVo.setTags(JSONUtil.toList(tags, String.class));
-		ProblemDifficultyEnum anEnum = ProblemDifficultyEnum.getEnum(difficulty);
+        if (StrUtil.isNotBlank(tags) && JSONUtil.isTypeJSONArray(tags)) {
+            pageVo.setTags(JSONUtil.toList(tags, String.class));
+        } else {
+            pageVo.setTags(Collections.emptyList());
+        }
+        ProblemDifficultyEnum anEnum = ProblemDifficultyEnum.getEnum(difficulty);
 		if (anEnum != null) {
 			pageVo.setDifficulty(anEnum.getName());
 		}
@@ -104,15 +110,28 @@ public interface OjProblemConverter {
 		vo.setId(id);
 		vo.setTitle(title);
 		vo.setContent(content);
-		vo.setTags(JSONUtil.toList(tags, String.class));
-		vo.setDifficulty(difficulty);
+        if (StrUtil.isNotBlank(tags) && JSONUtil.isTypeJSONArray(tags)) {
+            vo.setTags(JSONUtil.toList(tags, String.class));
+        } else {
+            vo.setTags(Collections.emptyList());
+        }
+        vo.setDifficulty(difficulty);
 		vo.setSubmitNum(submitNum);
 		vo.setAcceptedNum(acceptedNum);
 		vo.setAnsLanguage(ansLanguage);
 		vo.setAnswer(answer);
-		vo.setJudgeCase(JSONUtil.toList(judgeCase, JudgeCase.class));
-		vo.setJudgeConfig(JSONUtil.toBean(judgeConfig, JudgeConfig.class));
-		vo.setThumbNum(thumbNum);
+        if (StrUtil.isNotBlank(judgeCase) && JSONUtil.isTypeJSONArray(judgeCase)) {
+            vo.setJudgeCase(JSONUtil.toList(judgeCase, JudgeCase.class));
+        } else {
+            vo.setJudgeCase(Collections.emptyList());
+        }
+        // 防御性判断：judgeConfig 为 null 或空字符串时，返回 null 而非抛出异常
+        if (StrUtil.isNotBlank(judgeConfig) && JSONUtil.isTypeJSONObject(judgeConfig)) {
+            vo.setJudgeConfig(JSONUtil.toBean(judgeConfig, JudgeConfig.class));
+        } else {
+            vo.setJudgeConfig(null);
+        }
+        vo.setThumbNum(thumbNum);
 		vo.setFavourNum(favourNum);
 		return vo;
 	}

@@ -46,12 +46,11 @@ public class JudgeServiceImpl implements JudgeService {
 		submitMapper.update(ojProblemSubmit);
 		ExecuteCodeResponse executeCodeResponse = codeSandbox.executeCode(executeCodeRequest);
 		JudgeTask judgeTask = setJudgeTask(executeCodeResponse, ojProblem, ojProblemSubmit);
-		ojProblemSubmit.setStatus(ProblemSubmitStatusEnum.Judging.getKey());
-		submitMapper.update(ojProblemSubmit);
 		HandleJudgeTask handleJudgeTask = new HandleJudgeTask();
 		ojProblemSubmit.setOutput(JSONUtil.toJsonStr(executeCodeResponse.getOuputList()));
 		ojProblemSubmit.setJudgeInfo(JSONUtil.toJsonStr(executeCodeResponse.getJudgeInfo()));
 		ojProblemSubmit = handleJudgeTask.doHandle(judgeTask);
+        ojProblemSubmit.setStatus(ProblemSubmitStatusEnum.Judging.getKey());
 		boolean saveFlag = submitMapper.update(ojProblemSubmit) == 1;
 		Integer codeStatus = ojProblemSubmit.getCodeStatus();
 		if (codeStatus.equals(ProblemJudgeResultEnum.ACCEPTED.getKey())) {
