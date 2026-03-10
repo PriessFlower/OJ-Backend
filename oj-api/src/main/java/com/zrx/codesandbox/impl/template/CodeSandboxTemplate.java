@@ -129,18 +129,30 @@ public abstract class CodeSandboxTemplate implements CodeSandBox {
 	}
 
 	public void startDocker() {
-		DockerClientConfig config = DefaultDockerClientConfig.createDefaultConfigBuilder()
-			// .withDockerHost("unix:///var/run/docker.sock")
-			// windows 使用管道连接
-			.withDockerHost("npipe:////./pipe/docker_engine")
-			// 禁用TLS验证（测试环境）
-			.withDockerTlsVerify(false)
-			.build();
-		DockerHttpClient httpClient = new ApacheDockerHttpClient.Builder().dockerHost(config.getDockerHost())
-			.sslConfig(config.getSSLConfig())
-			.build();
+        // 1. 获取当前操作系统名称并转为小写
+        String osName = System.getProperty("os.name").toLowerCase();
 
-		dockerClient = DockerClientBuilder.getInstance(config).withDockerHttpClient(httpClient).build();
+        // 2. 动态判断并设置 Docker Host
+        String dockerHost = "unix:///var/run/docker.sock"; // 默认给 Linux/Mac 使用的 Unix Socket
+        if (osName.contains("win")) {
+            dockerHost = "npipe:////./pipe/docker_engine"; // 如果是 Windows，覆盖为管道连接
+        }
+
+        // 3. 将动态获取的 dockerHost 传入配置
+        DockerClientConfig config = DefaultDockerClientConfig.createDefaultConfigBuilder()
+                .withDockerHost(dockerHost)
+                // 禁用TLS验证（测试环境）
+                .withDockerTlsVerify(false)
+                .build();
+
+        DockerHttpClient httpClient = new ApacheDockerHttpClient.Builder()
+                .dockerHost(config.getDockerHost())
+                .sslConfig(config.getSSLConfig())
+                .build();
+
+        dockerClient = DockerClientBuilder.getInstance(config)
+                .withDockerHttpClient(httpClient)
+                .build();
 	}
 
 	public void createContainer() {
