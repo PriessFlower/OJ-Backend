@@ -26,8 +26,8 @@ spring:
     redis:
       database: 0
       host: ${REDIS_HOST:localhost}  # 支持环境变量
-      port: ${REDIS_PORT:6379}
-      password: ${REDIS_PASSWORD:}  # 生产环境建议使用环境变量
+      port: 6379
+      password: ${REDIS_PASSWORD:ZTzt5201314.}  # 生产环境建议使用环境变量
       timeout: 5000ms
       lettuce:
         pool:
