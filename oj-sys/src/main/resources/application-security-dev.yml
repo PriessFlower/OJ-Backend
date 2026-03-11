@@ -1,0 +1,48 @@
+# 开发环境安全配置
+
+# sa-token 配置
+sa-token:
+  # token 名称（同时也是 cookie 名称）
+  token-name: token
+  # token 有效期（单位：秒） 开发环境设置较短，方便测试
+  timeout: 86400  # 1天
+  # token 最低活跃频率（单位：秒）
+  active-timeout: -1
+  # 是否允许同一账号多地同时登录（开发环境允许，方便调试）
+  is-concurrent: true
+  # 在多人登录同一账号时，是否共用一个 token
+  is-share: true
+  # token 风格
+  token-style: simple-uuid
+  # 是否输出操作日志（开发环境开启，方便调试）
+  is-log: true
+
+spring:
+  servlet:
+    multipart:
+      max-file-size: 100MB
+  data:
+    # redis配置 - 开发环境
+    redis:
+      database: 0
+      host: 101.34.92.18
+      port: 6379
+      password: ZTzt5201314.
+      timeout: 5000ms
+      lettuce:
+        pool:
+          max-active: 200
+          max-wait: -1ms
+          max-idle: 10
+          min-idle: 0
+
+oj:
+  redis:
+    open: true
+
+# MinIO 配置 - 开发环境
+minio:
+  endpoint: http://101.34.92.18
+  bucketName: oj-bucket
+  accessKey: minio
+  secretKey: YafcXDBhHmMZTceh
