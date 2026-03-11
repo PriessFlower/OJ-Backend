@@ -24,6 +24,7 @@ import com.zrx.codesandbox.model.ExecuteCodeResponse;
 import com.zrx.codesandbox.model.ExecuteMessage;
 import com.zrx.codesandbox.model.JudgeInfo;
 import com.zrx.codesandbox.threads.TimeManagerThread;
+import com.zrx.codesandbox.util.CgroupsMemoryUtils;
 import com.zrx.codesandbox.util.LanguageCmdUtils;
 import com.zrx.codesandbox.util.ProcessUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -98,6 +99,16 @@ public abstract class CodeSandboxTemplate implements CodeSandBox {
                 waitCount++;
             }
 			runExecuteMessageList = runFile(inputList);
+
+			// cgroups 读到峰值内存则覆盖 Stats 的值（Linux 生产环境更准确）
+			long cgroupsMemory = CgroupsMemoryUtils.getMaxMemoryUsage(containerId);
+			if (cgroupsMemory > 0) {
+				log.debug("从 cgroups 读取到峰值内存: {} bytes", cgroupsMemory);
+				for (ExecuteMessage msg : runExecuteMessageList) {
+					msg.setMemory(cgroupsMemory);
+				}
+			}
+
 			stopContainer();
 			removeContainer(statsCmd);
 		} catch (Exception e) {

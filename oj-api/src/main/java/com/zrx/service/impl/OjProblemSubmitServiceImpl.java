@@ -61,22 +61,14 @@ public class OjProblemSubmitServiceImpl extends ServiceImpl<OjProblemSubmitMappe
 
 		Long questionId = problemSubmitAddRequest.getQuestionId();
 
-		OjProblem problem = problemMapper.selectOneById(questionId);
-
-		if (problem == null) {
+		if (problemMapper.selectOneById(questionId) == null) {
 			throw new BusinessException("题目不存在");
 		}
-		ojProblemSubmit.setQuestionId(problemSubmitAddRequest.getQuestionId());
+		ojProblemSubmit.setQuestionId(questionId);
 		ojProblemSubmit.setUserId(loginUser.getId());
 		mapper.insert(ojProblemSubmit);
 		Long ojProblemSubmitId = ojProblemSubmit.getId();
-		if (problem.getSubmitNum() == null) {
-			problem.setSubmitNum(1);
-		}
-		else {
-			problem.setSubmitNum(problem.getSubmitNum() + 1);
-		}
-		problemMapper.update(problem);
+		problemMapper.incrementSubmitNum(questionId);
 		// 消息队列
 		// ojMessageProducer.sendMessage("luojialong", "shenming",
 		// String.valueOf(ojProblemSubmitId));
@@ -89,7 +81,7 @@ public class OjProblemSubmitServiceImpl extends ServiceImpl<OjProblemSubmitMappe
 //			// throw new RuntimeException(e);
 //		}
 //		// });
-        // 改用异步方式，我现在知道为什么它不用异步方式了，因为用了异步方式，无法正确的显示判题时间和内存消耗
+        // 改用异步方式，我现在知道为什么它不用异步方式了，因为用了异步方式 + 事务，后续第一时间查不一定查得到。
         CompletableFuture.runAsync(() -> {
             try {
                 judgeService.doJudge(ojProblemSubmitId);

@@ -36,8 +36,15 @@ public class JudgeServiceImpl implements JudgeService {
 
 	@Override
 	public void doJudge(Long ojProblemSubmitId) throws Exception {
-
-		OjProblemSubmit ojProblemSubmit = submitMapper.selectOneById(ojProblemSubmitId);
+		OjProblemSubmit ojProblemSubmit = null;
+		for (int i = 0; i < 3; i++) {
+			ojProblemSubmit = submitMapper.selectOneById(ojProblemSubmitId);
+			if (ojProblemSubmit != null) break;
+			Thread.sleep(200);
+		}
+		if (ojProblemSubmit == null) {
+			throw new Exception("提交记录不存在: " + ojProblemSubmitId);
+		}
 		OjProblem ojProblem = ojProblemService.getById(ojProblemSubmit.getQuestionId());
 
 		ExecuteCodeRequest executeCodeRequest = getExecuteCodeRequest(ojProblemSubmit, ojProblem);

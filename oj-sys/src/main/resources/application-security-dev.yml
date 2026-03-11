@@ -25,7 +25,7 @@ spring:
     # redis配置 - 开发环境
     redis:
       database: 0
-      host: 101.34.92.18
+      host: localhost
       port: 6379
       password: ZTzt5201314.
       timeout: 5000ms
@@ -42,7 +42,7 @@ oj:
 
 # MinIO 配置 - 开发环境
 minio:
-  endpoint: http://101.34.92.18
+  endpoint: http://localhost:9000
   bucketName: oj-bucket
   accessKey: minio
-  secretKey: YafcXDBhHmMZTceh
+  secretKey: ZTzt5201314.

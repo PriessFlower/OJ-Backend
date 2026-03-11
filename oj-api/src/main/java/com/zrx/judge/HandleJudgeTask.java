@@ -57,7 +57,7 @@ public class HandleJudgeTask {
 			ojProblemSubmit.setCodeStatus(ProblemJudgeResultEnum.TIME_LIMIT_EXCEEDED.getKey());
 			return ojProblemSubmit;
 		}
-		if (judgeInfo.getMemory() > judgeConfig.getMemoryLimit()) {
+		if (judgeInfo.getMemory() > judgeConfig.getMemoryLimit() * 1024L) {
 			ojProblemSubmit.setCodeStatus(ProblemJudgeResultEnum.MEMORY_LIMIT_EXCEEDED.getKey());
 			return ojProblemSubmit;
 		}
