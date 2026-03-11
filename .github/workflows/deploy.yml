@@ -65,5 +65,7 @@ jobs:
               -e REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }} \
               -e MINIO_ENDPOINT=${{ secrets.MINIO_ENDPOINT }} \
               -e MINIO_SECRET_KEY=${{ secrets.MINIO_SECRET_KEY }} \
+              -e MYSQL_URL=${{secrets.MYSQL_URL}} \
+              -e MYSQL_PASSWORD=${{secrets.MYSQL_PASSWORD}} \
               --name oj-backend-container \
               ${{ secrets.DOCKER_USERNAME }}/oj-backend:latest

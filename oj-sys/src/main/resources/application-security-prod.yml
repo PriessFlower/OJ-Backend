@@ -42,7 +42,7 @@ oj:
 
 # MinIO 配置 - 生产环境
 minio:
-  endpoint: ${MINIO_ENDPOINT:http://101.34.92.18}  # 支持环境变量
+  endpoint: ${MINIO_ENDPOINT:http://localhost}  # 支持环境变量
   bucketName: ${MINIO_BUCKET:oj-bucket}
   accessKey: ${MINIO_ACCESS_KEY:minio}
   secretKey: ${MINIO_SECRET_KEY:}
