@@ -9,8 +9,12 @@ spring:
   # 默认dev环境
   profiles:
     active: dev
-    include:
-      - security
+    # 使用 profile groups 来组合配置
+    group:
+      dev:
+        - security-dev
+      prod:
+        - security-prod
   # 支持swagger3
   mvc:
     pathmatch:
