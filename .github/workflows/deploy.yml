@@ -57,13 +57,4 @@ jobs:
             docker rm oj-backend-container 2>/dev/null || true
             
             # 启动新容器（使用单行命令避免转义问题）
-            docker run -d --network host -v /var/run/docker.sock:/var/run/docker.sock \
-              -e SPRING_PROFILES_ACTIVE=prod \
-              -e REDIS_HOST=${{ secrets.REDIS_HOST }} \
-              -e REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }} \
-              -e MINIO_ENDPOINT=${{ secrets.MINIO_ENDPOINT }} \
-              -e MINIO_SECRET_KEY=${{ secrets.MINIO_SECRET_KEY }} \
-              -e MYSQL_URL=${{ secrets.MYSQL_URL }} \
-              -e MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }} \
-              --name oj-backend-container \
-              ${{ secrets.DOCKER_USERNAME }}/oj-backend:latest
+            docker run -d --network host -v /var/run/docker.sock:/var/run/docker.sock -e SPRING_PROFILES_ACTIVE=prod -e REDIS_HOST=${{ secrets.REDIS_HOST }} -e REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }} -e MINIO_ENDPOINT=${{ secrets.MINIO_ENDPOINT }} -e MINIO_SECRET_KEY=${{ secrets.MINIO_SECRET_KEY }} -e MYSQL_URL=${{ secrets.MYSQL_URL }} -e MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }} --name oj-backend-container ${{ secrets.DOCKER_USERNAME }}/oj-backend:latest
