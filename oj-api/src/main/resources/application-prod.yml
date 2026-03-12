@@ -1,6 +1,6 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: ${MYSQL_URL:jdbc:mysql://localhost:3306/oj-system?useUnicode=true&characterEncoding=utf-8&useSSL=true}
-    username: oj-system
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/${MYSQL_DATABASE:oj-system}?useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true
+    username: ${MYSQL_USERNAME:oj-system}
     password: ${MYSQL_PASSWORD:ZTzt5201314.}
