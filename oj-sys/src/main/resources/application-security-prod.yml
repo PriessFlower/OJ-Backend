@@ -1,22 +1,3 @@
-# 生产环境安全配置
-
-# sa-token 配置
-sa-token:
-  # token 名称（同时也是 cookie 名称）
-  token-name: token
-  # token 有效期（单位：秒） 生产环境7天
-  timeout: 604800  # 7天
-  # token 最低活跃频率（单位：秒）
-  active-timeout: -1
-  # 是否允许同一账号多地同时登录（生产环境不允许，安全考虑）
-  is-concurrent: false
-  # 在多人登录同一账号时，是否共用一个 token
-  is-share: true
-  # token 风格
-  token-style: simple-uuid
-  # 是否输出操作日志（生产环境关闭，减少日志量）
-  is-log: false
-
 spring:
   servlet:
     multipart:
@@ -35,10 +16,6 @@ spring:
           max-wait: -1ms
           max-idle: 10
           min-idle: 0
-
-oj:
-  redis:
-    open: true
 
 # MinIO 配置 - 生产环境
 minio:
