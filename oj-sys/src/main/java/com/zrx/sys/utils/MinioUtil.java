@@ -97,7 +97,7 @@ public class MinioUtil {
 	 * @param file 文件
 	 * @return Boolean
 	 */
-	public String upload(MultipartFile file, String fileName) {
+	public String upload(MultipartFile file, String fileName,String folder) {
 		String originalFilename = file.getOriginalFilename();
 		if (StringUtils.isBlank(originalFilename)) {
 			throw new BusinessException("文件名不能为空");
@@ -105,7 +105,7 @@ public class MinioUtil {
 		SysUser user = SecurityHelper.getUser();
 		String userInfo = user.getUsername() + "-" + user.getId();
 		String formatDate = DateUtil.format(new Date(), "yyyy-MM-dd");
-		String objectName = userInfo + "/" + formatDate + "/" + fileName;
+		String objectName = folder + "/" + userInfo + "/" + formatDate + "/" + fileName;
 		try {
 			PutObjectArgs objectArgs = PutObjectArgs.builder()
 				.bucket(prop.getBucketName())

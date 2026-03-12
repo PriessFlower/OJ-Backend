@@ -12,6 +12,6 @@ import org.springframework.web.multipart.MultipartFile;
  */
 public interface SysFileService extends IService<SysFile> {
 
-	String upload(MultipartFile file);
+	String upload(MultipartFile file,String folder);
 
 }

@@ -33,13 +33,13 @@ public class SysFileServiceImpl extends ServiceImpl<SysFileMapper, SysFile> impl
 	private String bucketName;
 
 	@Override
-	public String upload(MultipartFile file) {
+	public String upload(MultipartFile file,String folder) {
 		// TODO: 处理大文件上传
 		String fileName = file.getOriginalFilename();
 		fileName = NanoId.randomNanoId(10) + "-" + FileNameUtil.getName(fileName);
 		SysFile sysFile = new SysFile();
 		sysFile.setFileName(fileName);
-		String url = minioUtil.upload(file, fileName);
+		String url = minioUtil.upload(file, fileName,folder);
 		if (StringUtils.isEmpty(url)) {
 			throw new BusinessException("上传失败! ");
 		}

@@ -73,7 +73,8 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 
 	@Override
 	public String uploadAvatar(MultipartFile file) {
-		String url = sysFileService.upload(file);
+        String folder = "avatars";
+		String url = sysFileService.upload(file,folder);
 		SysUser user = SecurityHelper.getUser();
 		user.setAvatar(url);
 		boolean updateFlag = updateById(user);
