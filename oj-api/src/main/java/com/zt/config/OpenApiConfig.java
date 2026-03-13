@@ -26,7 +26,7 @@ public class OpenApiConfig {
 				// 接口文档版本
 				.version("v1.0")
 				// 开发者联系方式
-				.contact(new Contact().name("zhang.rx").email("zrx15726109130@outlook.com")))
+				.contact(new Contact().name("墨城有珠").email("2837198145@qq.com")))
 			.externalDocs(new ExternalDocumentation().description("OJ").url("http://localhost:8080/api/"));
 	}
 

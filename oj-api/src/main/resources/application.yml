@@ -43,12 +43,12 @@ springdoc:
   group-configs:
     - group: '核心接口'
       paths-to-match: '/**'
-      packages-to-scan: com.zrx
+      packages-to-scan: com.zt
     - group: '系统接口'
       paths-to-match:
         - '/sys/**'
         - '/security/**'
-      packages-to-scan: com.zrx
+      packages-to-scan: com.zt
 
 # knife4j相关配置 可以不用改
 knife4j:
