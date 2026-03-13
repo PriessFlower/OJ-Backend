@@ -86,10 +86,10 @@ public abstract class CodeSandboxTemplate implements CodeSandBox {
 
         //需要用finally清理资源！！！
 		try {
-			compileExecuteMessage = compileFile(userCodeFile);
 			startDocker();
 			createContainer();
 			runContainer();
+			compileExecuteMessage = compileFile(userCodeFile);
 			statsCmd = calculateMemory();
 //			while (memory < 0) 不适用忙等待，cpu占用率太高
 //				;

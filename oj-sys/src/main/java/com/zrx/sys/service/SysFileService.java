@@ -14,4 +14,6 @@ public interface SysFileService extends IService<SysFile> {
 
 	String upload(MultipartFile file,String folder);
 
+    String upload(MultipartFile file);
+
 }

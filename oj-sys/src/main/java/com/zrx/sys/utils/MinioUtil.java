@@ -123,6 +123,32 @@ public class MinioUtil {
 		return objectName;
 	}
 
+    public String upload(MultipartFile file, String fileName) {
+        String originalFilename = file.getOriginalFilename();
+        if (StringUtils.isBlank(originalFilename)) {
+            throw new BusinessException("文件名不能为空");
+        }
+        SysUser user = SecurityHelper.getUser();
+        String userInfo = user.getUsername() + "-" + user.getId();
+        String formatDate = DateUtil.format(new Date(), "yyyy-MM-dd");
+        String objectName = userInfo + "/" + formatDate + "/" + fileName;
+        try {
+            PutObjectArgs objectArgs = PutObjectArgs.builder()
+                    .bucket(prop.getBucketName())
+                    .object(objectName)
+                    .stream(file.getInputStream(), file.getSize(), -1)
+                    .contentType(file.getContentType())
+                    .build();
+            // 文件名称相同会覆盖
+            minioClient.putObject(objectArgs);
+        }
+        catch (Exception e) {
+            log.info("文件上传报错: {}", e.getMessage());
+            return null;
+        }
+        return objectName;
+    }
+
 	/**
 	 * 预览图片
 	 * @param fileName 文件名

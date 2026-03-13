@@ -52,7 +52,26 @@ public class SysFileServiceImpl extends ServiceImpl<SysFileMapper, SysFile> impl
 		return getUrl(url);
 	}
 
-	private String getUrl(String url) {
+    @Override
+    public String upload(MultipartFile file) {
+        String fileName = file.getOriginalFilename();
+        fileName = NanoId.randomNanoId(10) + "-" + FileNameUtil.getName(fileName);
+        SysFile sysFile = new SysFile();
+        sysFile.setFileName(fileName);
+        String url = minioUtil.upload(file, fileName);
+        if (StringUtils.isEmpty(url)) {
+            throw new BusinessException("上传失败! ");
+        }
+        sysFile.setUrl(url);
+        sysFile.setFileSize(file.getSize());
+        boolean save = save(sysFile);
+        if (!save) {
+            throw new BusinessException("上传失败");
+        }
+        return getUrl(url);
+    }
+
+    private String getUrl(String url) {
 		return endpoint + "/" + bucketName + "/" + url;
 	}
 

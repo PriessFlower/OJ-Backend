@@ -21,6 +21,12 @@ public class LanguageCmdUtils {
 
 	private static final String C_RUN = "%s/a.exe";
 
+	private static final String JAVA_Docker_COMPILE = "docker exec -i %s javac -encoding utf-8 %s/%s";
+
+	private static final String C_PLUS_PLUS_Docker_COMPILE = "docker exec -i %s g++ %s/%s -o %s/a.exe";
+
+	private static final String C_Docker_COMPILE = "docker exec -i %s gcc %s/%s -o %s/a.exe";
+
 	private static final String JAVA_Docker_RUN = "docker exec -i  %s java -Dfile.encoding=UTF-8 -cp %s Main";
 
 	private static final String PYTHON_Docker_RUN = "docker exec -i %s python3 %s";
@@ -28,6 +34,19 @@ public class LanguageCmdUtils {
 	private static final String C_PLUS_PLUS_Docker_RUN = "docker exec -i %s %s/a.exe";
 
 	private static final String C_Docker_RUN = "docker exec -i %s %s/a.exe";
+
+	public static String getDockerCompileCMD(String containerId, String volumnName, String fileName, String language) {
+		switch (language) {
+			case "java":
+				return String.format(JAVA_Docker_COMPILE, containerId, volumnName, fileName);
+			case "c++":
+				return String.format(C_PLUS_PLUS_Docker_COMPILE, containerId, volumnName, fileName, volumnName);
+			case "c":
+				return String.format(C_Docker_COMPILE, containerId, volumnName, fileName, volumnName);
+			default:
+				return null;
+		}
+	}
 
 	public static String getCompileCMD(String userCodePath, String userCodeParent, String language) {
 		switch (language) {
