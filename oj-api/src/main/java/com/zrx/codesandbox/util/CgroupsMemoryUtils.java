@@ -31,7 +31,7 @@ public class CgroupsMemoryUtils {
         // 尝试 cgroups v1
         long memory = readCgroupsV1(containerId);
         if (memory > 0) {
-            log.debug("从 cgroups v1 读取峰值内存: {} bytes ({} MB)",
+            log.info("从 cgroups v1 读取峰值内存: {} bytes ({} MB)",
                      memory, memory / 1024 / 1024);
             return memory;
         }
@@ -39,7 +39,7 @@ public class CgroupsMemoryUtils {
         // 尝试 cgroups v2
         memory = readCgroupsV2(containerId);
         if (memory > 0) {
-            log.debug("从 cgroups v2 读取峰值内存: {} bytes ({} MB)",
+            log.info("从 cgroups v2 读取峰值内存: {} bytes ({} MB)",
                      memory, memory / 1024 / 1024);
             return memory;
         }
