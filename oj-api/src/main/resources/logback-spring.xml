@@ -17,7 +17,7 @@
         </encoder>
     </appender>
 
-    <logger name="com.zrx.mapper" level="DEBUG" additivity="false">
+    <logger name="com.zt.mapper" level="DEBUG" additivity="false">
         <appender-ref ref="SQL_FILE" />
     </logger>
 

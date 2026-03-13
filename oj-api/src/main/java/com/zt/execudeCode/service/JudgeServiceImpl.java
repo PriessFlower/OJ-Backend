@@ -1,0 +1,92 @@
+package com.zt.execudeCode.service;
+
+import cn.hutool.json.JSONUtil;
+import com.zt.codesandbox.CodeSandBox;
+import com.zt.codesandbox.model.ExecuteCodeRequest;
+import com.zt.codesandbox.model.ExecuteCodeResponse;
+import com.zt.enums.ProblemJudgeResultEnum;
+import com.zt.enums.ProblemSubmitStatusEnum;
+import com.zt.execudeCode.CodeSandboxManager;
+import com.zt.execudeCode.JudgeService;
+import com.zt.judge.HandleJudgeTask;
+import com.zt.mapper.OjProblemSubmitMapper;
+import com.zt.model.dto.problem.JudgeCase;
+import com.zt.model.entity.OjProblem;
+import com.zt.model.entity.OjProblemSubmit;
+import com.zt.model.judge.JudgeTask;
+import com.zt.service.OjProblemService;
+import jakarta.annotation.Resource;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+public class JudgeServiceImpl implements JudgeService {
+
+	@Resource
+	private OjProblemService ojProblemService;
+
+	@Resource
+	private OjProblemSubmitMapper submitMapper;
+
+	@Value("${codesandbox.type:remote}")
+	private String type;
+
+	@Override
+	public void doJudge(Long ojProblemSubmitId) throws Exception {
+		OjProblemSubmit ojProblemSubmit = null;
+		for (int i = 0; i < 3; i++) {
+			ojProblemSubmit = submitMapper.selectOneById(ojProblemSubmitId);
+			if (ojProblemSubmit != null) break;
+			Thread.sleep(200);
+		}
+		if (ojProblemSubmit == null) {
+			throw new Exception("提交记录不存在: " + ojProblemSubmitId);
+		}
+		OjProblem ojProblem = ojProblemService.getById(ojProblemSubmit.getQuestionId());
+
+		ExecuteCodeRequest executeCodeRequest = getExecuteCodeRequest(ojProblemSubmit, ojProblem);
+		CodeSandBox codeSandbox = CodeSandboxManager.instance(type);
+		ojProblemSubmit.setStatus(ProblemSubmitStatusEnum.Waiting.getKey());
+		submitMapper.update(ojProblemSubmit);
+		ExecuteCodeResponse executeCodeResponse = codeSandbox.executeCode(executeCodeRequest);
+		JudgeTask judgeTask = setJudgeTask(executeCodeResponse, ojProblem, ojProblemSubmit);
+		HandleJudgeTask handleJudgeTask = new HandleJudgeTask();
+		ojProblemSubmit.setOutput(JSONUtil.toJsonStr(executeCodeResponse.getOuputList()));
+		ojProblemSubmit.setJudgeInfo(JSONUtil.toJsonStr(executeCodeResponse.getJudgeInfo()));
+		ojProblemSubmit = handleJudgeTask.doHandle(judgeTask);
+        ojProblemSubmit.setStatus(ProblemSubmitStatusEnum.Judging.getKey());
+		boolean saveFlag = submitMapper.update(ojProblemSubmit) == 1;
+		Integer codeStatus = ojProblemSubmit.getCodeStatus();
+		if (codeStatus.equals(ProblemJudgeResultEnum.ACCEPTED.getKey())) {
+			ojProblem.setAcceptedNum(ojProblem.getAcceptedNum() == null ? 1 : ojProblem.getAcceptedNum() + 1);
+			ojProblemService.updateById(ojProblem);
+		}
+		if (!saveFlag) {
+			throw new Exception("代码提交保存失败");
+		}
+	}
+
+	private ExecuteCodeRequest getExecuteCodeRequest(OjProblemSubmit ojProblemSubmit, OjProblem ojProblem) {
+
+		ExecuteCodeRequest executeCodeRequest = new ExecuteCodeRequest();
+		executeCodeRequest.setCode(ojProblemSubmit.getCode());
+		executeCodeRequest.setLanguage(ojProblemSubmit.getLanguage());
+		List<JudgeCase> judgeCaseList = JSONUtil.toList(ojProblem.getJudgeCase(), JudgeCase.class);
+		List<String> inputList = judgeCaseList.stream().map(JudgeCase::getInput).collect(Collectors.toList());
+		executeCodeRequest.setInputList(inputList);
+		return executeCodeRequest;
+	}
+
+	private JudgeTask setJudgeTask(ExecuteCodeResponse executeCodeResponse, OjProblem ojProblem,
+			OjProblemSubmit ojProblemSubmit) {
+		JudgeTask judgeTask = new JudgeTask();
+		judgeTask.setOjProblem(ojProblem);
+		judgeTask.setOjProblemSubmit(ojProblemSubmit);
+		judgeTask.setExecuteCodeResponse(executeCodeResponse);
+		return judgeTask;
+	}
+
+}
