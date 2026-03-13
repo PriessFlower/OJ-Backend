@@ -359,7 +359,7 @@ public abstract class CodeSandboxTemplate implements CodeSandBox {
 			executeCodeResponse.setMessage(QuestionExecuteResultEnum.ExecuteSuccess.getText());
 			executeCodeResponse.setStatus(2);
 		}
-		judgeResult.setMemory(maxMemory / 1024 / 8);
+		judgeResult.setMemory(maxMemory / 1024 / 1024);
 		judgeResult.setTime(maxTime);
 		executeCodeResponse.setOuputList(outputList);
 		executeCodeResponse.setJudgeInfo(judgeResult);
@@ -381,7 +381,7 @@ public abstract class CodeSandboxTemplate implements CodeSandBox {
 		JudgeInfo judgeInfo = new JudgeInfo();
 		judgeInfo.setMessage(e.getMessage());
 		if (memory != null && memory > 0) {
-			judgeInfo.setMemory(memory / 1024 / 8);
+			judgeInfo.setMemory(memory / 1024 / 1024);
 		}
 		judgeInfo.setMessage(desensitizationStr(e.getMessage()));
         String errorMessage = e.getMessage() == null ? "" : e.getMessage();
