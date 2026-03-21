@@ -1,6 +1,8 @@
 package com.zt.model.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -25,6 +27,7 @@ public class OjPostVo implements Serializable {
 	/**
 	 * id
 	 */
+	@JsonSerialize(using = ToStringSerializer.class)
 	@Schema(description = "id")
 	private Long id;
 
